@@ -18,6 +18,7 @@ from oslo_config import cfg
 from oslo_log import helpers as log_helpers
 from oslo_log import log as logging
 import oslo_messaging
+from oslo_utils import excutils
 from oslo_utils import timeutils
 from oslo_utils import uuidutils
 
@@ -30,7 +31,10 @@ from neutron import manager
 
 from networking_fortinet._i18n import _, _LE, _LI
 from networking_fortinet.common import constants as const
+from networking_fortinet.common import utils
 from networking_fortinet.db import models as fortinet_db
+from networking_fortinet.tasks import tasks
+
 
 LOG = logging.getLogger(__name__)
 
@@ -84,8 +88,8 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
 
     def __init__(self, plugin=None):
         super(FortinetAgentRpcCallback, self).__init__()
-        #import ipdb;ipdb.set_trace()
-        #self.plugin = plugin
+        self.task_manager = tasks.TaskManager()
+        self.task_manager.start()
 
     @log_helpers.log_method_call
     def device_register(self, context, **kwargs):
@@ -149,6 +153,8 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
                  with their interfaces and floating_ips
         """
         import ipdb;ipdb.set_trace()
+        if not getattr(self, '_plugin', None):
+            self._plugin = manager.NeutronManager.get_plugin()
         routers = super(FortinetAgentRpcCallback, self).sync_routers(context,
                                                                      **kwargs)
         cls = fortinet_db.Fortinet_ML2_Namespace
@@ -166,13 +172,15 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
         # Limit one router per tenant
         if not router.get('id', None):
             return
+        router = {}
         tenant_id = router['router']['tenant_id']
         try:
             namespace = utils.allocate_vdom(self, context, tenant_id=tenant_id)
-            utils.add_vlink(self, context, namespace.vdom)
+            router['vdom'] = namespace.make_dict if namespace else {}
+            router['vlink'] = utils.allocate_vlink(self, context, fortigate_id, namespace.vdom)
         except Exception as e:
             with excutils.save_and_reraise_exception():
                 LOG.error(_LE("Failed to create_router router=%(router)s"),
-                          {"router": router})
+                          {"router ": router})
                 utils.rollback_on_err(self, context, e)
         utils.update_status(self, context, t_consts.TaskStatus.COMPLETED)
