@@ -33,6 +33,7 @@ from networking_fortinet._i18n import _, _LE, _LI
 from networking_fortinet.common import constants as const
 from networking_fortinet.common import utils
 from networking_fortinet.db import models as fortinet_db
+from networking_fortinet.tasks import constants as t_consts
 from networking_fortinet.tasks import tasks
 
 
@@ -88,8 +89,6 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
 
     def __init__(self, plugin=None):
         super(FortinetAgentRpcCallback, self).__init__()
-        self.task_manager = tasks.TaskManager()
-        self.task_manager.start()
 
     @log_helpers.log_method_call
     def device_register(self, context, **kwargs):
@@ -106,12 +105,10 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
                       "Skipping processing because it's older than .the "
                       "server start timestamp: %(server_time)s", log_dict)
             return
-        #if not self.plugin:
-        #    self.plugin = manager.NeutronManager.get_plugin()
         #import ipdb;ipdb.set_trace()
-        fortinet_db.add_record(
+        fortigate = fortinet_db.add_record(
             context, fortinet_db.Fortinet_Fortigate, **agent_state)
-        #self.plugin.create_or_update_agent(context, agent_state)
+        return fortigate.make_dict()
 
     def _check_clock_sync_on_agent_start(self, agent_state, agent_time):
         """Checks if the server and the agent times are in sync.
@@ -153,8 +150,9 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
                  with their interfaces and floating_ips
         """
         import ipdb;ipdb.set_trace()
-        if not getattr(self, '_plugin', None):
-            self._plugin = manager.NeutronManager.get_plugin()
+        host = kwargs.get('host')
+        fortigate = fortinet_db.query_record(
+            context, fortinet_db.Fortinet_Fortigate, host=host)
         routers = super(FortinetAgentRpcCallback, self).sync_routers(context,
                                                                      **kwargs)
         cls = fortinet_db.Fortinet_ML2_Namespace
@@ -167,8 +165,7 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
                               "%(router)s."), {'router': router})
         return routers
 
-
-    def _get_router_info(self, context, router):
+    def _get_router_info(self, context, fortigate_id, router):
         # Limit one router per tenant
         if not router.get('id', None):
             return
@@ -177,10 +174,12 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
         try:
             namespace = utils.allocate_vdom(self, context, tenant_id=tenant_id)
             router['vdom'] = namespace.make_dict if namespace else {}
-            router['vlink'] = utils.allocate_vlink(self, context, fortigate_id, namespace.vdom)
+            router['vlink'] = utils.allocate_vlink(self, context, fortigate_id,
+                                                   namespace.vdom)
         except Exception as e:
             with excutils.save_and_reraise_exception():
                 LOG.error(_LE("Failed to create_router router=%(router)s"),
                           {"router ": router})
                 utils.rollback_on_err(self, context, e)
-        utils.update_status(self, context, t_consts.TaskStatus.COMPLETED)
+        utils.update_status(
+            self.plugin, context, t_consts.TaskStatus.COMPLETED)
