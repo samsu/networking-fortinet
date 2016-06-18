@@ -108,7 +108,7 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
         #import ipdb;ipdb.set_trace()
         fortigate = fortinet_db.add_record(
             context, fortinet_db.Fortinet_Fortigate, **agent_state)
-        return fortigate.make_dict()
+        return fortigate['result'].make_dict()
 
     def _check_clock_sync_on_agent_start(self, agent_state, agent_time):
         """Checks if the server and the agent times are in sync.
