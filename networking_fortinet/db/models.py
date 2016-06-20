@@ -217,6 +217,13 @@ class DBbase(object):
         }
         return rollback
 
+    @classmethod
+    def query_return_dict(cls, context, lockmode=False, **kwargs):
+        """Get a filtered vlink_vlan_allocation record."""
+        query = cls.query_one(context, lockmode=lockmode, **kwargs)
+        res = query.make_dict() if query else {}
+        return res
+
     def make_dict(self):
         dict = {}
         for name in dir(self.__class__):

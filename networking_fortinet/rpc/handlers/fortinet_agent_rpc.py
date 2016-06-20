@@ -72,6 +72,7 @@ class FortinetAgentRpcApi(agent.L3PluginApi):
     def get_routers(self, context, router_ids=None):
         """Make a remote process call to retrieve the sync data for routers."""
         cctxt = self.fgt_client.prepare()
+        import ipdb;ipdb.set_trace()
         return cctxt.call(context, 'ftnt_sync_routers', host=self.host,
                           router_ids=router_ids)
 
@@ -153,16 +154,11 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
         host = kwargs.get('host')
         fortigate = fortinet_db.query_record(
             context, fortinet_db.Fortinet_Fortigate, host=host)
-        routers = super(FortinetAgentRpcCallback, self).sync_routers(context,
-                                                                     **kwargs)
-        cls = fortinet_db.Fortinet_ML2_Namespace
+        routers = super(FortinetAgentRpcCallback,
+                        self).sync_routers(context, **kwargs)
         for router in routers:
-            tenant_id = router.get('tenant_id', None)
-            if tenant_id:
-                router['vdom'] = cls.query_one(context, tenant_id=tenant_id)
-            else:
-                LOG.error(_LE("Can not get any tenant info from the router: "
-                              "%(router)s."), {'router': router})
+            rinfo = self._get_router_info(context, fortigate.id, router)
+            router['fortigate'] = rinfo
         return routers
 
     def _get_router_info(self, context, fortigate_id, router):
