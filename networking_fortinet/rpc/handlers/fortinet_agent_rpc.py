@@ -166,7 +166,7 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
         if not router.get('id', None):
             return
         rinfo = {}
-        tenant_id = router['router']['tenant_id']
+        tenant_id = router['tenant_id']
         try:
             namespace = utils.allocate_vdom(self, context, tenant_id=tenant_id)
             rinfo['vdom'] = namespace.make_dict() if namespace else {}
