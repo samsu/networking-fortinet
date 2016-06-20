@@ -169,12 +169,12 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
         # Limit one router per tenant
         if not router.get('id', None):
             return
-        router = {}
+        rinfo = {}
         tenant_id = router['router']['tenant_id']
         try:
             namespace = utils.allocate_vdom(self, context, tenant_id=tenant_id)
-            router['vdom'] = namespace.make_dict if namespace else {}
-            router['vlink'] = utils.allocate_vlink(self, context, fortigate_id,
+            rinfo['vdom'] = namespace.make_dict() if namespace else {}
+            rinfo['vlink'] = utils.allocate_vlink(self, context, fortigate_id,
                                                    namespace.vdom)
         except Exception as e:
             with excutils.save_and_reraise_exception():
@@ -183,3 +183,4 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
                 utils.rollback_on_err(self, context, e)
         utils.update_status(
             self.plugin, context, t_consts.TaskStatus.COMPLETED)
+        return rinfo

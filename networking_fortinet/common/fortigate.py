@@ -40,7 +40,6 @@ class Fortigate(object):
             task_manager = tasks.TaskManager()
         self.task_manager = task_manager
         self.task_manager.start()
-        #self.initialize()
 
     @log_helpers.log_method_call
     def initialize(self):

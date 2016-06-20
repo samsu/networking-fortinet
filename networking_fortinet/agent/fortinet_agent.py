@@ -141,6 +141,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         self.plugin_rpc = FortinetL3PluginApi(topics.L3PLUGIN, host)
         self.task_manager = tasks.TaskManager()
         self.task_manager.start()
+        self.fortigates = []
         self.fortigate = fortigate.Fortigate()
         self.api_client = self.fortigate.get_apiclient()
         self.initialize_fortigate()
@@ -208,8 +209,8 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         self.fortigate.setup_env()
         agent_state = {'fortigate_ip': self.fortigate.cfg.address,
                        'status': 'enable'}
-        import ipdb;ipdb.set_trace()
-        t = self.plugin_rpc.device_register(agent_state, use_call=True)
+        self.fortigates.append(
+            self.plugin_rpc.device_register(agent_state, use_call=True))
 
     @log_helpers.log_method_call
     def _check_config_params(self):
