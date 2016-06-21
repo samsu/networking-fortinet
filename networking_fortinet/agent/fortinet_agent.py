@@ -461,6 +461,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
             if update.action != queue.DELETE_ROUTER and not router:
                 try:
                     update.timestamp = timeutils.utcnow()
+                    print "### update = %s" % update
                     routers = self.plugin_rpc.get_routers(self.context,
                                                           [update.id])
                 except Exception:
