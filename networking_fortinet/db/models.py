@@ -314,7 +314,7 @@ class Fortinet_ML2_ReservedIP(model_base.BASEV2, DBbase):
 class Fortinet_Static_Router(model_base.BASEV2, models_v2.HasId, DBbase):
     """Schema for Fortinet static router."""
     fortigate_id = sa.Column(sa.String(36),
-                             sa.ForeignKey('fortinet.fortigate.id',
+                             sa.ForeignKey('fortinet.fortigates.id',
                                            ondelete="CASCADE"),
                              nullable=False)
     vdom = sa.Column(sa.String(11))
@@ -323,11 +323,6 @@ class Fortinet_Static_Router(model_base.BASEV2, models_v2.HasId, DBbase):
     device = sa.Column(sa.String(32))
     gateway = sa.Column(sa.String(32))
     edit_id = sa.Column(sa.Integer)
-
-    @classmethod
-    def add_record(cls, context, **kwargs):
-        kwargs.setdefault('id', uuidutils.generate_uuid())
-        return super(Fortinet_Static_Router, cls).add_record(context, **kwargs)
 
 
 class Fortinet_Vlink_Vlan_Allocation(model_base.BASEV2, models_v2.HasId,
