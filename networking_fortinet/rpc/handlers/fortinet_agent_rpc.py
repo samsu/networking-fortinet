@@ -203,6 +203,5 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
                 LOG.error(_LE("Failed to create_router router=%(router)s"),
                           {"router ": router})
                 utils.rollback_on_err(self, context, e)
-        utils.update_status(
-            self.plugin, context, t_consts.TaskStatus.COMPLETED)
+        utils.update_status(self, context, t_consts.TaskStatus.COMPLETED)
         return rinfo
