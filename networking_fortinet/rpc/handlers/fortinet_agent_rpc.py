@@ -13,7 +13,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+
 from datetime import datetime
+import functools
 from oslo_config import cfg
 from oslo_log import helpers as log_helpers
 from oslo_log import log as logging
@@ -40,22 +42,25 @@ from networking_fortinet.tasks import tasks
 LOG = logging.getLogger(__name__)
 
 
-def checktime(method):
-
-
+def checktimestamp(method):
+    """
+    compare the start time of rpc server with the message time to be sent,
+    if the message generated time is older than the start time, then discard.
+    """
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
         time = kwargs['time']
         time = timeutils.parse_strtime(time)
-        agent_state = kwargs['agent_state']['agent_state']
-        #self._check_clock_sync_on_agent_start(agent_state, time)
         if self.START_TIME > time:
             time_agent = timeutils.isotime(time)
             time_server = timeutils.isotime(self.START_TIME)
             log_dict = {'agent_time': time_agent, 'server_time': time_server}
-            LOG.debug("Stale message received with timestamp: %(agent_time)s. "
-                      "Skipping processing because it's older than .the "
+            LOG.debug("Stale message received with timestamp: %(agent_time)s."
+                      "Skipping processing because it's older than the "
                       "server start timestamp: %(server_time)s", log_dict)
             return
-
+        return method(self, *args, **kwargs)
+    return wrapper
 
 
 class FortinetAgentRpcApi(agent.L3PluginApi):
@@ -77,7 +82,7 @@ class FortinetAgentRpcApi(agent.L3PluginApi):
     @log_helpers.log_method_call
     def device_register(self, agent_state, use_call=False):
         cctxt = self.fgt_client.prepare()
-       #self.agent_state['uuid'] = uuidutils.generate_uuid()
+        #self.agent_state['uuid'] = uuidutils.generate_uuid()
         agent_state['host'] = self.host
         kwargs = {
             'agent_state': {'agent_state': agent_state},
@@ -90,9 +95,12 @@ class FortinetAgentRpcApi(agent.L3PluginApi):
     def get_routers(self, context, router_ids=None):
         """Make a remote process call to retrieve the sync data for routers."""
         cctxt = self.fgt_client.prepare()
-        kwargs = {
+        body = {
             'host': self.host,
-            'router_ids': router_ids,
+            'router_ids': router_ids
+        }
+        kwargs = {
+            'body': body,
             'time': datetime.utcnow().strftime(constants.ISO8601_TIME_FORMAT),
         }
         return cctxt.call(context, 'ftnt_sync_routers', **kwargs)
@@ -118,21 +126,10 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
             self.task_manager = task_manager
 
     @log_helpers.log_method_call
+    @checktimestamp
     def device_register(self, context, **kwargs):
         """The first report state when fortinet agent start to server."""
-        time = kwargs['time']
-        time = timeutils.parse_strtime(time)
         agent_state = kwargs['agent_state']['agent_state']
-        #self._check_clock_sync_on_agent_start(agent_state, time)
-        if self.START_TIME > time:
-            time_agent = timeutils.isotime(time)
-            time_server = timeutils.isotime(self.START_TIME)
-            log_dict = {'agent_time': time_agent, 'server_time': time_server}
-            LOG.debug("Stale message received with timestamp: %(agent_time)s. "
-                      "Skipping processing because it's older than .the "
-                      "server start timestamp: %(server_time)s", log_dict)
-            return
-        #import ipdb;ipdb.set_trace()
         fortigate = fortinet_db.add_record(
             context, fortinet_db.Fortinet_Fortigate, **agent_state)
         return fortigate['result'].make_dict()
@@ -168,6 +165,7 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
                               "threshold agent down"
                               "time: %(threshold)s."), log_dict)
 
+    @checktimestamp
     def ftnt_sync_routers(self, context, **kwargs):
         """Sync routers according to filters to a specific agent.
 
@@ -177,11 +175,12 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
                  with their interfaces and floating_ips
         """
         import ipdb;ipdb.set_trace()
-        host = kwargs.get('host')
+        body = kwargs['body']
+        host = body.get('host')
         fortigate = fortinet_db.query_record(
             context, fortinet_db.Fortinet_Fortigate, host=host)
         routers = super(FortinetAgentRpcCallback,
-                        self).sync_routers(context, **kwargs)
+                        self).sync_routers(context, **body)
         for router in routers:
             rinfo = self._get_router_info(context, fortigate.id, router)
             router['fortigate'] = rinfo
