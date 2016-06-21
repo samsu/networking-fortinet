@@ -104,7 +104,8 @@ class FortinetMechanismDriver(driver_api.MechanismDriver):
         #self.topic = topics.L3PLUGIN
         self.topic = const.FTNT_AGENT
         self.conn = n_rpc.create_connection(new=True)
-        self.endpoints = [fortinet_agent_rpc.FortinetAgentRpcCallback()]
+        self.endpoints = [fortinet_agent_rpc.FortinetAgentRpcCallback(
+            task_manager=self.task_manager)]
         self.conn.create_consumer(self.topic, self.endpoints, fanout=False)
         self.conn.consume_in_threads()
 

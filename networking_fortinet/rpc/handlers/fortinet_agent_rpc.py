@@ -88,8 +88,13 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
     target = oslo_messaging.Target(version='1.0')
     START_TIME = timeutils.utcnow()
 
-    def __init__(self, plugin=None):
+    def __init__(self, plugin=None, task_manager=None):
         super(FortinetAgentRpcCallback, self).__init__()
+        if not task_manager:
+            self.task_manager = tasks.TaskManager()
+            self.task_manager.start()
+        else:
+            self.task_manager = task_manager
 
     @log_helpers.log_method_call
     def device_register(self, context, **kwargs):
