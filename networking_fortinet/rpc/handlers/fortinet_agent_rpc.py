@@ -40,6 +40,24 @@ from networking_fortinet.tasks import tasks
 LOG = logging.getLogger(__name__)
 
 
+def checktime(method):
+
+
+        time = kwargs['time']
+        time = timeutils.parse_strtime(time)
+        agent_state = kwargs['agent_state']['agent_state']
+        #self._check_clock_sync_on_agent_start(agent_state, time)
+        if self.START_TIME > time:
+            time_agent = timeutils.isotime(time)
+            time_server = timeutils.isotime(self.START_TIME)
+            log_dict = {'agent_time': time_agent, 'server_time': time_server}
+            LOG.debug("Stale message received with timestamp: %(agent_time)s. "
+                      "Skipping processing because it's older than .the "
+                      "server start timestamp: %(server_time)s", log_dict)
+            return
+
+
+
 class FortinetAgentRpcApi(agent.L3PluginApi):
     """Agent-side RPC (stub) for agent-to-plugin interaction.
 
@@ -72,9 +90,12 @@ class FortinetAgentRpcApi(agent.L3PluginApi):
     def get_routers(self, context, router_ids=None):
         """Make a remote process call to retrieve the sync data for routers."""
         cctxt = self.fgt_client.prepare()
-        ##import ipdb;ipdb.set_trace()
-        return cctxt.call(context, 'ftnt_sync_routers', host=self.host,
-                          router_ids=router_ids)
+        kwargs = {
+            'host': self.host,
+            'router_ids': router_ids,
+            'time': datetime.utcnow().strftime(constants.ISO8601_TIME_FORMAT),
+        }
+        return cctxt.call(context, 'ftnt_sync_routers', **kwargs)
 
 
 class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):

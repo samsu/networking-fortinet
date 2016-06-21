@@ -314,7 +314,7 @@ class Fortinet_ML2_ReservedIP(model_base.BASEV2, DBbase):
 class Fortinet_Static_Router(model_base.BASEV2, models_v2.HasId, DBbase):
     """Schema for Fortinet static router."""
     fortigate_id = sa.Column(sa.String(36),
-                             sa.ForeignKey('fortinet.fortigates.id',
+                             sa.ForeignKey('fortinet_fortigates.id',
                                            ondelete="CASCADE"),
                              nullable=False)
     vdom = sa.Column(sa.String(11))

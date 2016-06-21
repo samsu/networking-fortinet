@@ -144,17 +144,6 @@ class VlanInterface(Base):
     def __init__(self):
         super(VlanInterface, self).__init__()
 
-"""
-    @classmethod
-    def get_with_params_check(cls, driver, data):
-        res = cls.get(driver, data)
-        for key, value in data.iteritems():
-            if value != res['results'][0].get(key):
-                res = cls.set(driver, data)
-                break
-        return res
-"""
-
 
 class RouterStatic(Base):
     def __init__(self):
