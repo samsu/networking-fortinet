@@ -535,7 +535,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
 
         try:
             with self.namespaces_manager as ns_manager:
-                import ipdb;ipdb.set_trace()
+                ##import ipdb;ipdb.set_trace()
                 self.fetch_and_sync_all_routers(context, ns_manager)
         except n_exc.AbortSyncRouters:
             self.fullsync = True

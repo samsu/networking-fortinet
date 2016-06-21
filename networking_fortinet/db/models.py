@@ -21,6 +21,7 @@ from neutron.db import model_base
 from neutron.db import models_v2
 from oslo_db import exception as os_db_exception
 from oslo_log import log as logging
+from oslo_utils import uuidutils
 import six
 import sqlalchemy as sa
 from sqlalchemy.inspection import inspect
@@ -322,6 +323,11 @@ class Fortinet_Static_Router(model_base.BASEV2, models_v2.HasId, DBbase):
     device = sa.Column(sa.String(32))
     gateway = sa.Column(sa.String(32))
     edit_id = sa.Column(sa.Integer)
+
+    @classmethod
+    def add_record(cls, context, **kwargs):
+        kwargs.setdefault('id', uuidutils.generate_uuid())
+        return super(Fortinet_Static_Router, cls).add_record(context, **kwargs)
 
 
 class Fortinet_Vlink_Vlan_Allocation(model_base.BASEV2, models_v2.HasId,

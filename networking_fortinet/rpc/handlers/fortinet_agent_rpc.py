@@ -72,7 +72,7 @@ class FortinetAgentRpcApi(agent.L3PluginApi):
     def get_routers(self, context, router_ids=None):
         """Make a remote process call to retrieve the sync data for routers."""
         cctxt = self.fgt_client.prepare()
-        import ipdb;ipdb.set_trace()
+        ##import ipdb;ipdb.set_trace()
         return cctxt.call(context, 'ftnt_sync_routers', host=self.host,
                           router_ids=router_ids)
 
