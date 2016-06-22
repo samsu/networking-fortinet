@@ -523,8 +523,9 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
     def periodic_sync_routers_task(self, context):
         if self.test:
             import inspect
-            print inspect.stack()[1][3]
             import ipdb;ipdb.set_trace()
+            for idx in len(inspect.stack()):
+                print "## inspect.stack(%d)" % idx, inspect.stack()[idx]
 
         self.process_services_sync(context)
         if not self.fullsync:
