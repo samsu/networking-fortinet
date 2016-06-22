@@ -148,6 +148,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         self.router = l3_fortinet.FortinetL3ServicePlugin(
             fortigate=self.fortigate)
         self.fullsync = True
+        self.test = True
 
         # Get the list of service plugins from Neutron Server
         # This is the first place where we contact neutron-server on startup
@@ -520,6 +521,11 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
     @log_helpers.log_method_call
     @periodic_task.periodic_task(spacing=1, run_immediately=True)
     def periodic_sync_routers_task(self, context):
+        if self.test:
+            import inspect
+            print inspect.stack()[1][3]
+            import ipdb;ipdb.set_trace()
+
         self.process_services_sync(context)
         if not self.fullsync:
             return
