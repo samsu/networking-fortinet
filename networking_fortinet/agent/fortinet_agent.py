@@ -524,7 +524,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         if self.test:
             import inspect
             import ipdb;ipdb.set_trace()
-            for idx in len(inspect.stack()):
+            for idx in range(len(inspect.stack())):
                 print "## inspect.stack(%d)" % idx, inspect.stack()[idx]
 
         self.process_services_sync(context)
