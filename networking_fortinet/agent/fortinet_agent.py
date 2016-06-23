@@ -521,12 +521,6 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
     @log_helpers.log_method_call
     @periodic_task.periodic_task(spacing=1, run_immediately=True)
     def periodic_sync_routers_task(self, context):
-        if self.test:
-            import inspect
-            import ipdb;ipdb.set_trace()
-            for idx in range(len(inspect.stack())):
-                print "## inspect.stack(%d)" % idx, inspect.stack()[idx]
-
         self.process_services_sync(context)
         if not self.fullsync:
             return
@@ -543,7 +537,6 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
 
         try:
             with self.namespaces_manager as ns_manager:
-                ##import ipdb;ipdb.set_trace()
                 self.fetch_and_sync_all_routers(context, ns_manager)
         except n_exc.AbortSyncRouters:
             self.fullsync = True
@@ -554,6 +547,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         timestamp = timeutils.utcnow()
 
         try:
+            import ipdb;ipdb.set_trace()
             if self.conf.use_namespaces:
                 routers = self.plugin_rpc.get_routers(context)
             else:
