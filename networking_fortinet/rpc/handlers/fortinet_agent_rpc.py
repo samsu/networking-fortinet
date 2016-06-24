@@ -181,9 +181,9 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
             context, fortinet_db.Fortinet_Fortigate, host=host)
         routers = super(FortinetAgentRpcCallback,
                         self).sync_routers(context, **body)
-        routers.setdefault('fortigate', fortigate.make_dict())
         for router in routers:
             rinfo = self._get_router_info(context, fortigate.id, router)
+            rinfo.setdefault('fortigate', fortigate.make_dict())
             router['fortigate'] = rinfo
         return routers
 
