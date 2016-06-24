@@ -21,7 +21,7 @@ from oslo_utils import excutils
 import six
 
 from neutron.agent.l3 import dvr_fip_ns
-from neutron.agent.l3 import dvr_router_base
+from neutron.agent.l3 import dvr_local_router
 from neutron.agent.linux import ip_lib
 from neutron.common import constants as l3_constants
 from neutron.common import exceptions
@@ -38,11 +38,9 @@ LOG = logging.getLogger(__name__)
 MASK_30 = 0x3fffffff
 
 
-#class DvrLocalRouter(dvr_router_base.DvrRouterBase):
-
-class DvrLocalRouter(l3_fortinet.FortinetL3ServicePlugin):
-    def __init__(self, fortigate, agent, host, *args, **kwargs):
-        super(DvrLocalRouter, self).__init__(fortigate=fortigate)
+class DvrLocalRouter(dvr_local_router.DvrLocalRouter):
+    def __init__(self, agent, host, *args, **kwargs):
+        super(DvrLocalRouter, self).__init__(agent, host, *args, **kwargs)
         self.agent = agent
         self.host = host
         self.floating_ips_dict = {}

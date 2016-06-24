@@ -295,10 +295,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
             if self.conf.agent_mode == l3_constants.L3_AGENT_MODE_DVR_SNAT:
                 return dvr_router.DvrEdgeRouter(*args, **kwargs)
             else:
-                return self.router.create_router(*args, **kwargs)
-                #return dvr_local_router.DvrLocalRouter(
-                #    self.fortigate, *args, **kwargs)
-
+                return dvr_local_router.DvrLocalRouter(*args, **kwargs)
 
         if router.get('ha'):
             kwargs['state_change_callback'] = self.enqueue_state_change

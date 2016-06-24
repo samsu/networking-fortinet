@@ -180,7 +180,8 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
         fortigate = fortinet_db.query_record(
             context, fortinet_db.Fortinet_Fortigate, host=host)
         routers = super(FortinetAgentRpcCallback,
-                        self).sync_routers(context, **body)
+                        self).sync_routers(context, **kwargs)
+        routers.setdefault('fortigate', fortigate.make_dict())
         for router in routers:
             rinfo = self._get_router_info(context, fortigate.id, router)
             router['fortigate'] = rinfo
