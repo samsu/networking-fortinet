@@ -41,7 +41,7 @@ MASK_30 = 0x3fffffff
 class DvrLocalRouter(dvr_local_router.DvrLocalRouter):
     def __init__(self, agent, host, *args, **kwargs):
         super(DvrLocalRouter, self).__init__(agent, host, *args, **kwargs)
-        self.agent = agent
+        self.fortigate = agent.fortigate
         self.host = host
         self.floating_ips_dict = {}
         # Linklocal subnet for router and floating IP namespace link

@@ -16,6 +16,7 @@
 from neutron.db import api as db_api
 from oslo_config import cfg
 from oslo_log import helpers as log_helpers
+import six
 
 from networking_fortinet._i18n import _LE
 from networking_fortinet.api_client import client
@@ -119,3 +120,21 @@ class Fortigate(object):
                                 const.FORTINET_PARAMS[param]['netmask'])
 
         return result if isinstance(result, list) else list(result)
+
+
+class FortigateBaseMeta(type):
+
+    def __init__(cls, names, bases, attrs):
+        super(FortigateBaseMeta, cls).__init__(names, bases, attrs)
+        if attrs.get('task_manager', None):
+            cls.task_manager = attrs['task_manager']
+        else:
+            cls.task_manager = tasks.TaskManager()
+            cls.task_manager.start()
+
+
+@six.add_metaclass(FortigateBaseMeta)
+class Router(object):
+    def __init__(self, task_manager=None):
+        self.vdom = 'vdom'
+
