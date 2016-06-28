@@ -14,6 +14,7 @@
 
 import inspect
 import os
+from oslo_log import helpers as log_helpers
 from oslo_log import log as logging
 import re
 import six
@@ -112,7 +113,6 @@ class Base(object):
 
     @classmethod
     def element(cls, client, action, data):
-        funcinfo(cls=cls, action=action, data=data)
         if not data:
             data = getattr(cls, 'data', None)
         # op is the combination of action and resource class name,

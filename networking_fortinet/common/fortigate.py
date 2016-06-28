@@ -122,19 +122,43 @@ class Fortigate(object):
         return result if isinstance(result, list) else list(result)
 
 
-class FortigateBaseMeta(type):
-
-    def __init__(cls, names, bases, attrs):
-        super(FortigateBaseMeta, cls).__init__(names, bases, attrs)
-        if attrs.get('task_manager', None):
-            cls.task_manager = attrs['task_manager']
+class FortigateBase(object):
+    def __init__(self, fortigate, task_manager=None):
+        self.fortigate = fortigate
+        if task_manager:
+            self.task_manager = task_manager
         else:
-            cls.task_manager = tasks.TaskManager()
-            cls.task_manager.start()
+            self.task_manager = tasks.TaskManager()
+            self.task_manager.start()
 
 
-@six.add_metaclass(FortigateBaseMeta)
-class Router(object):
-    def __init__(self, task_manager=None):
-        self.vdom = 'vdom'
+class Router(FortigateBase):
+    def __init__(self, fortigate, task_manager=None):
+        super(Router, self).__init__(fortigate, task_manager=task_manager)
+        self.fortigate = fortigate
+        # A bunch of resources in the Fortigate
+        self.vdom = None
 
+    @log_helpers.log_method_call
+    def create(self, router):
+        LOG.debug("create_router: router=%s" % (router))
+        # Limit one router per tenant
+        if not router.get('router', None):
+            return
+        tenant_id = router['router']['tenant_id']
+        if fortinet_db.query_count(context, l3_db.Router,
+                                   tenant_id=tenant_id):
+            raise Exception(_("FortinetL3ServicePlugin:create_router "
+                              "Only support one router per tenant"))
+        with context.session.begin(subtransactions=True):
+            try:
+                namespace = utils.add_vdom(self, context, tenant_id=tenant_id)
+                utils.add_vlink(self, context, namespace.vdom)
+            except Exception as e:
+                with excutils.save_and_reraise_exception():
+                    LOG.error(_LE("Failed to create_router router=%(router)s"),
+                              {"router": router})
+                    utils.rollback_on_err(self, context, e)
+        utils.update_status(self, context, t_consts.TaskStatus.COMPLETED)
+        return super(FortinetL3ServicePlugin, self).\
+            create_router(context, router)
