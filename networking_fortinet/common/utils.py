@@ -152,8 +152,6 @@ def _prepare_params(record, resource, *keys, **kwargs):
     if record:
         params = {key: getattr(record, key, None) for key in keys
                   if getattr(record, key, None)}
-        #if 'id' in keys:
-        #    params.setdefault('id', getattr(record, 'edit_id', None))
     else:
         LOG.debug("_prepare_params() called, record is None, "
                   "resource=%(res)s, kwargs=%(kwargs)s",
