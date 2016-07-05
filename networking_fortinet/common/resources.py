@@ -147,8 +147,9 @@ class Base(object):
 
 
 class Vdom(Base):
+    keys = ('name', )
+
     def __init__(self):
-        self.keys = ('name', )
         super(Vdom, self).__init__()
 
     @classmethod
@@ -157,20 +158,23 @@ class Vdom(Base):
 
 
 class VdomLink(Base):
+    keys = ('name', )
+
     def __init__(self):
-        self.keys = ('name', )
         super(VdomLink, self).__init__()
 
 
 class VlanInterface(Base):
+    keys = ('vdom', 'name')
+
     def __init__(self):
-        self.keys = ('vdom', 'name')
         super(VlanInterface, self).__init__()
 
 
 class RouterStatic(Base):
+    keys = ('vdom', 'id')
+
     def __init__(self):
-        self.keys = ('vdom', 'id')
         super(RouterStatic, self).__init__()
 
     @classmethod
@@ -182,14 +186,16 @@ class RouterStatic(Base):
 
 
 class FirewallIppool(Base):
+    keys = ('vdom', 'name')
+
     def __init__(self):
-        self.keys = ('vdom', 'name')
         super(FirewallIppool, self).__init__()
 
 
 class FirewallPolicy(Base):
+    keys = ('vdom', 'id')
+
     def __init__(self):
-        self.keys = ('vdom', 'id')
         super(FirewallPolicy, self).__init__()
 
     @classmethod
@@ -201,26 +207,30 @@ class FirewallPolicy(Base):
 
 
 class FirewallAddress(Base):
+    keys = ('vdom', 'name')
+
     def __init__(self):
-        self.keys = ('vdom', 'name')
         super(FirewallAddress, self).__init__()
 
 
 class FirewallAddrgrp(Base):
+    keys = ('vdom', 'name')
+
     def __init__(self):
-        self.keys = ('vdom', 'name')
         super(FirewallAddrgrp, self).__init__()
 
 
 class FirewallService(Base):
+    keys = ('vdom', 'name')
+
     def __init__(self):
-        self.keys = ('vdom', 'name')
         super(FirewallService, self).__init__()
 
 
 class DhcpServer(Base):
+    keys = ('vdom', 'id')
+
     def __init__(self):
-        self.keys = ('vdom', 'id')
         super(DhcpServer, self).__init__()
 
     @classmethod
@@ -232,12 +242,14 @@ class DhcpServer(Base):
 
 
 class DhcpServerRsvAddr(Base):
+    keys = ('vdom', 'id')
+
     def __init__(self):
-        self.keys = ('vdom', 'id')
         super(DhcpServerRsvAddr, self).__init__()
 
 
 class FirewallVip(Base):
+    keys = ('vdom', 'name')
+
     def __init__(self):
-        self.keys = ('vdom', 'name')
         super(FirewallVip, self).__init__()
