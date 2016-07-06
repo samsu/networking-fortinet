@@ -84,9 +84,10 @@ class DefaultClassMethods(type):
             def _defaultClassMethod(cls, client, data):
                 try:
                     kwargs = cls.get_kws(**data)
-                    return cls.element(client, 'GET', kwargs)
-                except api_ex.ResourceNotFound:
+                    cls.element(client, 'GET', kwargs)
                     return cls.element(client, attr, data)
+                except api_ex.ResourceNotFound:
+                    return None
 
         else:
             def _defaultClassMethod(cls, client, data):
