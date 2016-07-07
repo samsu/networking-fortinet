@@ -16,6 +16,7 @@
 from neutron.db import api as db_api
 from oslo_config import cfg
 from oslo_log import helpers as log_helpers
+from oslo_utils import excutils
 import six
 
 from networking_fortinet._i18n import _LE
@@ -149,138 +150,24 @@ class Base(object):
             self.task_manager.add(task_id, **res['rollback'])
         return res.get('result', res)
 
-    def _prepare_params(self, *keys, **kwargs):
-        params = {key: kwargs.get(key, None) for key in keys if key in kwargs}
-        return params
+    def rollback(self, task_id):
+        if task_id:
+            self.task_manager.update_status(task_id,
+                                            t_consts.TaskStatus.ROLLBACK)
 
-    def add_resource_with_keys(self, task_id, resource, *keys, **kwargs):
-        try:
-            params = self._prepare_params(resource, *keys, **kwargs)
-            return self.op(resource.get, **params)
-        except exception.ResourceNotFound:
-            return self.op(resource.add, task_id=task_id, **kwargs)
+    def finish(self, task_id):
+        if task_id:
+            self.task_manager.update_status(task_id,
+                                            t_consts.TaskStatus.COMPLETED)
 
-    def set_resource_with_keys(self, task_id, resource, *keys, **kwargs):
-        params = self._prepare_params(*keys, **kwargs)
-        try:
-            self.op(resource.get, **params)
-            return self.op(resource.set, task_id=task_id, **kwargs)
-        except exception.ResourceNotFound:
-            LOG.debug("The resource %(rs)s with fields %(kws)s "
-                      "is not exist, create a new one instead",
-                      {"rs": resource, 'kws': kwargs})
-            return self.op(resource.add, task_id=task_id, **kwargs)
+    def add_resource(self, task_id, resource, **kwargs):
+        return self.op(resource.add, task_id=task_id, **kwargs)
 
-    def delete_resource_with_keys(self, task_id, resource, *keys, **kwargs):
-        params = self._prepare_params(*keys, **kwargs)
-        try:
-            self.op(resource.get, **params)
-            return self.op(resource.delete, task_id=task_id, **params)
-        except exception.ResourceNotFound as e:
-            resources.Exinfo(e)
-        return None
+    def set_resource(self, task_id, resource, **kwargs):
+        return self.op(resource.set, task_id=task_id, **kwargs)
 
-    def add_resource_with_name(self, task_id, resource, **kwargs):
-        keys = ('vdom', 'name')
-        return self.add_resource_with_keys(task_id, resource, *keys, **kwargs)
-
-    def set_resource_with_name(self, task_id, resource, **kwargs):
-        keys = ('vdom', 'name')
-        return self.set_resource_with_keys(task_id, resource, *keys, **kwargs)
-
-    def delete_resource_with_name(self, task_id, resource, **kwargs):
-        keys = ('vdom', 'name')
-        return self.delete_resource_with_keys(
-            task_id, resource, *keys, **kwargs)
-
-    def add_resource_with_id(self, task_id, resource, **kwargs):
-        keys = ('vdom', 'id')
-        return self.add_resource_with_keys(task_id, resource, *keys, **kwargs)
-
-    def set_resource_with_id(self, task_id, resource, **kwargs):
-        # because the name 'edit_id' in record is different with id in
-        # the api templates, the id related function can not reuse the
-        # related xx_keys function
-        keys = ('vdom', 'id')
-        return self.set_resource_with_keys(task_id, resource, *keys, **kwargs)
-
-    def delete_resource_with_id(self, context, record, resource):
-        if getattr(record, 'edit_id', None):
-            try:
-                self.op(context, resource.get, vdom=record.vdom,
-                   id=record.edit_id)
-                return self.op(context, resource.delete,
-                          vdom=record.vdom, id=record.edit_id)
-            except Exception as e:
-                resources.Exinfo(e)
-        return None
-
-    def add_by_keys(self, context, cls, resource, *keys, **kwargs):
-        record = add_record(self, context, cls, **kwargs)
-        add_resource_with_keys(self, context, record, resource, *keys, **kwargs)
-        return record
-
-    def set_by_keys(self, context, cls, resource, *keys, **kwargs):
-        params = _prepare_params(None, resource, *keys, **kwargs)
-        record = fortinet_db.query_record(context, cls, **params)
-        if record:
-            record = cls.update_record(context, record, **kwargs)
-            set_resource_with_keys(self, context, record, resource, *keys,
-                                   **kwargs)
-        else:
-            record = add_by_keys(self, context, cls, resource, *keys, **kwargs)
-        return record
-
-    def delete_by_keys(self, context, cls, resource, *keys, **kwargs):
-        record = fortinet_db.query_record(context, cls, **kwargs)
-        delete_resource_with_keys(self, context, record, resource, *keys,
-                                  **kwargs)
-        return fortinet_db.delete_record(context, cls, **kwargs)
-
-    def add_by_name(self, context, cls, resource, **kwargs):
-        return add_by_keys(self, context, cls, resource, 'vdom', 'name',
-                           **kwargs)
-
-    def set_by_name(self, context, cls, resource, **kwargs):
-        return set_by_keys(self, context, cls, resource, 'vdom', 'name',
-                           **kwargs)
-
-    def delete_by_name(self, context, cls, resource, **kwargs):
-        return delete_by_keys(self, context, cls, resource,
-                              'vdom', 'name', **kwargs)
-
-    def add_by_id(self, context, cls, resource, **kwargs):
-        record = add_record(self, context, cls, **kwargs)
-        res = add_resource_with_id(self, context, record, resource, **kwargs)
-        if not getattr(record, 'edit_id'):
-            cls.update_record(context, record, edit_id=res['results']['mkey'])
-        return record
-
-    def set_by_id(self, context, cls, resource, **kwargs):
-        params = _prepare_params(None, resource, 'vdom', 'id', **kwargs)
-        record = fortinet_db.query_record(context, cls, **params)
-        if record:
-            cls.update_record(context, record, **kwargs)
-            set_resource_with_id(self, context, record, resource, **kwargs)
-            return record
-        else:
-            return None
-
-    def delete_by_id(self, context, cls, resource, **kwargs):
-        record = fortinet_db.query_record(context, cls, **kwargs)
-        delete_resource_with_id(self, context, record, resource)
-        return fortinet_db.delete_record(context, cls, **kwargs)
-
-    def add_vdom(self, task_id, **kwargs):
-        #namespace = allocate_vdom(obj, context, **kwargs)
-        keys = ('name',)
-        return self.add_resource_with_keys(task_id, resources.vdom, *keys,
-                                           **kwargs)
-
-    def delete_vdom(self, task_id, **kwargs):
-        keys = ('name',)
-        return self.delete_resource_with_keys(task_id, resources.vdom, *keys,
-                                              **kwargs)
+    def delete_resource(self, task_id, resource, **kwargs):
+        return self.op(resource.delete, task_id=task_id, **kwargs)
 
 
 class Router(Base):
@@ -288,23 +175,38 @@ class Router(Base):
         super(Router, self).__init__(fortigate, task_manager=task_manager)
         self.fortigate = fortigate
         # A bunch of resources in the Fortigate
-        self.vdom = None
+        self.cfg = None
 
     @log_helpers.log_method_call
     def create_router(self, router):
-        LOG.debug("create_router: router=%s" % (router))
         # Limit one router per tenant
-        if not router.get('router', None):
+        cfg = router.get('fortigate', None)
+        if not cfg:
             return
-        tenant_id = router['router']['tenant_id']
+        res = {}
+        task_id = router.get('id', None)
         try:
-            namespace = self.add_vdom(task_id, tenant_id=tenant_id)
-            utils.add_vlink(self, context, namespace.vdom)
+            if 'vdom' in cfg:
+                self.add_resource(task_id, resources.Vdom,
+                                  name=cfg['vdom']['vdom'])
+            if 'vlink' in cfg:
+                vlinkinfo = cfg['vlink']
+                if 'vdomlink' in vlinkinfo:
+                    self.add_resource(task_id, resources.VdomLink,
+                                      name=vlinkinfo['vdomlink']['name'])
+                if 'vlaninterface' in vlinkinfo:
+                    for inf in vlinkinfo['vlaninterface']:
+                        self.set_resource(task_id, resources.VlanInterface,
+                                          **inf)
+                if 'routestatic' in vlinkinfo:
+                    r = self.add_resource(task_id, resources.RouterStatic,
+                                          **vlinkinfo['routestatic'])
+                    res['routestatic'] = {'edit_id': r['mkey']}
+
         except Exception as e:
             with excutils.save_and_reraise_exception():
                 LOG.error(_LE("Failed to create_router router=%(router)s"),
                           {"router": router})
-                utils.rollback_on_err(self, context, e)
-        utils.update_status(self, context, t_consts.TaskStatus.COMPLETED)
-        return super(FortinetL3ServicePlugin, self).\
-            create_router(context, router)
+                self.rollback(task_id)
+        self.finish(task_id)
+        return res

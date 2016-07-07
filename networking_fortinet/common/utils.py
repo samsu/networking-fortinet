@@ -789,6 +789,7 @@ def allocate_vlink_intf(obj, context, vlink_vlan, vlink_ip):
     ipsubnet = netaddr.IPNetwork(vlink_ip.vlink_ip_subnet)
     vdomlink = allocate_vdomlink(obj, context, vdom=vdom)
     vlink_intf['vdomlink'] = vdomlink.make_dict() if vdomlink else {}
+    # vlanid is not needed for vdomlink
     vlink_intf['vlaninterface'] = [
         {
             'name': vlink_vlan.inf_name_ext_vdom,

@@ -105,6 +105,20 @@ class FortinetAgentRpcApi(agent.L3PluginApi):
         }
         return cctxt.call(context, 'ftnt_sync_routers', **kwargs)
 
+    @log_helpers.log_method_call
+    def update_data(self, context, data=None):
+        """Make a remote process call to retrieve the sync data for routers."""
+        cctxt = self.fgt_client.prepare()
+        body = {
+            'host': self.host,
+            'data': data
+        }
+        kwargs = {
+            'body': body,
+            'time': datetime.utcnow().strftime(constants.ISO8601_TIME_FORMAT),
+        }
+        return cctxt.cast(context, 'update_data', **kwargs)
+
 
 class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
     """Processes the rpc report in Fortinet plugin implementations.
@@ -205,3 +219,13 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
                 utils.rollback_on_err(self, context, e)
         utils.update_status(self, context, t_consts.TaskStatus.COMPLETED)
         return rinfo
+
+    @checktimestamp
+    def update_data(self, context, data=None):
+        """Make a remote process call to retrieve the sync data for routers."""
+        import ipdb;ipdb.set_trace()
+        print data
+        kwargs = {
+            'time': datetime.utcnow().strftime(constants.ISO8601_TIME_FORMAT),
+        }
+        return kwargs

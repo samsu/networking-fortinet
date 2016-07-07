@@ -44,11 +44,13 @@ LOG = logging.getLogger(None).logger
 #LOG.addHandler(streamlog)
 
 CFG_ARGS = [
-             '--config-file',
-             '/etc/neutron/neutron.conf',
-             '--config-file',
-             '/etc/neutron/plugin.ini'
-           ]
+    '--config-file',
+    '/etc/neutron/neutron.conf',
+    '--config-file',
+    '/etc/neutron/l3_agent.ini',
+    '--config-file',
+    '/etc/neutron/plugin.ini'
+]
 
 CFG_KWARGS = {}
 SUPPORTED_DR = ['vlan']

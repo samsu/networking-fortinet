@@ -87,7 +87,27 @@ class DefaultClassMethods(type):
                     cls.element(client, 'GET', kwargs)
                     return cls.element(client, attr, data)
                 except api_ex.ResourceNotFound:
-                    return None
+                    return {}
+
+        elif 'GET' == str(attr).upper():
+            def _defaultClassMethod(cls, client, data):
+                kwargs = cls.get_kws(**data)
+                return cls.element(client, 'GET', kwargs)
+
+        elif 'SET' == str(attr).upper():
+            def _defaultClassMethod(cls, client, data):
+                # Todo: for the 'set', need to add the compare the new data
+                # with the existing data, if the new data is a part of them
+                # then do nothing for the 'set', otherwise set the new data.
+                try:
+                    kwargs = cls.get_kws(**data)
+                    cls.element(client, 'GET', kwargs)
+                    return cls.element(client, attr, data)
+                except api_ex.ResourceNotFound:
+                    LOG.debug("The resource %(rs)s with fields %(kws)s "
+                              "is not exist, create a new one instead",
+                              {"rs": cls.__name__, 'kws': kwargs})
+                return {}
 
         else:
             def _defaultClassMethod(cls, client, data):
@@ -128,8 +148,14 @@ class Base(object):
     @classmethod
     def get_kws(cls, **kwargs):
         kws = {}
+        if 'edit_id' in kwargs:
+            kwargs.setdefault('id', kwargs.pop('edit_id'))
+
         for key in cls.keys:
-            kws.setdefault(key, kwargs.get(key, None))
+            if key in kwargs and kwargs.get(key, None):
+                kws.setdefault(key, kwargs.pop(key))
+            else:
+                raise api_ex.ResourceNotFound
         return kws
 
     @classmethod
