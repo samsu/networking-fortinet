@@ -295,7 +295,10 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
             if self.conf.agent_mode == l3_constants.L3_AGENT_MODE_DVR_SNAT:
                 return dvr_router.DvrEdgeRouter(*args, **kwargs)
             else:
-                return dvr_local_router.DvrLocalRouter(*args, **kwargs)
+                #return dvr_local_router.DvrLocalRouter(*args, **kwargs)
+                return fortigate.Router(self.fortigate,
+                                        task_manager=self.task_manager,
+                                        *args, **kwargs)
 
         if router.get('ha'):
             kwargs['state_change_callback'] = self.enqueue_state_change
@@ -311,7 +314,9 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
 
         self.router_info[router_id] = ri
 
-        ri.initialize(self.process_monitor)
+        ri.create_router(router)
+
+        #ri.initialize(self.process_monitor)
 
         # TODO(Carl) This is a hook in to fwaas.  It should be cleaned up.
         self.process_router_add(ri)
