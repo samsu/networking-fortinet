@@ -308,8 +308,8 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
     @log_helpers.log_method_call
     def _router_added(self, router_id, router):
         ri = self._create_router(router_id, router)
-        registry.notify(resources.ROUTER, events.BEFORE_CREATE,
-                        self, router=ri)
+        #registry.notify(resources.ROUTER, events.BEFORE_CREATE,
+        #                self, router=ri)
 
         self.router_info[router_id] = ri
 
