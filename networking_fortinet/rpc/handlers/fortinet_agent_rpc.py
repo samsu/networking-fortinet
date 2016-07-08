@@ -188,7 +188,7 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
         @return: a list of routers
                  with their interfaces and floating_ips
         """
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
         body = kwargs['body']
         host = body.get('host')
         fortigate = fortinet_db.query_record(
