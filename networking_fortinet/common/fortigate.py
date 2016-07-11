@@ -186,6 +186,7 @@ class Router(Base):
         res = {}
         task_id = router.get('id', None)
         try:
+            import ipdb;ipdb.set_trace()
             if 'vdom' in cfg:
                 self.add_resource(task_id, resources.Vdom,
                                   name=cfg['vdom']['vdom'])
