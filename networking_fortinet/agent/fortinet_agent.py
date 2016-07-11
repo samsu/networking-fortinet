@@ -645,6 +645,7 @@ class L3NATAgentWithStateReport(FortinetAgent):
         router_infos = self.router_info.values()
         num_routers = len(router_infos)
         for ri in router_infos:
+            import ipdb;ipdb.set_trace()
             ex_gw_port = ri.get_ex_gw_port()
             if ex_gw_port:
                 num_ex_gw_ports += 1
