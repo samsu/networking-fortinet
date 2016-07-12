@@ -188,7 +188,6 @@ class Router(Base, router.RouterInfo):
         res = {}
         task_id = router.get('id', None)
         try:
-            import ipdb;ipdb.set_trace()
             if 'vdom' in cfg:
                 self.add_resource(task_id, resources.Vdom,
                                   name=cfg['vdom']['vdom'])
@@ -211,6 +210,7 @@ class Router(Base, router.RouterInfo):
                 LOG.error(_LE("Failed to create_router router=%(router)s"),
                           {"router": router})
                 self.rollback(task_id)
+        import ipdb;ipdb.set_trace()
         self.finish(task_id)
         return res
 
