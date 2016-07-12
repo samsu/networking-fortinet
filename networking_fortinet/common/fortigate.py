@@ -219,6 +219,6 @@ class Router(Base, router.RouterInfo):
         if ex_gw_port:
             import ipdb;ipdb.set_trace()
             self.fip_ns = agent.get_fip_ns(ex_gw_port['network_id'])
-            self.fip_ns.scan_fip_ports(self)
+            #self.fip_ns.scan_fip_ports(self)
 
         super(Router, self).process(agent)
