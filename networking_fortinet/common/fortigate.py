@@ -127,7 +127,7 @@ class Fortigate(object):
 
 
 class Base(object):
-    def __init__(self, fortigate, task_manager=None):
+    def __init__(self, fortigate, task_manager=None, *args, **kwargs):
         self.fortigate = fortigate
         self.api_client = fortigate.api_client
         if task_manager:
