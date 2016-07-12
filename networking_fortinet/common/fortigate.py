@@ -13,6 +13,7 @@
 #    under the License.
 
 
+from neutron.agent.l3 import router_info as router
 from neutron.db import api as db_api
 from oslo_config import cfg
 from oslo_log import helpers as log_helpers
@@ -170,9 +171,10 @@ class Base(object):
         return self.op(resource.delete, task_id=task_id, **kwargs)
 
 
-class Router(Base):
-    def __init__(self, fortigate, task_manager=None):
-        super(Router, self).__init__(fortigate, task_manager=task_manager)
+class Router(Base, router.RouterInfo):
+    def __init__(self, fortigate, task_manager=None, *args, **kwargs):
+        super(Router, self).__init__(fortigate, task_manager=task_manager,
+                                     *args, **kwargs)
         self.fortigate = fortigate
         # A bunch of resources in the Fortigate
         self.cfg = None
@@ -211,3 +213,11 @@ class Router(Base):
                 self.rollback(task_id)
         self.finish(task_id)
         return res
+
+    def process(self, agent):
+        ex_gw_port = self.get_ex_gw_port()
+        if ex_gw_port:
+            self.fip_ns = agent.get_fip_ns(ex_gw_port['network_id'])
+            self.fip_ns.scan_fip_ports(self)
+
+        super(DvrLocalRouter, self).process(agent)
