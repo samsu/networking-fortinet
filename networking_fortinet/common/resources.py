@@ -149,7 +149,7 @@ class Base(object):
     def get_kws(cls, **kwargs):
         kws = {}
         if 'edit_id' in kwargs:
-            kwargs.setdefault('id', kwargs.pop('edit_id'))
+            kwargs['id'] = kwargs.pop('edit_id')
 
         for key in cls.keys:
             if key in kwargs and kwargs.get(key, None):
