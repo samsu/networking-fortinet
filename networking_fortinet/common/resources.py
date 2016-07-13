@@ -51,10 +51,10 @@ def rollback(func):
         print "result=%s" % result
         LOG.debug("## rollback: cls is %(cls)s, args is %(args)s",
                   {'cls': cls, 'args': args})
-        if not result:
-            rollback = {}
-        else:
+        if 'ADD' == result.get('http_method', None):
             rollback = cls.prepare_rollback(cls.delete, *args, **result)
+        else:
+            rollback = {}
         return {'result': result, 'rollback': rollback}
     return wrapper
 
