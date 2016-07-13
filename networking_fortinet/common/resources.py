@@ -44,19 +44,24 @@ def funcinfo(cls=None, action=None, data=None):
                   {'cls': cls.__name__, 'action': action, 'data': data})
 
 
-def rollback(func):
-    def wrapper(cls, *args):
-        result = func(cls, *args)
-        print "cls=%s, args=%s" % (cls, args)
-        print "result=%s" % result
-        LOG.debug("## rollback: cls is %(cls)s, args is %(args)s",
-                  {'cls': cls, 'args': args})
-        if 'ADD' == result.get('http_method', None):
-            rollback = cls.prepare_rollback(cls.delete, *args, **result)
-        else:
-            rollback = {}
-        return {'result': result, 'rollback': rollback}
-    return wrapper
+class Rollback(object):
+    def __init__(self, attr):
+        self.attr = attr
+
+    def __call__(self, func):
+        def wrapper(cls, *args):
+            result = func(cls, *args)
+            print "attr=%s, cls=%s, args=%s" % (self.attr, cls, args)
+            print "result=%s" % result
+            LOG.debug("## rollback: cls is %(cls)s, args is %(args)s",
+                      {'cls': cls, 'args': args})
+            if self.attr == result.get('http_method', None):
+                action = getattr(cls, const.ROLLBACK_METHODS[self.attr], None)
+                rollback = cls.prepare_rollback(action, *args, **result)
+            else:
+                rollback = {}
+            return {'result': result, 'rollback': rollback}
+        return wrapper
 
 
 class Exinfo(object):
@@ -73,10 +78,11 @@ class Exinfo(object):
 
 class DefaultClassMethods(type):
     def __getattr__(cls, attr):
-        if str(attr).upper() not in OPS:
+        attr = str(attr).upper()
+        if attr not in OPS:
             raise AttributeError(attr)
-        if 'ADD' == str(attr).upper():
-            @rollback
+        if 'ADD' == attr:
+            @Rollback(attr)
             def _defaultClassMethod(cls, client, data):
                 try:
                     kwargs = cls.get_kws(**data)
@@ -84,7 +90,7 @@ class DefaultClassMethods(type):
                 except api_ex.ResourceNotFound:
                     return cls.element(client, attr, data)
 
-        elif 'DELETE' == str(attr).upper():
+        elif 'DELETE' == attr:
             def _defaultClassMethod(cls, client, data):
                 try:
                     kwargs = cls.get_kws(**data)
@@ -93,12 +99,12 @@ class DefaultClassMethods(type):
                 except api_ex.ResourceNotFound:
                     return {}
 
-        elif 'GET' == str(attr).upper():
+        elif 'GET' == attr:
             def _defaultClassMethod(cls, client, data):
                 kwargs = cls.get_kws(**data)
                 return cls.element(client, 'GET', kwargs)
 
-        elif 'SET' == str(attr).upper():
+        elif 'SET' == attr:
             def _defaultClassMethod(cls, client, data):
                 # Todo: for the 'set', need to add the compare the new data
                 # with the existing data, if the new data is a part of them
