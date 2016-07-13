@@ -15,6 +15,8 @@
 
 import netaddr
 
+from networking_fortinet.db import models as fortinet_db
+
 CONF_SECTION = 'ml2_fortinet'
 PREFIX = {
     'vdom': 'osvdm',
@@ -77,24 +79,8 @@ AGENT_BIN_FTNT = 'fortinet-agent'
 AGENT_TYPE_FTNT = 'Fortinet agent'
 
 # Define class
-FORTINET_MAPS = {
-    'vdom_link': {
-        'api': {
-            'get': 'GET_VDOM_LNK',
-        },
-        'cls': 'Fortinet_Vlink_Vlan_Allocation',
-        'type': int,
-        'format': True,
-        'range': range,
-        'keys': ('vlanid',)
-    },
-    'vlink_ip_range': {
-        'cls': 'Fortinet_Vlink_IP_Allocation',
-        'type': netaddr.IPNetwork,
-        'format': False,
-        'range': netaddr.IPNetwork.subnet,
-        'keys': ('vlink_ip_subnet',)
-    }
+DICT_DB_MAPS = {
+    'routestatic': fortinet_db.Fortinet_Static_Router
 }
 
 NOSTATE = 0x00

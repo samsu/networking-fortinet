@@ -203,7 +203,8 @@ class Router(Base, router.RouterInfo):
                 if 'routestatic' in vlinkinfo:
                     r = self.add_resource(task_id, resources.RouterStatic,
                                           **vlinkinfo['routestatic'])
-                    res['routestatic'] = {'edit_id': r['results']['mkey']}
+                    res['routestatic'] = vlinkinfo['routestatic']
+                    res['routestatic']['edit_id'] = r['results']['mkey']
 
         except Exception as e:
             with excutils.save_and_reraise_exception():

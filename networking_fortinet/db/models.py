@@ -162,6 +162,16 @@ class DBbase(object):
         return update_record(context, record, **kwargs)
 
     @classmethod
+    def update_with_kwargs(cls, context, **kwargs):
+        # kwargs MUST have all primary keys of the cls
+        query_kw = {}
+        for key in primary_keys(cls):
+            query_kw.setdefault(key, kwargs.get(key, None))
+        record = cls.query_one(context, **query_kw)
+        if record:
+            cls.update_record(context, record, **kwargs)
+
+    @classmethod
     def delete_record(cls, context, kwargs):
         """
         Notes: kwargs is a dictionary as a variable, no wrapped as

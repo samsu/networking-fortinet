@@ -225,7 +225,5 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
         """Make a remote process call to retrieve the sync data for routers."""
         import ipdb;ipdb.set_trace()
         print data
-        kwargs = {
-            'time': datetime.utcnow().strftime(constants.ISO8601_TIME_FORMAT),
-        }
-        return kwargs
+        for key in data:
+            const.DICT_DB_MAPS[key].update_with_kwargs(context, **data[key])
