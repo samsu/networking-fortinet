@@ -47,7 +47,8 @@ def funcinfo(cls=None, action=None, data=None):
 def rollback(func):
     def wrapper(cls, *args):
         result = func(cls, *args)
-        print "cls=%s, args=%s" %(cls, args)
+        print "cls=%s, args=%s" % (cls, args)
+        print "result=%s" % result
         LOG.debug("## rollback: cls is %(cls)s, args is %(args)s",
                   {'cls': cls, 'args': args})
         if not result:
