@@ -51,10 +51,10 @@ class Rollback(object):
     def __call__(self, func):
         def wrapper(cls, *args):
             result = func(cls, *args)
-            print "attr=%s, cls=%s, args=%s" % (self.attr, cls, args)
-            print "result=%s" % result
-            LOG.debug("## rollback: cls is %(cls)s, args is %(args)s",
-                      {'cls': cls, 'args': args})
+            LOG.debug("## rollback: cls is %(cls)s, args is %(args)s,"
+                      "attr is %(attr)s, executed method is %(method)s.",
+                      {'cls': cls, 'args': args, 'attr': self.attr,
+                       'method': result.get('http_method', '')})
             if self.attr == result.get('http_method', None):
                 action = getattr(cls, const.ROLLBACK_METHODS[self.attr], None)
                 rollback = cls.prepare_rollback(action, *args, **result)
