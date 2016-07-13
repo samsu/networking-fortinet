@@ -221,10 +221,10 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
         return rinfo
 
     @checktimestamp
-    def update_data(self, context, data=None):
+    def update_data(self, context, **kwargs):
         """Make a remote process call to retrieve the sync data for routers."""
         import ipdb;ipdb.set_trace()
-        print data
+        data = kwargs['body']['data']
         for key in data:
             cls = getattr(fortinet_db, const.DICT_DB_MAPS[key], None)
             if cls:
