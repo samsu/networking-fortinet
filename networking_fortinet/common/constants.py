@@ -15,8 +15,6 @@
 
 import netaddr
 
-from networking_fortinet.db import models as fortinet_db
-
 CONF_SECTION = 'ml2_fortinet'
 PREFIX = {
     'vdom': 'osvdm',
@@ -80,7 +78,7 @@ AGENT_TYPE_FTNT = 'Fortinet agent'
 
 # Define class
 DICT_DB_MAPS = {
-    'routestatic': fortinet_db.Fortinet_Static_Router
+    'routestatic': 'Fortinet_Static_Router'
 }
 
 NOSTATE = 0x00

@@ -226,4 +226,6 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
         import ipdb;ipdb.set_trace()
         print data
         for key in data:
-            const.DICT_DB_MAPS[key].update_with_kwargs(context, **data[key])
+            cls = getattr(fortinet_db, const.DICT_DB_MAPS[key], None)
+            if cls:
+                cls.update_with_kwargs(context, **data[key])
