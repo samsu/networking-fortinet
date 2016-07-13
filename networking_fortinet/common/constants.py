@@ -81,6 +81,8 @@ DICT_DB_MAPS = {
     'routestatic': 'Fortinet_Static_Router'
 }
 
+ROLLBACK_METHODS = {'ADD': 'delete'}
+
 NOSTATE = 0x00
 RUNNING = 0x01
 PAUSED = 0x03

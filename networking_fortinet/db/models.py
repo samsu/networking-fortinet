@@ -140,8 +140,8 @@ class DBbase(object):
                 for key, value in six.iteritems(kwargs):
                     setattr(record, key, value)
                 session.add(record)
-                rollback = cls._prepare_rollback(context, cls.delete_record,
-                                                 **kwargs)
+                rollback = cls.prepare_rollback(context, cls.delete_record,
+                                                **kwargs)
             else:
                 rollback = {}
         #raise os_db_exception.DBDuplicateEntry
@@ -219,7 +219,7 @@ class DBbase(object):
         return query.all()
 
     @staticmethod
-    def _prepare_rollback(context, func, **kwargs):
+    def prepare_rollback(context, func, **kwargs):
         if not func:
             raise ValueError
         rollback = {
@@ -370,8 +370,8 @@ class Fortinet_Vlink_Vlan_Allocation(model_base.BASEV2, models_v2.HasId,
             # a new record, consider to separate vlanid to a table.
             record = cls.query_one(context, lockmode=True, allocated=False)
             record.update_record(context, record, **kwargs)
-            rollback = cls._prepare_rollback(context, cls.delete_record,
-                                             **kwargs)
+            rollback = cls.prepare_rollback(context, cls.delete_record,
+                                            **kwargs)
         else:
             rollback = {}
         ## need to check the attribute in the record whether updated
@@ -418,9 +418,8 @@ class Fortinet_Vlink_IP_Allocation(model_base.BASEV2, DBbase):
                 record = cls.query_one(context, lockmode=True, allocated=False)
                 kwargs.setdefault('allocated', True)
                 record.update_record(context, record, **kwargs)
-                rollback = cls._prepare_rollback(context,
-                                                 cls.delete_record,
-                                                 **kwargs)
+                rollback = cls.prepare_rollback(context, cls.delete_record,
+                                                **kwargs)
             else:
                 rollback = {}
         ## need to check the attribute in the record whether updated
@@ -511,9 +510,9 @@ class Fortinet_FloatingIP_Allocation(model_base.BASEV2, DBbase):
                 record = cls.query_one(context, lockmode=True, allocated=False)
                 kwargs.setdefault('allocated', True)
                 record.update_record(context, record, **kwargs)
-                rollback = cls._prepare_rollback(context,
-                                                 cls.delete_record,
-                                                 **kwargs)
+                rollback = cls.prepare_rollback(context,
+                                                cls.delete_record,
+                                                **kwargs)
             else:
                 rollback = {}
         ## need to check the attribute in the record whether updated
