@@ -47,13 +47,11 @@ def funcinfo(cls=None, action=None, data=None):
 def rollback(func):
     def wrapper(cls, *args):
         result = func(cls, *args)
-        exec_method = result.get('http_method', None)
-        if exec_method in const.ROLLBACK_METHODS.keys():
-            rb_method = getattr(cls, const.ROLLBACK_METHODS[exec_method], None)
-            import ipdb;ipdb.set_trace()
-            rollback = cls.prepare_rollback(rb_method, *args, **result)
-        else:
+        print "cls=%s, args=%s" %(cls, args)
+        if not result:
             rollback = {}
+        else:
+            rollback = cls.prepare_rollback(cls.delete, *args, **result)
         return {'result': result, 'rollback': rollback}
     return wrapper
 
@@ -71,11 +69,11 @@ class Exinfo(object):
 
 
 class DefaultClassMethods(type):
-    @rollback
     def __getattr__(cls, attr):
         if str(attr).upper() not in OPS:
             raise AttributeError(attr)
         if 'ADD' == str(attr).upper():
+            @rollback
             def _defaultClassMethod(cls, client, data):
                 try:
                     kwargs = cls.get_kws(**data)
