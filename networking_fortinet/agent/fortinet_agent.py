@@ -315,11 +315,10 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         self.router_info[router_id] = ri
         res = ri.create_router(router)
         import ipdb;ipdb.set_trace()
-
-        self.plugin_rpc.update_data(self.context, data=res)
+        if res:
+            self.plugin_rpc.update_data(self.context, data=res)
 
         #ri.initialize(self.process_monitor)
-
         # TODO(Carl) This is a hook in to fwaas.  It should be cleaned up.
         self.process_router_add(ri)
 

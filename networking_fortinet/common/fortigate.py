@@ -203,16 +203,15 @@ class Router(Base, router.RouterInfo):
                 if 'routestatic' in vlinkinfo:
                     r = self.add_resource(task_id, resources.RouterStatic,
                                           **vlinkinfo['routestatic'])
-                    res['routestatic'] = vlinkinfo['routestatic']
-                    import ipdb;ipdb.set_trace()
-                    res['routestatic']['edit_id'] = r['results']['mkey']
+                    if 'ADD' == r['http_method']:
+                        res['routestatic'] = vlinkinfo['routestatic']
+                        res['routestatic']['edit_id'] = r['results']['mkey']
 
         except Exception as e:
             with excutils.save_and_reraise_exception():
                 LOG.error(_LE("Failed to create_router router=%(router)s"),
                           {"router": router})
                 self.rollback(task_id)
-        import ipdb;ipdb.set_trace()
         self.finish(task_id)
         return res
 
