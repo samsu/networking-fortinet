@@ -327,21 +327,6 @@ GET_VDOM_LINK = """
 }
 """
 
-
-ADD_VDOM_LNK_INTERFACE = """
-{
-    "path":"/api/v2/cmdb/system/interface/",
-    "method": "POST",
-    "body": {
-        "name": "vdom-link",
-        "json": {
-            "name":"{{ name }}"
-        }
-    }
-}
-"""
-
-
 ADD_ROUTER_STATIC = """
 {
     "path": "/api/v2/cmdb/router/static",
