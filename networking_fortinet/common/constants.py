@@ -76,6 +76,7 @@ FTNT_AGENT = 'fortinet-agent'
 AGENT_BIN_FTNT = 'fortinet-agent'
 AGENT_TYPE_FTNT = 'Fortinet agent'
 
+DVR_PORT_NAME = 'fgt-int-port'
 # Define class
 DICT_DB_MAPS = {
     'routestatic': 'Fortinet_Static_Router'

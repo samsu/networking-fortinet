@@ -29,6 +29,7 @@ from neutron.common import topics
 from neutron.common import utils as common_utils
 from neutron.i18n import _LE
 
+from networking_fortinet.common import constants
 from networking_fortinet.services.l3_router import l3_fortinet
 from networking_fortinet.rpc.handlers import fortinet_agent_rpc
 from networking_fortinet.tasks import tasks
@@ -36,7 +37,7 @@ from networking_fortinet.tasks import tasks
 LOG = logging.getLogger(__name__)
 # xor-folding mask used for IPv6 rule index
 MASK_30 = 0x3fffffff
-
+DVR_PORT_NAME = constants.DVR_PORT_NAME
 
 class DvrLocalRouter(dvr_local_router.DvrLocalRouter):
     def __init__(self, agent, host, *args, **kwargs):
@@ -48,7 +49,6 @@ class DvrLocalRouter(dvr_local_router.DvrLocalRouter):
         self.rtr_fip_subnet = None
         self.dist_fip_count = None
         self.fip_ns = None
-
 
     @log_helpers.log_method_call
     def get_floating_ips(self):
@@ -192,9 +192,14 @@ class DvrLocalRouter(dvr_local_router.DvrLocalRouter):
                     return port
 
     @log_helpers.log_method_call
+    def get_internal_device_name(self, port_id):
+        return DVR_PORT_NAME
+
+    @log_helpers.log_method_call
     def _update_arp_entry(self, ip, mac, subnet_id, operation):
         """Add or delete arp entry into router namespace for the subnet."""
         port = self._get_internal_port(subnet_id)
+        import ipdb;ipdb.set_trace()
         # update arp entry only if the subnet is attached to the router
         if not port:
             return
