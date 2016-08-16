@@ -185,7 +185,6 @@ class ApiClientBase(object):
                             "reconnecting to %(conn)s"),
                         {'rid': rid,
                          'conn': api_client.ctrl_conn_to_str(http_conn)})
-            http_conn.close()
             http_conn = self._create_connection(*self._conn_params(http_conn))
             priority = self._next_conn_priority
             self._next_conn_priority += 1
@@ -196,12 +195,14 @@ class ApiClientBase(object):
             while not self._conn_pool.empty():
                 priority, conn = self._conn_pool.get()
                 if self._conn_params(conn) == conn_params:
-                    priority = self._next_conn_priority
-                    self._next_conn_priority += 1
+                    continue
+                priority = self._next_conn_priority
+                self._next_conn_priority += 1
                 conns.append((priority, conn))
             for priority, conn in conns:
                 self._conn_pool.put((priority, conn))
             # put http_conn at end of queue also
+            http_conn = self._create_connection(*self._conn_params(http_conn))
             priority = self._next_conn_priority
             self._next_conn_priority += 1
         else:
