@@ -154,6 +154,7 @@ class ApiClientBase(object):
                   "connection(s) available.",
                   {'rid': rid, 'conn': api_client.ctrl_conn_to_str(conn),
                    'qsize': qsize})
+        print "auto_login=%s, self.auth_cookie(conn) = $s" % (auto_login, self.auth_cookie(conn))
         if auto_login and self.auth_cookie(conn) is None:
             self._wait_for_login(conn, headers)
         return conn
@@ -203,6 +204,7 @@ class ApiClientBase(object):
                 self._conn_pool.put((priority, conn))
             # put http_conn at end of queue also
             http_conn = self._create_connection(*self._conn_params(http_conn))
+            http_conn.connect()
             priority = self._next_conn_priority
             self._next_conn_priority += 1
         else:
