@@ -101,6 +101,9 @@ class ApiRequest(object):
                 # Update connection with user specified request timeout,
                 # the connect timeout is usually smaller so we only set
                 # the request timeout after a connection is established
+                print "conn=", conn
+                print "self._api_client._conn_pool=", self._api_client._conn_pool
+
                 if conn.sock is None:
                     conn.connect()
                     conn.sock.settimeout(self._http_timeout)
@@ -142,8 +145,9 @@ class ApiRequest(object):
                     if isinstance(e, httpclient.BadStatusLine):
                         LOG.warning(_LW("[%(rid)d] connection error: %(e)s"),
                                     {'rid': self._rid(), 'e': e})
-                        self._api_client.release_connection(conn, True, True,
-                                                            rid=self._rid())
+                        conn.connect()
+                        #self._api_client.release_connection(conn, True, True,
+                        #                                    rid=self._rid())
                         continue
                     else:
                         with excutils.save_and_reraise_exception():
