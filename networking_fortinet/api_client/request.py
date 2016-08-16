@@ -84,6 +84,8 @@ class ApiRequest(object):
 
     def _issue_request(self):
         '''Issue a request to a provider.'''
+
+        print "self._api_client._conn_pool=", self._api_client._conn_pool
         conn = self.get_conn()
         if conn is None:
             error = Exception(_("No API connections available"))
