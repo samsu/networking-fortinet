@@ -154,8 +154,7 @@ class ApiClientBase(object):
                   "connection(s) available.",
                   {'rid': rid, 'conn': api_client.ctrl_conn_to_str(conn),
                    'qsize': qsize})
-        print "auto_login=%s, self.auth_cookie(conn) = $s" % (
-            str(auto_login), self.auth_cookie(conn))
+        print "auto_login=", auto_login, "self.auth_cookie(conn) = ", self.auth_cookie(conn)
         if auto_login and self.auth_cookie(conn) is None:
             self._wait_for_login(conn, headers)
         return conn
