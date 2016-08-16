@@ -291,7 +291,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         if router.get('distributed'):
             kwargs['agent'] = self
             kwargs['host'] = self.host
-            import ipdb;ipdb.set_trace()
+            #import ipdb;ipdb.set_trace()
             if self.conf.agent_mode == l3_constants.L3_AGENT_MODE_DVR_SNAT:
                 return dvr_router.DvrEdgeRouter(*args, **kwargs)
             else:
@@ -647,7 +647,7 @@ class L3NATAgentWithStateReport(FortinetAgent):
         router_infos = self.router_info.values()
         num_routers = len(router_infos)
         for ri in router_infos:
-            import ipdb;ipdb.set_trace()
+            #import ipdb;ipdb.set_trace()
             ex_gw_port = ri.get_ex_gw_port()
             if ex_gw_port:
                 num_ex_gw_ports += 1

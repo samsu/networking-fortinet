@@ -123,7 +123,7 @@ class ApiRequest(object):
                 try:
                     if self._body:
                         if (self._url ==
-                            jsonutils.loads(templates.LOGIN)['path']):
+                                jsonutils.loads(templates.LOGIN)['path']):
                             body = urlparse.urlencode(self._body)
                         else:
                             body = jsonutils.dumps(self._body)
@@ -137,13 +137,21 @@ class ApiRequest(object):
                                  "body": body, "headers": headers})
 
                     conn.request(self._method, url, body, headers)
+                    response = conn.getresponse()
                 except Exception as e:
-                    with excutils.save_and_reraise_exception():
-                        LOG.warning(_LW("[%(rid)d] Exception issuing request: "
-                                        "%(e)s"),
+                    if isinstance(e, httpclient.BadStatusLine):
+                        LOG.warning(_LW("[%(rid)d] connection error: %(e)s"),
                                     {'rid': self._rid(), 'e': e})
+                        self._api_client.release_connection(conn, True, True,
+                                                            rid=self._rid())
+                        continue
+                    else:
+                        with excutils.save_and_reraise_exception():
+                            LOG.warning(
+                                _LW("[%(rid)d] Exception issuing request: "
+                                    "%(e)s"),
+                                {'rid': self._rid(), 'e': e})
 
-                response = conn.getresponse()
                 response.body = response.read()
                 response.headers = response.getheaders()
                 elapsed_time = time.time() - issued_time
