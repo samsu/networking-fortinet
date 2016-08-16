@@ -99,6 +99,7 @@ class ApiClientBase(object):
         data = self._get_provider_data(conn)
         if data:
             cookie = data[1]
+        print "### auth_cookie() cookie=", cookie
         return cookie
 
     @staticmethod
