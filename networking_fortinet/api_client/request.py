@@ -85,7 +85,7 @@ class ApiRequest(object):
     def _issue_request(self):
         '''Issue a request to a provider.'''
 
-        print "self._api_client._conn_pool=", self._api_client._conn_pool
+        print "## self._api_client._conn_pool=", self._api_client._conn_pool
         conn = self.get_conn()
         if conn is None:
             error = Exception(_("No API connections available"))
@@ -107,7 +107,7 @@ class ApiRequest(object):
                 # the connect timeout is usually smaller so we only set
                 # the request timeout after a connection is established
                 print "conn=", conn
-                print "self._api_client._conn_pool=", self._api_client._conn_pool
+                print "### self._api_client._conn_pool=", self._api_client._conn_pool
 
                 if conn.sock is None:
                     conn.connect()
@@ -150,13 +150,19 @@ class ApiRequest(object):
                     if isinstance(e, httpclient.BadStatusLine):
                         LOG.warning(_LW("[%(rid)d] connection error: %(e)s"),
                                     {'rid': self._rid(), 'e': e})
+                        print "conn=", conn
+                        print "####1 self._api_client._conn_pool=", self._api_client._conn_pool
                         self._api_client.release_connection(conn, True, True,
                                                             rid=self._rid())
+                        print "conn=", conn
+                        print "####2 self._api_client._conn_pool=", self._api_client._conn_pool
                         conn = self.get_conn()
                         if conn is None:
                             error = Exception(_("No connections available"))
                             self._request_error = error
                             return error
+                        print "conn=", conn
+                        print "####3 self._api_client._conn_pool=", self._api_client._conn_pool
                         continue
                     else:
                         with excutils.save_and_reraise_exception():
