@@ -76,12 +76,15 @@ class ApiRequest(object):
     def join(self):
         pass
 
-    def _issue_request(self):
-        '''Issue a request to a provider.'''
-        conn = (self._client_conn or
+    def get_conn(self):
+        return (self._client_conn or
                 self._api_client.acquire_connection(True,
                                                     copy.copy(self._headers),
                                                     rid=self._rid()))
+
+    def _issue_request(self):
+        '''Issue a request to a provider.'''
+        conn = self.get_conn()
         if conn is None:
             error = Exception(_("No API connections available"))
             self._request_error = error
@@ -145,9 +148,13 @@ class ApiRequest(object):
                     if isinstance(e, httpclient.BadStatusLine):
                         LOG.warning(_LW("[%(rid)d] connection error: %(e)s"),
                                     {'rid': self._rid(), 'e': e})
-                        conn.connect()
-                        #self._api_client.release_connection(conn, True, True,
-                        #                                    rid=self._rid())
+                        self._api_client.release_connection(conn, True, True,
+                                                            rid=self._rid())
+                        conn = self.get_conn()
+                        if conn is None:
+                            error = Exception(_("No connections available"))
+                            self._request_error = error
+                            return error
                         continue
                     else:
                         with excutils.save_and_reraise_exception():

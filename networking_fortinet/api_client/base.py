@@ -184,6 +184,7 @@ class ApiClientBase(object):
                             "reconnecting to %(conn)s"),
                         {'rid': rid,
                          'conn': api_client.ctrl_conn_to_str(http_conn)})
+            http_conn.close()
             http_conn = self._create_connection(*self._conn_params(http_conn))
             priority = self._next_conn_priority
             self._next_conn_priority += 1
