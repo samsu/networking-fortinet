@@ -77,17 +77,10 @@ class ApiRequest(object):
         pass
 
     def get_conn(self):
-        print "## before get_conn() self._api_client._conn_pool=", self._api_client._conn_pool
-        print "## self._method = ", self._method
-        print "## self._url = ", self._url
-        print "## self._body = ", self._body
-        print time.ctime()
         conn = self._client_conn or \
                self._api_client.acquire_connection(True,
                                                    copy.copy(self._headers),
                                                    rid=self._rid())
-        print "## after get_conn() self._api_client._conn_pool=", self._api_client._conn_pool
-        print time.ctime()
         return conn
 
     def _issue_request(self):
@@ -113,9 +106,6 @@ class ApiRequest(object):
                 # Update connection with user specified request timeout,
                 # the connect timeout is usually smaller so we only set
                 # the request timeout after a connection is established
-                print "conn=", conn
-                print "### self._api_client._conn_pool=", self._api_client._conn_pool
-
                 if conn.sock is None:
                     conn.connect()
                     conn.sock.settimeout(self._http_timeout)
@@ -150,7 +140,6 @@ class ApiRequest(object):
                                     "headers=%(headers)s"),
                                 {'method': self._method, "url": url,
                                  "body": body, "headers": headers})
-                    print "## method=%s, url=%s, body=%s, headers=%s" % (self._method, url, body, headers)
                     conn.request(self._method, url, body, headers)
                     response = conn.getresponse()
                 except Exception as e:
@@ -159,15 +148,11 @@ class ApiRequest(object):
                                     {'rid': self._rid(), 'e': e})
                         self._api_client.release_connection(conn, True, False,
                                                             rid=self._rid())
-                        print "conn2=", conn
-                        print "####2 self._api_client._conn_pool=", self._api_client._conn_pool
                         conn = self.get_conn()
                         if conn is None:
                             error = Exception(_("No connections available"))
                             self._request_error = error
                             return error
-                        print "conn3=", conn
-                        print "####3 self._api_client._conn_pool=", self._api_client._conn_pool
                         continue
                     else:
                         with excutils.save_and_reraise_exception():

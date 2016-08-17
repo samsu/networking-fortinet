@@ -99,7 +99,6 @@ class ApiClientBase(object):
         data = self._get_provider_data(conn)
         if data:
             cookie = data[1]
-        print "### auth_cookie() cookie=", cookie
         return cookie
 
     @staticmethod
@@ -147,8 +146,7 @@ class ApiClientBase(object):
                       'conn': api_client.ctrl_conn_to_str(conn),
                       'sec': now - conn.last_used})
             conn = self._create_connection(*self._conn_params(conn))
-            provider_sem, cookie = self._get_provider_data(conn)
-            self._set_provider_data(conn, (provider_sem, None))
+            self.set_auth_cookie(conn, None)
         conn.last_used = now
         conn.priority = priority  # stash current priority for release
         qsize = self._conn_pool.qsize()
@@ -156,7 +154,6 @@ class ApiClientBase(object):
                   "connection(s) available.",
                   {'rid': rid, 'conn': api_client.ctrl_conn_to_str(conn),
                    'qsize': qsize})
-        print "auto_login=", auto_login, "self.auth_cookie(conn) = ", self.auth_cookie(conn)
         if auto_login and self.auth_cookie(conn) is None:
             self._wait_for_login(conn, headers)
         return conn
@@ -189,8 +186,7 @@ class ApiClientBase(object):
                         {'rid': rid,
                          'conn': api_client.ctrl_conn_to_str(http_conn)})
             http_conn = self._create_connection(*self._conn_params(http_conn))
-            provider_sem, cookie = self._get_provider_data(http_conn)
-            self._set_provider_data(http_conn, (provider_sem, None))
+            self.set_auth_cookie(http_conn, None)
             conns = []
             while not self._conn_pool.empty():
                 priority, conn = self._conn_pool.get()
@@ -228,13 +224,11 @@ class ApiClientBase(object):
     def _wait_for_login(self, conn, headers=None):
         '''Block until a login has occurred for the current API provider.'''
         data = self._get_provider_data(conn)
-        print "### data = ", data
         if data is None:
             LOG.error(_LE("Login request for an invalid connection: '%s'"),
                       api_client.ctrl_conn_to_str(conn))
             return
         provider_sem = data[0]
-        print "### provider_sem = ", provider_sem
         if provider_sem.acquire(blocking=False):
             try:
                 cookie = self._login(conn, headers)
