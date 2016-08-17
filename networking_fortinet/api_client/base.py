@@ -233,6 +233,7 @@ class ApiClientBase(object):
         print "## provider_sem.acquire(blocking=False) =", provider_sem.acquire(blocking=False)
         if provider_sem.acquire(blocking=False):
             try:
+                import ipdb;ipdb.set_trace()
                 cookie = self._login(conn, headers)
                 self.set_auth_cookie(conn, cookie)
             finally:
