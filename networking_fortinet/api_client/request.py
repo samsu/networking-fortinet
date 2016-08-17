@@ -157,8 +157,6 @@ class ApiRequest(object):
                     if isinstance(e, httpclient.BadStatusLine):
                         LOG.warning(_LW("[%(rid)d] connection error: %(e)s"),
                                     {'rid': self._rid(), 'e': e})
-                        print "conn1=", conn
-                        print "####1 self._api_client._conn_pool=", self._api_client._conn_pool
                         self._api_client.release_connection(conn, True, False,
                                                             rid=self._rid())
                         print "conn2=", conn

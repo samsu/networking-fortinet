@@ -136,7 +136,6 @@ class ApiClientBase(object):
         :returns: An available HTTPConnection instance or None if no
                  api_providers are configured.
         '''
-        import ipdb;ipdb.set_trace()
         if self._conn_pool.empty():
             LOG.debug("[%d] Waiting to acquire API client connection.", rid)
         priority, conn = self._conn_pool.get()
@@ -231,8 +230,6 @@ class ApiClientBase(object):
         data = self._get_provider_data(conn)
         print "### data = ", data
         if data is None:
-            import ipdb;ipdb.set_trace()
-            data = self._get_provider_data(conn)
             LOG.error(_LE("Login request for an invalid connection: '%s'"),
                       api_client.ctrl_conn_to_str(conn))
             return
@@ -240,7 +237,6 @@ class ApiClientBase(object):
         print "### provider_sem = ", provider_sem
         if provider_sem.acquire(blocking=False):
             try:
-                import ipdb;ipdb.set_trace()
                 cookie = self._login(conn, headers)
                 self.set_auth_cookie(conn, cookie)
             finally:
