@@ -102,7 +102,7 @@ class ApiRequest(object):
         response = None
         try:
             redirects = 0
-            while (redirects <= self._redirects):
+            while redirects <= self._redirects:
                 # Update connection with user specified request timeout,
                 # the connect timeout is usually smaller so we only set
                 # the request timeout after a connection is established
@@ -112,11 +112,6 @@ class ApiRequest(object):
                 elif conn.sock.gettimeout() != self._http_timeout:
                     conn.sock.settimeout(self._http_timeout)
                 headers = copy.copy(self._headers)
-                if templates.RELOGIN in url:
-                    url = jsonutils.loads(templates.LOGIN)['path']
-                    conn.connect()
-                    self._api_client._wait_for_login(conn, headers)
-                    url = self._url
 
                 cookie = self._api_client.auth_cookie(conn)
 
@@ -190,7 +185,7 @@ class ApiRequest(object):
                     # for the current provider so that subsequent requests
                     # to the same provider triggers re-authentication.
                     self._api_client.set_auth_cookie(conn, None)
-                elif response.status == 503:
+                elif 503 == response.status:
                     is_conn_service_unavail = True
 
                 if response.status not in [301, 302, 307]:
@@ -216,8 +211,7 @@ class ApiRequest(object):
             # the conn to be released with is_conn_error == True
             # which puts the conn on the back of the client's priority
             # queue.
-            if (response.status == 500 and
-                response.status > 501):
+            if 500 == response.status or 501 < response.status:
                 LOG.warning(_LW("[%(rid)d] Request '%(method)s %(url)s' "
                                 "received: %(status)s"),
                             {'rid': self._rid(), 'method': self._method,
