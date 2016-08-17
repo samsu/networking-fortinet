@@ -145,7 +145,7 @@ class ApiRequest(object):
                                     "headers=%(headers)s"),
                                 {'method': self._method, "url": url,
                                  "body": body, "headers": headers})
-
+                    print "## method=%s, url=%s, body=%s, headers=%s" % (self._method, url, body, headers)
                     conn.request(self._method, url, body, headers)
                     response = conn.getresponse()
                 except Exception as e:
