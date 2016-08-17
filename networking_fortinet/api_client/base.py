@@ -139,9 +139,13 @@ class ApiClientBase(object):
         import ipdb;ipdb.set_trace()
         if self._conn_pool.empty():
             LOG.debug("[%d] Waiting to acquire API client connection.", rid)
-        priority, conn = self._conn_pool.get()
-        now = time.time()
-        if getattr(conn, 'last_used', now) < now - self.CONN_IDLE_TIMEOUT:
+            conn_invalid = True
+        else:
+            priority, conn = self._conn_pool.get()
+            now = time.time()
+            conn_invalid = getattr(conn, 'last_used',
+                             now) < now - self.CONN_IDLE_TIMEOUT
+        if conn_invalid:
             LOG.info(_LI("[%(rid)d] Connection %(conn)s idle for %(sec)0.2f "
                        "seconds; reconnecting."),
                      {'rid': rid, 'conn': api_client.ctrl_conn_to_str(conn),
