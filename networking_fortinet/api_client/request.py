@@ -159,7 +159,7 @@ class ApiRequest(object):
                                     {'rid': self._rid(), 'e': e})
                         print "conn1=", conn
                         print "####1 self._api_client._conn_pool=", self._api_client._conn_pool
-                        self._api_client.release_connection(conn, False, True,
+                        self._api_client.release_connection(conn, True, False,
                                                             rid=self._rid())
                         print "conn2=", conn
                         print "####2 self._api_client._conn_pool=", self._api_client._conn_pool
