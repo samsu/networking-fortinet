@@ -205,9 +205,7 @@ class ApiRequest(object):
                 elif response.status == 503:
                     is_conn_service_unavail = True
 
-                if response.status not in [301,
-                                           302,
-                                           307]:
+                if response.status not in [301, 302, 307]:
                     break
                 elif redirects >= self._redirects:
                     LOG.info(_LI("[%d] Maximum redirects exceeded, aborting "
@@ -237,7 +235,7 @@ class ApiRequest(object):
                             {'rid': self._rid(), 'method': self._method,
                              'url': self._url, 'status': response.status})
                 raise Exception(_('Server error return: %s'), response.status)
-            return response
+
         except Exception as e:
             if isinstance(e, httpclient.BadStatusLine):
                 msg = ("Invalid server response")
@@ -260,6 +258,7 @@ class ApiRequest(object):
                 self._api_client.release_connection(conn, is_conn_error,
                                                     is_conn_service_unavail,
                                                     rid=self._rid())
+            return response
 
     def _redirect_params(self, conn, headers, allow_release_conn=False):
         """Process redirect response, create new connection if necessary.
