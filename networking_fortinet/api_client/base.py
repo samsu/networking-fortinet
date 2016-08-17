@@ -230,7 +230,6 @@ class ApiClientBase(object):
         provider_sem = data[0]
         print "### data = ", data
         print "### provider_sem = ", provider_sem
-        print "## provider_sem.acquire(blocking=False) =", provider_sem.acquire(blocking=False)
         if provider_sem.acquire(blocking=False):
             try:
                 import ipdb;ipdb.set_trace()
