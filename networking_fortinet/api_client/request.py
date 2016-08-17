@@ -163,7 +163,6 @@ class ApiRequest(object):
                             error = Exception(_("No connections available"))
                             self._request_error = error
                             return error
-                        conn.connect()
                         print "conn3=", conn
                         print "####3 self._api_client._conn_pool=", self._api_client._conn_pool
                         continue
