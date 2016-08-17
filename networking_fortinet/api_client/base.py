@@ -137,6 +137,7 @@ class ApiClientBase(object):
                  api_providers are configured.
         '''
         import ipdb;ipdb.set_trace()
+        now = time.time()
         if self._conn_pool.empty():
             LOG.debug("[%d] Waiting to acquire API client connection.", rid)
             for conn_params in self._api_providers:
@@ -147,7 +148,6 @@ class ApiClientBase(object):
                 break
         else:
             priority, conn = self._conn_pool.get()
-            now = time.time()
             if getattr(conn, 'last_used', now) < now - self.CONN_IDLE_TIMEOUT:
                 LOG.info(_LI("[%(rid)d] Connection %(conn)s idle for "
                              "%(sec)0.2f seconds; reconnecting."),
