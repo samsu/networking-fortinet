@@ -137,19 +137,21 @@ class ApiClientBase(object):
                  api_providers are configured.
         '''
         import ipdb;ipdb.set_trace()
+        conn_invalid = False
         if self._conn_pool.empty():
             LOG.debug("[%d] Waiting to acquire API client connection.", rid)
             conn_invalid = True
         else:
             priority, conn = self._conn_pool.get()
             now = time.time()
-            conn_invalid = getattr(conn, 'last_used',
-                             now) < now - self.CONN_IDLE_TIMEOUT
+            if getattr(conn, 'last_used', now) < now - self.CONN_IDLE_TIMEOUT:
+                LOG.info(_LI("[%(rid)d] Connection %(conn)s idle for "
+                             "%(sec)0.2f seconds; reconnecting."),
+                         {'rid': rid,
+                          'conn': api_client.ctrl_conn_to_str(conn),
+                          'sec': now - conn.last_used})
+                conn_invalid = True
         if conn_invalid:
-            LOG.info(_LI("[%(rid)d] Connection %(conn)s idle for %(sec)0.2f "
-                       "seconds; reconnecting."),
-                     {'rid': rid, 'conn': api_client.ctrl_conn_to_str(conn),
-                      'sec': now - conn.last_used})
             conn = self._create_connection(*self._conn_params(conn))
             self._set_provider_data(conn, None)
         conn.last_used = now
