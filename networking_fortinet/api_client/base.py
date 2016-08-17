@@ -140,6 +140,7 @@ class ApiClientBase(object):
         now = time.time()
         if self._conn_pool.empty():
             LOG.debug("[%d] Waiting to acquire API client connection.", rid)
+            print "### should not be here!!!!"
             for conn_params in self._api_providers:
                 conn = self._create_connection(*conn_params)
                 self._set_provider_data(conn, None)
@@ -155,7 +156,8 @@ class ApiClientBase(object):
                           'conn': api_client.ctrl_conn_to_str(conn),
                           'sec': now - conn.last_used})
                 conn = self._create_connection(*self._conn_params(conn))
-                self._set_provider_data(conn, None)
+                semaphore, cookie = self._get_provider_data(conn)
+                self._set_provider_data(conn, (semaphore, None))
         conn.last_used = now
         conn.priority = priority  # stash current priority for release
         qsize = self._conn_pool.qsize()
