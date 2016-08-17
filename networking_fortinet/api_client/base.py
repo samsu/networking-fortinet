@@ -137,27 +137,19 @@ class ApiClientBase(object):
                  api_providers are configured.
         '''
         import ipdb;ipdb.set_trace()
-        now = time.time()
         if self._conn_pool.empty():
             LOG.debug("[%d] Waiting to acquire API client connection.", rid)
-            print "### should not be here!!!!"
-            for conn_params in self._api_providers:
-                conn = self._create_connection(*conn_params)
-                self._set_provider_data(conn, None)
-                priority = self._next_conn_priority
-                self._next_conn_priority += 1
-                break
-        else:
-            priority, conn = self._conn_pool.get()
-            if getattr(conn, 'last_used', now) < now - self.CONN_IDLE_TIMEOUT:
-                LOG.info(_LI("[%(rid)d] Connection %(conn)s idle for "
-                             "%(sec)0.2f seconds; reconnecting."),
-                         {'rid': rid,
-                          'conn': api_client.ctrl_conn_to_str(conn),
-                          'sec': now - conn.last_used})
-                conn = self._create_connection(*self._conn_params(conn))
-                semaphore, cookie = self._get_provider_data(conn)
-                self._set_provider_data(conn, (semaphore, None))
+        priority, conn = self._conn_pool.get()
+        now = time.time()
+        if getattr(conn, 'last_used', now) < now - self.CONN_IDLE_TIMEOUT:
+            LOG.info(_LI("[%(rid)d] Connection %(conn)s idle for "
+                         "%(sec)0.2f seconds; reconnecting."),
+                     {'rid': rid,
+                      'conn': api_client.ctrl_conn_to_str(conn),
+                      'sec': now - conn.last_used})
+            conn = self._create_connection(*self._conn_params(conn))
+            provider_sem, cookie = self._get_provider_data(conn)
+            self._set_provider_data(conn, (provider_sem, None))
         conn.last_used = now
         conn.priority = priority  # stash current priority for release
         qsize = self._conn_pool.qsize()
@@ -198,9 +190,19 @@ class ApiClientBase(object):
                         {'rid': rid,
                          'conn': api_client.ctrl_conn_to_str(http_conn)})
             http_conn = self._create_connection(*self._conn_params(http_conn))
+            provider_sem, cookie = self._get_provider_data(http_conn)
+            self._set_provider_data(http_conn, (provider_sem, None))
+            conns = []
+            while not self._conn_pool.empty():
+                priority, conn = self._conn_pool.get()
+                if self._conn_params(conn) == conn_params:
+                    continue
+                conns.append((priority, conn))
+            for priority, conn in conns:
+                self._conn_pool.put((priority, conn))
             priority = self._next_conn_priority
             self._next_conn_priority += 1
-            self._conn_pool.put((priority, http_conn))
+
         elif service_unavail:
             # http_conn returned a service unaviable response, put other
             # connections to the same controller at end of priority queue,
@@ -208,15 +210,17 @@ class ApiClientBase(object):
             while not self._conn_pool.empty():
                 priority, conn = self._conn_pool.get()
                 if self._conn_params(conn) == conn_params:
-                    continue
-                priority = self._next_conn_priority
-                self._next_conn_priority += 1
+                    priority = self._next_conn_priority
+                    self._next_conn_priority += 1
                 conns.append((priority, conn))
             for priority, conn in conns:
                 self._conn_pool.put((priority, conn))
+            priority = self._next_conn_priority
+            self._next_conn_priority += 1
         else:
             priority = http_conn.priority
-            self._conn_pool.put((priority, http_conn))
+
+        self._conn_pool.put((priority, http_conn))
         LOG.debug("[%(rid)d] Released connection %(conn)s. %(qsize)d "
                   "connection(s) available.",
                   {'rid': rid, 'conn': api_client.ctrl_conn_to_str(http_conn),
