@@ -136,6 +136,7 @@ class ApiClientBase(object):
         :returns: An available HTTPConnection instance or None if no
                  api_providers are configured.
         '''
+        import ipdb;ipdb.set_trace()
         if self._conn_pool.empty():
             LOG.debug("[%d] Waiting to acquire API client connection.", rid)
         priority, conn = self._conn_pool.get()

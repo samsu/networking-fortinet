@@ -79,7 +79,6 @@ class ApiRequest(object):
     def get_conn(self):
         print "## before get_conn() self._api_client._conn_pool=", self._api_client._conn_pool
         print time.ctime()
-        import ipdb;ipdb.set_trace()
         conn = self._client_conn or \
                self._api_client.acquire_connection(True,
                                                    copy.copy(self._headers),
