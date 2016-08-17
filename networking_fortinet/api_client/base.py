@@ -146,7 +146,7 @@ class ApiClientBase(object):
                      {'rid': rid, 'conn': api_client.ctrl_conn_to_str(conn),
                       'sec': now - conn.last_used})
             conn = self._create_connection(*self._conn_params(conn))
-
+            self._set_provider_data(conn, None)
         conn.last_used = now
         conn.priority = priority  # stash current priority for release
         qsize = self._conn_pool.qsize()
@@ -189,6 +189,7 @@ class ApiClientBase(object):
             http_conn = self._create_connection(*self._conn_params(http_conn))
             priority = self._next_conn_priority
             self._next_conn_priority += 1
+            self._conn_pool.put((priority, http_conn))
         elif service_unavail:
             # http_conn returned a service unaviable response, put other
             # connections to the same controller at end of priority queue,
@@ -202,15 +203,9 @@ class ApiClientBase(object):
                 conns.append((priority, conn))
             for priority, conn in conns:
                 self._conn_pool.put((priority, conn))
-            # put http_conn at end of queue also
-            http_conn = self._create_connection(*self._conn_params(http_conn))
-            http_conn.connect()
-            priority = self._next_conn_priority
-            self._next_conn_priority += 1
         else:
             priority = http_conn.priority
-
-        self._conn_pool.put((priority, http_conn))
+            self._conn_pool.put((priority, http_conn))
         LOG.debug("[%(rid)d] Released connection %(conn)s. %(qsize)d "
                   "connection(s) available.",
                   {'rid': rid, 'conn': api_client.ctrl_conn_to_str(http_conn),
