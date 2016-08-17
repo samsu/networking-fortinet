@@ -228,6 +228,8 @@ class ApiClientBase(object):
                       api_client.ctrl_conn_to_str(conn))
             return
         provider_sem = data[0]
+        print "### data = ", data
+        print "### provider_sem = ", provider_sem
         if provider_sem.acquire(blocking=False):
             try:
                 cookie = self._login(conn, headers)
