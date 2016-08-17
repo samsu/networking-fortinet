@@ -137,10 +137,14 @@ class ApiClientBase(object):
                  api_providers are configured.
         '''
         import ipdb;ipdb.set_trace()
-        conn_invalid = False
         if self._conn_pool.empty():
             LOG.debug("[%d] Waiting to acquire API client connection.", rid)
-            conn_invalid = True
+            for conn_params in self._api_providers:
+                conn = self._create_connection(*conn_params)
+                self._set_provider_data(conn, None)
+                priority = self._next_conn_priority
+                self._next_conn_priority += 1
+                break
         else:
             priority, conn = self._conn_pool.get()
             now = time.time()
@@ -150,10 +154,8 @@ class ApiClientBase(object):
                          {'rid': rid,
                           'conn': api_client.ctrl_conn_to_str(conn),
                           'sec': now - conn.last_used})
-                conn_invalid = True
-        if conn_invalid:
-            conn = self._create_connection(*self._conn_params(conn))
-            self._set_provider_data(conn, None)
+                conn = self._create_connection(*self._conn_params(conn))
+                self._set_provider_data(conn, None)
         conn.last_used = now
         conn.priority = priority  # stash current priority for release
         qsize = self._conn_pool.qsize()
