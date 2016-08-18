@@ -139,6 +139,7 @@ class ApiRequest(object):
                     response = conn.getresponse()
                 except Exception as e:
                     if isinstance(e, httpclient.BadStatusLine):
+                        import ipdb;ipdb.set_trace()
                         LOG.warning(_LW("[%(rid)d] connection error: %(e)s"),
                                     {'rid': self._rid(), 'e': e})
                         self._api_client.release_connection(conn, True, False,
