@@ -85,7 +85,6 @@ class ApiRequest(object):
 
     def _issue_request(self):
         '''Issue a request to a provider.'''
-        import ipdb;ipdb.set_trace()
         print "self._client_conn=", self._client_conn
         conn = self.get_conn()
         print "self._client_conn=", self._client_conn
@@ -164,7 +163,17 @@ class ApiRequest(object):
                            'elapsed': elapsed_time,
                            'response.headers': response.headers,
                            'response.body': response.body})
-
+                print("@@@@@@ [ _issue_request ] [%(rid)d] "
+                      "Completed request '%(conn)s': "
+                      "%(status)s (%(elapsed)s seconds), "
+                      "response.headers %(response.headers)s, "
+                      "response.body %(response.body)s",
+                      {'rid': self._rid(),
+                       'conn': self._request_str(conn, url),
+                       'status': response.status,
+                       'elapsed': elapsed_time,
+                       'response.headers': response.headers,
+                       'response.body': response.body})
                 if response.status in (401, 302):
                     if (cookie is None and
                        self._url != jsonutils.loads(templates.LOGIN)['path']):
