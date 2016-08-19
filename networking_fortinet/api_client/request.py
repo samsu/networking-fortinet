@@ -37,7 +37,7 @@ from networking_fortinet.api_client import templates
 LOG = logging.getLogger(__name__)
 
 DEFAULT_HTTP_TIMEOUT = 300
-DEFAULT_RETRIES = 2
+DEFAULT_RETRIES = 3
 DEFAULT_REDIRECTS = 2
 DEFAULT_API_REQUEST_POOL_SIZE = 1
 DEFAULT_MAXIMUM_REQUEST_ID = 4294967295

@@ -122,6 +122,7 @@ class EventletApiRequest(request.ApiRequest):
         attempt = 0
         timeout = 0
         response = None
+        import ipdb;ipdb.set_trace()
         while response is None and attempt <= self._retries:
             eventlet.greenthread.sleep(timeout)
             attempt += 1

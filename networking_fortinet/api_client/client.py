@@ -24,14 +24,15 @@ from networking_fortinet.api_client import base
 from networking_fortinet.api_client import eventlet_client
 from networking_fortinet.api_client import eventlet_request
 from networking_fortinet.api_client import exception
+from networking_fortinet.api_client import request
 from networking_fortinet.api_client import templates
 from networking_fortinet.common import singleton
 
 LOG = logging.getLogger(__name__)
 
-DEFAULT_HTTP_TIMEOUT = 75
-DEFAULT_HTTP_REQ_RETRY_TIMES = 3
-DEFAULT_HTTP_REDIRECT_TIMES = 2
+DEFAULT_HTTP_TIMEOUT = request.DEFAULT_HTTP_TIMEOUT
+DEFAULT_RETRIES = request.DEFAULT_RETRIES
+DEFAULT_REDIRECTS = request.DEFAULT_REDIRECTS
 
 @singleton.singleton
 class FortiosApiClient(eventlet_client.EventletApiClient):
@@ -43,8 +44,8 @@ class FortiosApiClient(eventlet_client.EventletApiClient):
                  use_https=False,
                  connect_timeout=base.DEFAULT_CONNECT_TIMEOUT,
                  http_timeout=DEFAULT_HTTP_TIMEOUT,
-                 retries=DEFAULT_HTTP_REQ_RETRY_TIMES,
-                 redirects=DEFAULT_HTTP_REDIRECT_TIMES):
+                 retries=DEFAULT_RETRIES,
+                 redirects=DEFAULT_REDIRECTS):
         '''Constructor. Adds the following:
         :param api_providers: a list of tuples of the form: (host, port,
             is_ssl)
