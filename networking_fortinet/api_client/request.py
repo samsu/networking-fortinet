@@ -142,7 +142,6 @@ class ApiRequest(object):
                               "headers=%(headers)s",
                               {'method': self._method, "url": url,
                                "body": body, "headers": headers})
-                    import ipdb;ipdb.set_trace()
                     conn.request(self._method, url, body, headers)
                 except Exception as e:
                     with excutils.save_and_reraise_exception():
@@ -215,6 +214,7 @@ class ApiRequest(object):
             return response
 
         except Exception as e:
+            import ipdb;ipdb.set_trace()
             if isinstance(e, httpclient.BadStatusLine):
                 msg = ("Invalid server response")
             else:
