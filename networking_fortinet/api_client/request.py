@@ -85,9 +85,10 @@ class ApiRequest(object):
 
     def _issue_request(self):
         '''Issue a request to a provider.'''
-        print "self._client_conn=", self._client_conn
+        print "### s1 self._api_client._conn_pool =", self._api_client._conn_pool
         conn = self.get_conn()
         print "self._client_conn=", self._client_conn
+        print "### s2 self._api_client._conn_pool =", self._api_client._conn_pool
         if conn is None:
             error = Exception(_("No API connections available"))
             self._request_error = error
@@ -245,10 +246,13 @@ class ApiRequest(object):
             print "### finally: self._client_conn=", self._client_conn
             print "### finally: is_conn_error=", is_conn_error
             print "### finally: is_conn_service_unavail=", is_conn_service_unavail
+            print "### finally: conn=", conn
+            print "### finally 1: self._api_client._conn_pool =", self._api_client._conn_pool
             if self._client_conn is None:
                 self._api_client.release_connection(conn, is_conn_error,
                                                     is_conn_service_unavail,
                                                     rid=self._rid())
+            print "### finally 2: self._api_client._conn_pool =", self._api_client._conn_pool
 
     def _redirect_params(self, conn, headers, allow_release_conn=False):
         """Process redirect response, create new connection if necessary.
