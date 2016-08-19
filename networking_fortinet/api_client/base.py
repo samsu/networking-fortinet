@@ -187,7 +187,7 @@ class ApiClientBase(object):
                          'conn': api_client.ctrl_conn_to_str(http_conn)})
             http_conn.close()
             http_conn = self._create_connection(*self._conn_params(http_conn))
-            self.set_auth_cookie(http_conn, None)
+            #self.set_auth_cookie(http_conn, None)
             conns = []
             while not self._conn_pool.empty():
                 priority, conn = self._conn_pool.get()
