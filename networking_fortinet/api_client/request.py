@@ -224,7 +224,6 @@ class ApiRequest(object):
             return response
 
         except Exception as e:
-            import ipdb;ipdb.set_trace()
             if isinstance(e, httpclient.BadStatusLine):
                 msg = ("Invalid server response")
             else:
