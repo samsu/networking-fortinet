@@ -29,6 +29,9 @@ from networking_fortinet.common import singleton
 
 LOG = logging.getLogger(__name__)
 
+DEFAULT_HTTP_TIMEOUT = 75
+DEFAULT_HTTP_REQ_RETRY_TIMES = 3
+DEFAULT_HTTP_REDIRECT_TIMES = 2
 
 @singleton.singleton
 class FortiosApiClient(eventlet_client.EventletApiClient):
@@ -39,14 +42,16 @@ class FortiosApiClient(eventlet_client.EventletApiClient):
                  gen_timeout=base.GENERATION_ID_TIMEOUT,
                  use_https=False,
                  connect_timeout=base.DEFAULT_CONNECT_TIMEOUT,
-                 http_timeout=75, retries=2, redirects=2):
+                 http_timeout=DEFAULT_HTTP_TIMEOUT,
+                 retries=DEFAULT_HTTP_REQ_RETRY_TIMES,
+                 redirects=DEFAULT_HTTP_REDIRECT_TIMES):
         '''Constructor. Adds the following:
         :param api_providers: a list of tuples of the form: (host, port,
             is_ssl)
         :param http_timeout: how long to wait before aborting an
             unresponsive controller (and allow for retries to another
             controller in the cluster)
-        :param retries: the number of concurrent connections.
+        :param retries: the number of http/https request to retry.
         :param redirects: the number of concurrent connections.
         '''
         super(FortiosApiClient, self).__init__(
