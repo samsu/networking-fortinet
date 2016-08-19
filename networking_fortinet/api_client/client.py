@@ -128,8 +128,7 @@ class FortiosApiClient(eventlet_client.EventletApiClient):
             exception.ERROR_MAPPINGS[status](response)
 
         # Continue processing for non-error condition.
-        if (status != 200 and status != 201
-                and status != 204):
+        if status != 200 and status != 201 and status != 204:
             LOG.error(_LE("%(method)s to %(url)s, unexpected response code: "
                         "%(status)d (content = '%(body)s')"),
                       {'method': method, 'url': url,
