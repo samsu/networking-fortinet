@@ -121,6 +121,7 @@ class FortiosApiClient(eventlet_client.EventletApiClient):
             LOG.warning(_LW("Resource not found. Response status: %(status)s, "
                             "response body: %(response.body)s"),
                         {'status': status, 'response.body': response.body})
+            exception.ERROR_MAPPINGS[status](response)
         elif status in exception.ERROR_MAPPINGS:
             LOG.error(_LE("Received error code: %s"), status)
             LOG.error(_LE("Server Error Message: %s"), response.body)
