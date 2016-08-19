@@ -34,6 +34,7 @@ DEFAULT_HTTP_TIMEOUT = request.DEFAULT_HTTP_TIMEOUT
 DEFAULT_RETRIES = request.DEFAULT_RETRIES
 DEFAULT_REDIRECTS = request.DEFAULT_REDIRECTS
 
+
 @singleton.singleton
 class FortiosApiClient(eventlet_client.EventletApiClient):
     """The FortiOS API Client."""
@@ -117,7 +118,7 @@ class FortiosApiClient(eventlet_client.EventletApiClient):
         # Fail-fast: Check for exception conditions and raise the
         # appropriate exceptions for known error codes.
         if status in [404]:
-            LOG.warning(_LW("Received response code: %(status)s, "
+            LOG.warning(_LW("Resource not found. Response status: %(status)s, "
                             "response body: %(response.body)s"),
                         {'status': status, 'response.body': response.body})
         elif status in exception.ERROR_MAPPINGS:
