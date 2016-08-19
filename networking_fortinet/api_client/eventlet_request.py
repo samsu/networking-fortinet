@@ -128,8 +128,6 @@ class EventletApiRequest(request.ApiRequest):
         while response is None and attempt <= self._retries:
             eventlet.greenthread.sleep(timeout)
             attempt += 1
-            print "## attempt time = ", attempt
-            print "## self._retries = ", self._retries
             req = self._issue_request()
             # automatically raises any exceptions returned.
             if isinstance(req, httplib.HTTPResponse):

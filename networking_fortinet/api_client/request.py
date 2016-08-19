@@ -85,10 +85,7 @@ class ApiRequest(object):
 
     def _issue_request(self):
         '''Issue a request to a provider.'''
-        print "### s1 self._api_client._conn_pool =", self._api_client._conn_pool
         conn = self.get_conn()
-        print "self._client_conn=", self._client_conn
-        print "### s2 self._api_client._conn_pool =", self._api_client._conn_pool
         if conn is None:
             error = Exception(_("No API connections available"))
             self._request_error = error
@@ -142,11 +139,6 @@ class ApiRequest(object):
                               "headers=%(headers)s",
                               {'method': self._method, "url": url,
                                "body": body, "headers": headers})
-                    print("Issuing request: self._method = [%(method)s], "
-                              "url= %(url)s, body=%(body)s, "
-                              "headers=%(headers)s",
-                              {'method': self._method, "url": url,
-                               "body": body, "headers": headers})
                     conn.request(self._method, url, body, headers)
                 except Exception as e:
                     with excutils.save_and_reraise_exception():
@@ -169,17 +161,7 @@ class ApiRequest(object):
                            'elapsed': elapsed_time,
                            'response.headers': response.headers,
                            'response.body': response.body})
-                print("@@@@@@ [ _issue_request ] [%(rid)d] "
-                      "Completed request '%(conn)s': "
-                      "%(status)s (%(elapsed)s seconds), "
-                      "response.headers %(response.headers)s, "
-                      "response.body %(response.body)s",
-                      {'rid': self._rid(),
-                       'conn': self._request_str(conn, url),
-                       'status': response.status,
-                       'elapsed': elapsed_time,
-                       'response.headers': response.headers,
-                       'response.body': response.body})
+
                 if response.status in (401, 302):
                     if (cookie is None and
                        self._url != jsonutils.loads(templates.LOGIN)['path']):
@@ -247,16 +229,10 @@ class ApiRequest(object):
         finally:
             # Make sure we release the original connection provided by the
             # acquire_connection() call above.
-            print "### finally: self._client_conn=", self._client_conn
-            print "### finally: is_conn_error=", is_conn_error
-            print "### finally: is_conn_service_unavail=", is_conn_service_unavail
-            print "### finally: conn=", conn
-            print "### finally 1: self._api_client._conn_pool =", self._api_client._conn_pool
             if self._client_conn is None:
                 self._api_client.release_connection(conn, is_conn_error,
                                                     is_conn_service_unavail,
                                                     rid=self._rid())
-            print "### finally 2: self._api_client._conn_pool =", self._api_client._conn_pool
 
     def _redirect_params(self, conn, headers, allow_release_conn=False):
         """Process redirect response, create new connection if necessary.
