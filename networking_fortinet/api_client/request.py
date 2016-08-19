@@ -129,41 +129,27 @@ class ApiRequest(object):
                             body = jsonutils.dumps(self._body)
                     else:
                         body = None
-                    LOG.warning(_LW("Issuing request: "
-                                    "self._method = [%(method)s], "
-                                    "url=%(url)s, body=%(body)s, "
-                                    "headers=%(headers)s"),
-                                {'method': self._method, "url": url,
-                                 "body": body, "headers": headers})
+                    LOG.debug("Issuing request: self._method = [%(method)s], "
+                              "url= %(url)s, body=%(body)s, "
+                              "headers=%(headers)s",
+                              {'method': self._method, "url": url,
+                               "body": body, "headers": headers})
+                    import ipdb;ipdb.set_trace()
                     conn.request(self._method, url, body, headers)
-                    response = conn.getresponse()
                 except Exception as e:
-                    if isinstance(e, httpclient.BadStatusLine):
-                        import ipdb;ipdb.set_trace()
-                        LOG.warning(_LW("[%(rid)d] connection error: %(e)s"),
-                                    {'rid': self._rid(), 'e': e})
-                        self._api_client.release_connection(conn, True, False,
-                                                            rid=self._rid())
-                        conn = self.get_conn()
-                        if conn is None:
-                            error = Exception(_("No connections available"))
-                            self._request_error = error
-                            return error
-                        continue
-                    else:
-                        with excutils.save_and_reraise_exception():
-                            LOG.warning(
-                                _LW("[%(rid)d] Exception issuing request: "
-                                    "%(e)s"),
-                                {'rid': self._rid(), 'e': e})
+                    with excutils.save_and_reraise_exception():
+                        LOG.warning(
+                            _LW("[%(rid)d] Exception issuing request: %(e)s"),
+                            {'rid': self._rid(), 'e': e})
 
+                response = conn.getresponse()
                 response.body = response.read()
                 response.headers = response.getheaders()
                 elapsed_time = time.time() - issued_time
                 LOG.debug("@@@@@@ [ _issue_request ] [%(rid)d] "
                           "Completed request '%(conn)s': "
                           "%(status)s (%(elapsed)s seconds), "
-                          "response.headers %(response.headers)s"
+                          "response.headers %(response.headers)s, "
                           "response.body %(response.body)s",
                           {'rid': self._rid(),
                            'conn': self._request_str(conn, url),
@@ -181,11 +167,11 @@ class ApiRequest(object):
                         # a request to authenticate, we should abort the
                         # request since there is no point in retrying.
                         self._abort = True
-                    LOG.debug("self._api_client=%s" % self._api_client)
                     # If request is unauthorized, clear the session cookie
                     # for the current provider so that subsequent requests
                     # to the same provider triggers re-authentication.
                     self._api_client.set_auth_cookie(conn, None)
+
                 elif 503 == response.status:
                     is_conn_service_unavail = True
 
@@ -218,7 +204,7 @@ class ApiRequest(object):
                             {'rid': self._rid(), 'method': self._method,
                              'url': self._url, 'status': response.status})
                 raise Exception(_('Server error return: %s'), response.status)
-
+            return response
         except Exception as e:
             if isinstance(e, httpclient.BadStatusLine):
                 msg = ("Invalid server response")
@@ -241,7 +227,6 @@ class ApiRequest(object):
                 self._api_client.release_connection(conn, is_conn_error,
                                                     is_conn_service_unavail,
                                                     rid=self._rid())
-            return response
 
     def _redirect_params(self, conn, headers, allow_release_conn=False):
         """Process redirect response, create new connection if necessary.
