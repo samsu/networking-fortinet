@@ -191,7 +191,7 @@ class ApiRequest(object):
                 elif 503 == response.status:
                     is_conn_service_unavail = True
 
-                if response.status not in [301, 302, 307]:
+                if response.status not in [301, 307]:
                     break
                 elif redirects >= self._redirects:
                     LOG.info(_LI("[%d] Maximum redirects exceeded, aborting "
@@ -242,6 +242,7 @@ class ApiRequest(object):
         finally:
             # Make sure we release the original connection provided by the
             # acquire_connection() call above.
+            print "### finally: self._client_conn=", self._client_conn
             if self._client_conn is None:
                 self._api_client.release_connection(conn, is_conn_error,
                                                     is_conn_service_unavail,
