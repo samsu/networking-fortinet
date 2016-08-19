@@ -85,8 +85,10 @@ class ApiRequest(object):
 
     def _issue_request(self):
         '''Issue a request to a provider.'''
-
+        import ipdb;ipdb.set_trace()
+        print "self._client_conn=", self._client_conn
         conn = self.get_conn()
+        print "self._client_conn=", self._client_conn
         if conn is None:
             error = Exception(_("No API connections available"))
             self._request_error = error
@@ -111,7 +113,13 @@ class ApiRequest(object):
                     conn.sock.settimeout(self._http_timeout)
                 elif conn.sock.gettimeout() != self._http_timeout:
                     conn.sock.settimeout(self._http_timeout)
+
                 headers = copy.copy(self._headers)
+                if templates.RELOGIN in url:
+                    url = jsonutils.loads(templates.LOGIN)['path']
+                    conn.connect()
+                    self._api_client._wait_for_login(conn, headers)
+                    url = self._url
 
                 cookie = self._api_client.auth_cookie(conn)
 
@@ -205,6 +213,7 @@ class ApiRequest(object):
                              'url': self._url, 'status': response.status})
                 raise Exception(_('Server error return: %s'), response.status)
             return response
+
         except Exception as e:
             if isinstance(e, httpclient.BadStatusLine):
                 msg = ("Invalid server response")
@@ -220,6 +229,7 @@ class ApiRequest(object):
             self._request_error = e
             is_conn_error = True
             return e
+
         finally:
             # Make sure we release the original connection provided by the
             # acquire_connection() call above.
