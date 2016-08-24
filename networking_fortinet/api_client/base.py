@@ -28,20 +28,19 @@ import six
 
 from networking_fortinet._i18n import _LE, _LI, _LW
 from networking_fortinet import api_client
-
+from networking_fortinet.api_client import constants as const
 
 LOG = logging.getLogger(__name__)
-
-GENERATION_ID_TIMEOUT = -1
-DEFAULT_CONCURRENT_CONNECTIONS = 1
-DEFAULT_CONNECT_TIMEOUT = 35
+GENERATION_ID_TIMEOUT = const.GENERATION_ID_TIMEOUT
+DEFAULT_CONCURRENT_CONNECTIONS = const.DEFAULT_CONCURRENT_CONNECTIONS
+DEFAULT_CONNECT_TIMEOUT = const.DEFAULT_CONNECT_TIMEOUT
 
 
 @six.add_metaclass(abc.ABCMeta)
 class ApiClientBase(object):
     """An abstract baseclass for all API client implementations."""
 
-    CONN_IDLE_TIMEOUT = 60 * 15
+    CONN_IDLE_TIMEOUT = const.CONN_IDLE_TIMEOUT
 
     def _create_connection(self, host, port, is_ssl):
         if is_ssl:
