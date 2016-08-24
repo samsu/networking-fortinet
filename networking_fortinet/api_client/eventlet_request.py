@@ -24,14 +24,15 @@ from oslo_log import log as logging
 from oslo_serialization import jsonutils
 
 from networking_fortinet._i18n import _, _LI, _LW
+from networking_fortinet.api_client import constants as const
 from networking_fortinet.api_client import request
 from networking_fortinet.api_client import templates
 
 LOG = logging.getLogger(__name__)
 USER_AGENT = "Neutron eventlet client/2.0"
-DEFAULT_HTTP_TIMEOUT = request.DEFAULT_HTTP_TIMEOUT
-DEFAULT_RETRIES = request.DEFAULT_RETRIES if request.DEFAULT_RETRIES < 2 else 2
-DEFAULT_REDIRECTS = request.DEFAULT_REDIRECTS
+DEFAULT_HTTP_TIMEOUT = const.DEFAULT_HTTP_TIMEOUT
+DEFAULT_RETRIES = const.DEFAULT_RETRIES if request.DEFAULT_RETRIES < 2 else 2
+DEFAULT_REDIRECTS = const.DEFAULT_REDIRECTS
 
 
 class EventletApiRequest(request.ApiRequest):

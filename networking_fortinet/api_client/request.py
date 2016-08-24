@@ -32,16 +32,17 @@ import six.moves.urllib.parse as urlparse
 
 from networking_fortinet._i18n import _, _LI, _LW
 from networking_fortinet import api_client
+from networking_fortinet.api_client import constants as const
 from networking_fortinet.api_client import templates
 
 LOG = logging.getLogger(__name__)
 
-DEFAULT_HTTP_TIMEOUT = 300
-DEFAULT_RETRIES = 3
-DEFAULT_REDIRECTS = 2
-DEFAULT_API_REQUEST_POOL_SIZE = 1
-DEFAULT_MAXIMUM_REQUEST_ID = 4294967295
-DOWNLOAD_TIMEOUT = 180
+DEFAULT_HTTP_TIMEOUT = const.DEFAULT_HTTP_TIMEOUT
+DEFAULT_RETRIES = const.DEFAULT_RETRIES
+DEFAULT_REDIRECTS = const.DEFAULT_REDIRECTS
+DEFAULT_API_REQUEST_POOL_SIZE = const.DEFAULT_API_REQUEST_POOL_SIZE
+DEFAULT_MAXIMUM_REQUEST_ID = const.DEFAULT_MAXIMUM_REQUEST_ID
+DOWNLOAD_TIMEOUT = const.DOWNLOAD_TIMEOUT
 
 
 @six.add_metaclass(abc.ABCMeta)

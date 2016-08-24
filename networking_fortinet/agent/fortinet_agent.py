@@ -429,7 +429,8 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
             if ex_net_id != self._fetch_external_net_id(force=True):
                 raise n_exc.RouterNotCompatibleWithAgent(
                     router_id=router['id'])
-
+        print "## router['id'] = %s" % router['id']
+        print "## self.router_info = %s" % self.router_info
         if router['id'] not in self.router_info:
             self._process_added_router(router)
         else:

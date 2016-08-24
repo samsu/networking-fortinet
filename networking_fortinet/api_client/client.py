@@ -21,18 +21,18 @@ from oslo_serialization import jsonutils
 
 from networking_fortinet._i18n import _LE, _LW
 from networking_fortinet.api_client import base
+from networking_fortinet.api_client import constants as const
 from networking_fortinet.api_client import eventlet_client
 from networking_fortinet.api_client import eventlet_request
 from networking_fortinet.api_client import exception
-from networking_fortinet.api_client import request
 from networking_fortinet.api_client import templates
 from networking_fortinet.common import singleton
 
 LOG = logging.getLogger(__name__)
 
-DEFAULT_HTTP_TIMEOUT = request.DEFAULT_HTTP_TIMEOUT
-DEFAULT_RETRIES = request.DEFAULT_RETRIES
-DEFAULT_REDIRECTS = request.DEFAULT_REDIRECTS
+DEFAULT_HTTP_TIMEOUT = const.DEFAULT_HTTP_TIMEOUT
+DEFAULT_RETRIES = const.DEFAULT_RETRIES
+DEFAULT_REDIRECTS = const.DEFAULT_REDIRECTS
 
 
 @singleton.singleton

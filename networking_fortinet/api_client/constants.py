@@ -1,4 +1,4 @@
-# Copyright 2015 OpenStack Foundation.
+# Copyright 2015 Fortinet, Inc.
 # All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -14,4 +14,9 @@
 #    under the License.
 #
 
-_prefix_vdom = "osvdm"
+DEFAULT_HTTP_TIMEOUT = 300
+DEFAULT_RETRIES = 3
+DEFAULT_REDIRECTS = 2
+DEFAULT_API_REQUEST_POOL_SIZE = 1
+DEFAULT_MAXIMUM_REQUEST_ID = 4294967295
+DOWNLOAD_TIMEOUT = 180
