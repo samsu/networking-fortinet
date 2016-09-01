@@ -72,9 +72,9 @@ FORTINET_PARAMS = {
     }
 }
 
-FTNT_AGENT = 'L3 agent'
+FTNT_AGENT = 'fortinet-agent'
 AGENT_BIN_FTNT = 'fortinet-agent'
-AGENT_TYPE_FTNT = 'Fortinet agent'
+AGENT_TYPE_FTNT = 'L3 agent'
 
 DVR_PORT_NAME = 'fgt-int-port'
 # Define class
