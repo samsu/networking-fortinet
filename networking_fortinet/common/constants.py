@@ -72,7 +72,7 @@ FORTINET_PARAMS = {
     }
 }
 
-FTNT_AGENT = 'fortinet-agent'
+FTNT_AGENT = 'L3 agent'
 AGENT_BIN_FTNT = 'fortinet-agent'
 AGENT_TYPE_FTNT = 'Fortinet agent'
 
