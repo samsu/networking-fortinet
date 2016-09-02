@@ -28,9 +28,10 @@ class OVSBridge(ovs_lib.OVSBridge):
             for k, v in kwargs.iteritems():
                 args.append("%(key)s=%(val)s" % {'key': k, 'val': v})
         with self.ovsdb.transaction() as txn:
-            res = txn.add(
+            txn.add(
                 impl_vsctl.BaseCommand(self.ovsdb.context, 'set', opts, args))
-        return res
+        fields = tuple(key for key in kwargs)
+        return self.list_port(port, *fields)
 
     def list_port(self, port, *fields):
         args = ['port', port]
