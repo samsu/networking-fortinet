@@ -127,7 +127,7 @@ class Fortigate(object):
 
 
 class Base(object):
-    def __init__(self, fortigate, task_manager=None, *args, **kwargs):
+    def __init__(self, fortigate, task_manager=None):
         self.fortigate = fortigate
         self.api_client = fortigate.api_client
         if task_manager:
@@ -171,14 +171,13 @@ class Base(object):
         return self.op(resource.delete, task_id=task_id, **kwargs)
 
 
-class Router(Base, router.RouterInfo):
-    def __init__(self, fortigate, task_manager=None, *args, **kwargs):
+class Router(Base):
+    def __init__(self, fortigate, task_manager=None):
         self.fortigate = fortigate
         # A bunch of resources in the Fortigate
         self.cfg = None
         import ipdb;ipdb.set_trace()
-        super(Router, self).__init__(fortigate, task_manager=task_manager,
-                                     *args, **kwargs)
+        super(Router, self).__init__(fortigate, task_manager=task_manager)
 
     @log_helpers.log_method_call
     def create_router(self, router):
