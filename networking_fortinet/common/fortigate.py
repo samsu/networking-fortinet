@@ -173,11 +173,12 @@ class Base(object):
 
 class Router(Base, router.RouterInfo):
     def __init__(self, fortigate, task_manager=None, *args, **kwargs):
-        super(Router, self).__init__(fortigate, task_manager=task_manager,
-                                     *args, **kwargs)
         self.fortigate = fortigate
         # A bunch of resources in the Fortigate
         self.cfg = None
+        import ipdb;ipdb.set_trace()
+        super(Router, self).__init__(fortigate, task_manager=task_manager,
+                                     *args, **kwargs)
 
     @log_helpers.log_method_call
     def create_router(self, router):
