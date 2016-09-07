@@ -448,9 +448,10 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
     def _process_updated_router(self, router):
         ri = self.router_info[router['id']]
         ri.router = router
-        #import ipdb;ipdb.set_trace()
         registry.notify(resources.ROUTER, events.BEFORE_UPDATE,
                         self, router=ri)
+        print "self.router_info=", self.router_info
+        import ipdb;ipdb.set_trace()
         ri.process(self)
         registry.notify(resources.ROUTER, events.AFTER_UPDATE, self, router=ri)
 
