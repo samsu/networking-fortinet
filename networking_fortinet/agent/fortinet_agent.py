@@ -296,7 +296,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
                 return dvr_router.DvrEdgeRouter(*args, **kwargs)
             else:
                 #return dvr_local_router.DvrLocalRouter(*args, **kwargs)
-                import ipdb;ipdb.set_trace()
+                #import ipdb;ipdb.set_trace()
                 return fortigate.Router(self.fortigate,
                                         task_manager=self.task_manager,
                                         *args, **kwargs)
