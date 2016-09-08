@@ -272,7 +272,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
                         "one external network.")
                     raise Exception(msg)
 
-    #@log_helpers.log_method_call
+    @log_helpers.log_method_call
     def _create_router(self, router_id, router):
         # TODO(Carl) We need to support a router that is both HA and DVR.  The
         # patch that enables it will replace these lines.  See bug #1365473.
@@ -298,8 +298,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
                 #return dvr_local_router.DvrLocalRouter(*args, **kwargs)
                 #import ipdb;ipdb.set_trace()
                 return fortigate.Router(self.fortigate,
-                                        task_manager=self.task_manager,
-                                        *args, **kwargs)
+                                        task_manager=self.task_manager)
 
         if router.get('ha'):
             kwargs['state_change_callback'] = self.enqueue_state_change
