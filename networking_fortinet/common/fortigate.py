@@ -127,7 +127,7 @@ class Fortigate(object):
 
 
 class Base(object):
-    def __init__(self, fortigate, task_manager=None):
+    def __init__(self, fortigate, task_manager=None, *args, **kwargs):
         self.fortigate = fortigate
         self.api_client = fortigate.api_client
         if task_manager:
@@ -171,13 +171,13 @@ class Base(object):
         return self.op(resource.delete, task_id=task_id, **kwargs)
 
 
-class Router(Base):
-    def __init__(self, fortigate, task_manager=None):
+class Router(Base, router.RouterInfo):
+    def __init__(self, fortigate, task_manager=None, *args, **kwargs):
         self.fortigate = fortigate
         # A bunch of resources in the Fortigate
         self.cfg = None
         import ipdb;ipdb.set_trace()
-        super(Router, self).__init__(fortigate, task_manager=task_manager)
+        super(Router, self).__init__(fortigate, task_manager=task_manager, *args, **kwargs)
 
     @log_helpers.log_method_call
     def create_router(self, router):
@@ -218,12 +218,10 @@ class Router(Base):
     def process(self, agent):
         # After a router was added to the dict, still need to process
         # other things .e.g. ports
-        pass
-        """
         ex_gw_port = self.get_ex_gw_port()
         if ex_gw_port:
             import ipdb;ipdb.set_trace()
             self.fip_ns = agent.get_fip_ns(ex_gw_port['network_id'])
             #self.fip_ns.scan_fip_ports(self)
-        """
+
         #super(Router, self).process(agent)
