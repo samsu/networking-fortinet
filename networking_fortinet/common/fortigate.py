@@ -218,6 +218,7 @@ class Router(Base):
     def process(self, agent):
         # After a router was added to the dict, still need to process
         # other things .e.g. ports
+        pass
         ex_gw_port = self.get_ex_gw_port()
         if ex_gw_port:
             import ipdb;ipdb.set_trace()
