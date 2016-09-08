@@ -219,10 +219,11 @@ class Router(Base):
         # After a router was added to the dict, still need to process
         # other things .e.g. ports
         pass
+        """
         ex_gw_port = self.get_ex_gw_port()
         if ex_gw_port:
             import ipdb;ipdb.set_trace()
             self.fip_ns = agent.get_fip_ns(ex_gw_port['network_id'])
             #self.fip_ns.scan_fip_ports(self)
-
+        """
         #super(Router, self).process(agent)
