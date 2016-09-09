@@ -40,7 +40,6 @@ from networking_fortinet.db import models as fortinet_db
 from networking_fortinet.tasks import constants as t_consts
 from networking_fortinet.tasks import tasks
 
-
 LOG = logging.getLogger(__name__)
 
 
@@ -49,6 +48,7 @@ def checktimestamp(method):
     compare the start time of rpc server with the message time to be sent,
     if the message generated time is older than the start time, then discard.
     """
+
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
         time = kwargs['time']
@@ -62,6 +62,7 @@ def checktimestamp(method):
                       "server start timestamp: %(server_time)s", log_dict)
             return
         return method(self, *args, **kwargs)
+
     return wrapper
 
 
@@ -85,7 +86,7 @@ class FortinetAgentRpcApi(object):
     @log_helpers.log_method_call
     def device_register(self, agent_state, use_call=False):
         cctxt = self.fgt_client.prepare()
-        #self.agent_state['uuid'] = uuidutils.generate_uuid()
+        # self.agent_state['uuid'] = uuidutils.generate_uuid()
         agent_state['host'] = self.host
         kwargs = {
             'agent_state': {'agent_state': agent_state},
@@ -135,7 +136,6 @@ class FortinetAgentRpcCallback(object):
     START_TIME = timeutils.utcnow()
 
     def __init__(self, plugin=None, task_manager=None):
-        #super(FortinetAgentRpcCallback, self).__init__()
         if not task_manager:
             self.task_manager = tasks.TaskManager()
             self.task_manager.start()
@@ -193,7 +193,7 @@ class FortinetAgentRpcCallback(object):
         @return: a list of routers
                  with their interfaces and floating_ips
         """
-        #import ipdb;ipdb.set_trace()
+        # import ipdb;ipdb.set_trace()
         body = kwargs['body']
         host = body.get('host')
         fortigate = fortinet_db.query_record(
@@ -216,7 +216,7 @@ class FortinetAgentRpcCallback(object):
             namespace = utils.allocate_vdom(self, context, tenant_id=tenant_id)
             rinfo['vdom'] = namespace.make_dict() if namespace else {}
             rinfo['vlink'] = utils.allocate_vlink(self, context, fortigate_id,
-                                                   namespace.vdom)
+                                                  namespace.vdom)
         except Exception as e:
             with excutils.save_and_reraise_exception():
                 LOG.error(_LE("Failed to create_router router=%(router)s"),
