@@ -74,8 +74,8 @@ class FortinetAgentRpcApi(object):
     # 1.0 Initial Version
 
     def __init__(self, topic, host):
-        super(FortinetAgentRpcApi, self).__init__(topic, host)
         topic = topic if topic else const.FTNT_AGENT
+        self.host = host
         fgt_target = oslo_messaging.Target(
             topic=topic, version='1.0')
         self.context = n_context.get_admin_context_without_session()
