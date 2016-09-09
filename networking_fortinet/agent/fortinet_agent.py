@@ -407,7 +407,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
     @log_helpers.log_method_call
     def _process_router_if_compatible(self, router):
         if (self.conf.external_network_bridge and
-            not ip_lib.device_exists(self.conf.external_network_bridge)):
+                not ip_lib.device_exists(self.conf.external_network_bridge)):
             LOG.error(_LE("The external network bridge '%s' does not exist"),
                       self.conf.external_network_bridge)
             return
@@ -425,7 +425,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
 
         # If target_ex_net_id and ex_net_id are set they must be equal
         target_ex_net_id = self._fetch_external_net_id()
-        if (target_ex_net_id and ex_net_id and ex_net_id != target_ex_net_id):
+        if target_ex_net_id and ex_net_id and ex_net_id != target_ex_net_id:
             # Double check that our single external_net_id has not changed
             # by forcing a check by RPC.
             if ex_net_id != self._fetch_external_net_id(force=True):
@@ -471,8 +471,6 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
                 try:
                     update.timestamp = timeutils.utcnow()
                     print "### update = %s" % update
-                    #routers = self.plugin_rpc.get_routers(self.context,
-                    #                                      [update.id])
                     routers = self.ftnt_rpc.get_routers(self.context,
                                                         [update.id])
                 except Exception:
