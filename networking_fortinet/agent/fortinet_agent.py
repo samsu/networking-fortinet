@@ -635,9 +635,7 @@ class L3NATAgentWithStateReport(FortinetAgent):
                 'interface_driver': self.conf.interface_driver,
                 'log_agent_heartbeats': self.conf.AGENT.log_agent_heartbeats},
             'start_flag': True,
-            ##const.AGENT_TYPE_FTNT
-            'agent_type': l3_constants.AGENT_TYPE_L3
-        }
+            'agent_type': const.AGENT_TYPE_FTNT}
         report_interval = self.conf.AGENT.report_interval
         if report_interval:
             self.heartbeat = loopingcall.FixedIntervalLoopingCall(
