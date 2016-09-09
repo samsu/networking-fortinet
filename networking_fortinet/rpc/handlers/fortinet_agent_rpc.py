@@ -74,8 +74,9 @@ class FortinetAgentRpcApi(agent.L3PluginApi):
 
     def __init__(self, topic, host):
         super(FortinetAgentRpcApi, self).__init__(topic, host)
+        topic = topic if topic else const.FTNT_AGENT
         fgt_target = oslo_messaging.Target(
-            topic=const.FTNT_AGENT, version='1.0')
+            topic=topic, version='1.0')
         self.context = n_context.get_admin_context_without_session()
         self.fgt_client = n_rpc.get_client(fgt_target)
 
