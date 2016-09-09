@@ -28,6 +28,7 @@ from neutron.agent.l3 import agent
 from neutron.api.rpc.handlers import l3_rpc
 from neutron.common import constants
 from neutron.common import rpc as n_rpc
+from neutron.common import topics
 from neutron import context as n_context
 from neutron import manager
 
@@ -74,7 +75,8 @@ class FortinetAgentRpcApi(agent.L3PluginApi):
 
     def __init__(self, topic, host):
         super(FortinetAgentRpcApi, self).__init__(topic, host)
-        topic = topic if topic else const.FTNT_AGENT
+        topic = topic if topic else topics.L3PLUGIN
+        #const.FTNT_AGENT
         fgt_target = oslo_messaging.Target(
             topic=topic, version='1.0')
         self.context = n_context.get_admin_context_without_session()
