@@ -64,7 +64,7 @@ def checktimestamp(method):
     return wrapper
 
 
-class FortinetAgentRpcApi(agent.L3PluginApi):
+class FortinetAgentRpcApi(object):
     """Agent-side RPC (stub) for agent-to-plugin interaction.
 
     This class implements the client side of an rpc interface.  The server side
@@ -75,8 +75,7 @@ class FortinetAgentRpcApi(agent.L3PluginApi):
 
     def __init__(self, topic, host):
         super(FortinetAgentRpcApi, self).__init__(topic, host)
-        topic = topic if topic else topics.L3PLUGIN
-        #const.FTNT_AGENT
+        topic = topic if topic else const.FTNT_AGENT
         fgt_target = oslo_messaging.Target(
             topic=topic, version='1.0')
         self.context = n_context.get_admin_context_without_session()
@@ -123,7 +122,7 @@ class FortinetAgentRpcApi(agent.L3PluginApi):
         return cctxt.cast(context, 'update_data', **kwargs)
 
 
-class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
+class FortinetAgentRpcCallback(object):
     """Processes the rpc report in Fortinet plugin implementations.
 
     This class implements the server side of an rpc interface.  The client side
@@ -135,7 +134,7 @@ class FortinetAgentRpcCallback(l3_rpc.L3RpcCallback):
     START_TIME = timeutils.utcnow()
 
     def __init__(self, plugin=None, task_manager=None):
-        super(FortinetAgentRpcCallback, self).__init__()
+        #super(FortinetAgentRpcCallback, self).__init__()
         if not task_manager:
             self.task_manager = tasks.TaskManager()
             self.task_manager.start()

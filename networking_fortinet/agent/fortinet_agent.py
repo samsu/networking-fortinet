@@ -27,6 +27,7 @@ from oslo_utils import timeutils
 
 from neutron.agent.common import utils as common_utils
 
+from neutron.agent.l3 import agent as l3_agent
 from neutron.agent.l3 import dvr
 from neutron.agent.l3 import dvr_edge_router as dvr_router
 #from neutron.agent.l3 import dvr_local_router as dvr_local_router
@@ -138,7 +139,8 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
 
         self.driver = common_utils.load_interface_driver(self.conf)
         self.context = n_context.get_admin_context_without_session()
-        self.plugin_rpc = FortinetL3PluginApi(topics.L3PLUGIN, host)
+        self.plugin_rpc = l3_agent.L3PluginApi(topics.L3PLUGIN, host)
+        self.ftnt_rpc = FortinetL3PluginApi(const.FTNT_AGENT, host)
         self.task_manager = tasks.TaskManager()
         self.task_manager.start()
         self.fortigates = []
