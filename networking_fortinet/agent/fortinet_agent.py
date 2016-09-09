@@ -617,12 +617,12 @@ class L3NATAgentWithStateReport(FortinetAgent):
     def __init__(self, host, conf=None):
         self.use_call = True
         super(L3NATAgentWithStateReport, self).__init__(host=host, conf=conf)
-        ###self.state_rpc = agent_rpc.PluginReportStateAPI(topics.PLUGIN)
-        self.state_rpc = agent_rpc.PluginReportStateAPI(topics.L3PLUGIN)
+        self.state_rpc = agent_rpc.PluginReportStateAPI(topics.PLUGIN)
         self.agent_state = {
             'binary': 'neutron-l3-agent',
             'host': host,
-            'topic': const.FTNT_AGENT,
+            ### const.FTNT_AGENT,
+            'topic': topics.L3_AGENT,
             'configurations': {
                 'agent_mode': self.conf.agent_mode,
                 'use_namespaces': self.conf.use_namespaces,
