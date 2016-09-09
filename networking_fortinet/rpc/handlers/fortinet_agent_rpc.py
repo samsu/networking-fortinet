@@ -141,8 +141,6 @@ class FortinetAgentRpcCallback(object):
             self.task_manager.start()
         else:
             self.task_manager = task_manager
-        self.l3_plugin = manager.NeutronManager.get_service_plugins().get(
-            p_const.L3_ROUTER_NAT)
 
     @log_helpers.log_method_call
     @checktimestamp
@@ -198,8 +196,11 @@ class FortinetAgentRpcCallback(object):
         host = body.get('host')
         fortigate = fortinet_db.query_record(
             context, fortinet_db.Fortinet_Fortigate, host=host)
-
-        routers = self.l3_plugin.sync_routers(context, **body)
+        l3_plugin = manager.NeutronManager.get_service_plugins().get(
+            p_const.L3_ROUTER_NAT, None)
+        if not l3_plugin:
+            return {}
+        routers = l3_plugin.sync_routers(context, **body)
         for router in routers:
             rinfo = self._get_router_info(context, fortigate.id, router)
             rinfo.setdefault('fortigate', fortigate.make_dict())
