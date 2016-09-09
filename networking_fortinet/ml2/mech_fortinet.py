@@ -103,6 +103,7 @@ class FortinetMechanismDriver(driver_api.MechanismDriver):
         LOG.debug("FortinetMechanismDriver_setup_rpc")
         #self.topic = topics.L3PLUGIN
         self.topic = const.FTNT_AGENT
+        import ipdb;ipdb.set_trace()
         self.conn = n_rpc.create_connection(new=True)
         self.endpoints = [fortinet_agent_rpc.FortinetAgentRpcCallback(
             task_manager=self.task_manager)]
