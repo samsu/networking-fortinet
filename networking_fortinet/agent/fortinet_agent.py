@@ -213,7 +213,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         agent_state = {'fortigate_ip': self.fortigate.cfg.address,
                        'status': 'enable'}
         self.fortigates.append(
-            self.plugin_rpc.device_register(agent_state, use_call=True))
+            self.ftnt_rpc.device_register(agent_state, use_call=True))
 
     @log_helpers.log_method_call
     def _check_config_params(self):
@@ -471,8 +471,10 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
                 try:
                     update.timestamp = timeutils.utcnow()
                     print "### update = %s" % update
-                    routers = self.plugin_rpc.get_routers(self.context,
-                                                          [update.id])
+                    #routers = self.plugin_rpc.get_routers(self.context,
+                    #                                      [update.id])
+                    routers = self.ftnt_rpc.get_routers(self.context,
+                                                        [update.id])
                 except Exception:
                     msg = _LE("Failed to fetch router information for '%s'")
                     LOG.exception(msg, update.id)
