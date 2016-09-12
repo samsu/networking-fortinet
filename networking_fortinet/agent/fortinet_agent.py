@@ -460,8 +460,8 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
     @log_helpers.log_method_call
     def _process_router_update(self):
         for rp, update in self._queue.each_update_to_next_router():
-            LOG.debug("Starting router update for %s, action %s, priority %s",
-                      update.id, update.action, update.priority)
+            LOG.debug("Starting router update for %s, action %s, router %s",
+                      update.id, update.action, update.router)
             if update.action == queue.PD_UPDATE:
                 self.pd.process_prefix_update()
                 LOG.debug("Finished a router update for %s", update.id)
