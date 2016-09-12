@@ -182,6 +182,7 @@ class FortinetAgentRpcCallback(object):
                               "threshold agent down"
                               "time: %(threshold)s."), log_dict)
 
+    @log_helpers.log_method_call
     @checktimestamp
     def ftnt_sync_routers(self, context, **kwargs):
         """Sync routers according to filters to a specific agent.
