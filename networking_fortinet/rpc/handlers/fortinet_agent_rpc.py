@@ -202,7 +202,7 @@ class FortinetAgentRpcCallback(object):
         if not l3_plugin:
             return {}
         import ipdb;ipdb.set_trace()
-        routers = l3_plugin.sync_routers(context, **body)
+        routers = l3_plugin.endpoints[0].sync_routers(context, **body)
         for router in routers:
             rinfo = self._get_router_info(context, fortigate.id, router)
             rinfo.setdefault('fortigate', fortigate.make_dict())
