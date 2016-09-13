@@ -219,8 +219,7 @@ class Router(Base, router.RouterInfo):
         # other things .e.g. ports
         ex_gw_port = self.get_ex_gw_port()
         if ex_gw_port:
-            import ipdb;ipdb.set_trace()
             self.fip_ns = agent.get_fip_ns(ex_gw_port['network_id'])
             #self.fip_ns.scan_fip_ports(self)
-
+        import ipdb;ipdb.set_trace()
         super(Router, self).process(agent)
