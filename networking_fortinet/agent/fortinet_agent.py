@@ -553,7 +553,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
     def ftnt_sync_routers(self, context, routers):
         """
         :param context:
-        :param ns_manager:
+        :param routers:
         :return:
         """
         if not routers:

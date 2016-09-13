@@ -176,7 +176,6 @@ class Router(Base, router.RouterInfo):
         self.fortigate = fortigate
         # A bunch of resources in the Fortigate
         self.cfg = None
-        import ipdb;ipdb.set_trace()
         super(Router, self).__init__(fortigate, task_manager=task_manager, *args, **kwargs)
 
     @log_helpers.log_method_call
