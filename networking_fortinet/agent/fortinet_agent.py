@@ -471,8 +471,9 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
                 try:
                     update.timestamp = timeutils.utcnow()
                     print "### update = %s" % update
-                    routers = self.ftnt_rpc.get_routers(self.context,
-                                                        [update.id])
+                    routers = self.ftnt_sync_routers(
+                        self.context, self.plugin_rpc.get_routers(
+                            self.context, [update.id]))
                 except Exception:
                     msg = _LE("Failed to fetch router information for '%s'")
                     LOG.exception(msg, update.id)
