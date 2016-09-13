@@ -198,7 +198,6 @@ class FortinetAgentRpcCallback(object):
         routers = kwargs.get('routers')
         fortigate = fortinet_db.query_record(
             context, fortinet_db.Fortinet_Fortigate, host=host)
-        import ipdb;ipdb.set_trace()
         for router in routers:
             rinfo = self._get_router_info(context, fortigate.id, router)
             rinfo.setdefault('fortigate', fortigate.make_dict())
