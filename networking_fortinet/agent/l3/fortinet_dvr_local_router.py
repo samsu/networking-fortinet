@@ -462,6 +462,7 @@ class DvrLocalRouter(dvr_local_router.DvrLocalRouter):
     @log_helpers.log_method_call
     def process(self, agent):
         ex_gw_port = self.get_ex_gw_port()
+        import ipdb;ipdb.set_trace()
         if ex_gw_port:
             self.fip_ns = agent.get_fip_ns(ex_gw_port['network_id'])
             self.fip_ns.scan_fip_ports(self)
