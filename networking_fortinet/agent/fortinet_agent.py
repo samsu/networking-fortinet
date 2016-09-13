@@ -571,7 +571,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
             else:
                 routers = self.plugin_rpc.get_routers(context,
                                                       [self.conf.router_id])
-            routers = self.ftnt_sync_routers(self, context, routers)
+            routers = self.ftnt_sync_routers(context, routers)
         except oslo_messaging.MessagingException:
             LOG.exception(_LE("Failed synchronizing routers due to RPC error"))
             raise n_exc.AbortSyncRouters()
