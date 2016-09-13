@@ -223,4 +223,4 @@ class Router(Base, router.RouterInfo):
             self.fip_ns = agent.get_fip_ns(ex_gw_port['network_id'])
             #self.fip_ns.scan_fip_ports(self)
 
-        #super(Router, self).process(agent)
+        super(Router, self).process(agent)
