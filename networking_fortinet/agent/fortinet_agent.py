@@ -550,6 +550,17 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
             self.fullsync = True
 
     @log_helpers.log_method_call
+    def ftnt_sync_routers(self, context, routers):
+        """
+        :param context:
+        :param ns_manager:
+        :return:
+        """
+        if not routers:
+            return None
+        return self.ftnt_rpc.ftnt_sync_routers(context, routers)
+
+    @log_helpers.log_method_call
     def fetch_and_sync_all_routers(self, context, ns_manager):
         prev_router_ids = set(self.router_info)
         timestamp = timeutils.utcnow()
@@ -560,7 +571,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
             else:
                 routers = self.plugin_rpc.get_routers(context,
                                                       [self.conf.router_id])
-
+            routers = self.ftnt_sync_routers(self, context, routers)
         except oslo_messaging.MessagingException:
             LOG.exception(_LE("Failed synchronizing routers due to RPC error"))
             raise n_exc.AbortSyncRouters()

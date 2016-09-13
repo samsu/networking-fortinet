@@ -61,6 +61,7 @@ def checktimestamp(method):
                       "Skipping processing because it's older than the "
                       "server start timestamp: %(server_time)s", log_dict)
             return
+        kwargs = kwargs.get('body', kwargs)
         return method(self, *args, **kwargs)
 
     return wrapper
@@ -89,19 +90,19 @@ class FortinetAgentRpcApi(object):
         # self.agent_state['uuid'] = uuidutils.generate_uuid()
         agent_state['host'] = self.host
         kwargs = {
-            'agent_state': {'agent_state': agent_state},
+            'body': {'agent_state': agent_state},
             'time': datetime.utcnow().strftime(constants.ISO8601_TIME_FORMAT),
         }
         method = cctxt.call if use_call else cctxt.cast
         return method(self.context, 'device_register', **kwargs)
 
     @log_helpers.log_method_call
-    def get_routers(self, context, router_ids=None):
+    def ftnt_sync_routers(self, context, routers):
         """Make a remote process call to retrieve the sync data for routers."""
         cctxt = self.fgt_client.prepare()
         body = {
             'host': self.host,
-            'router_ids': router_ids
+            'routers': routers
         }
         kwargs = {
             'body': body,
@@ -146,7 +147,7 @@ class FortinetAgentRpcCallback(object):
     @checktimestamp
     def device_register(self, context, **kwargs):
         """The first report state when fortinet agent start to server."""
-        agent_state = kwargs['agent_state']['agent_state']
+        agent_state = kwargs['agent_state']
         fortigate = fortinet_db.add_record(
             context, fortinet_db.Fortinet_Fortigate, **agent_state)
         return fortigate['result'].make_dict()
@@ -193,16 +194,11 @@ class FortinetAgentRpcCallback(object):
                  with their interfaces and floating_ips
         """
         # import ipdb;ipdb.set_trace()
-        body = kwargs['body']
-        host = body.get('host')
+        host = kwargs.get('host')
+        routers = kwargs.get('routers')
         fortigate = fortinet_db.query_record(
             context, fortinet_db.Fortinet_Fortigate, host=host)
-        l3_plugin = manager.NeutronManager.get_service_plugins().get(
-            p_const.L3_ROUTER_NAT, None)
-        if not l3_plugin:
-            return {}
         import ipdb;ipdb.set_trace()
-        routers = l3_plugin.endpoints[0].sync_routers(context, **body)
         for router in routers:
             rinfo = self._get_router_info(context, fortigate.id, router)
             rinfo.setdefault('fortigate', fortigate.make_dict())
