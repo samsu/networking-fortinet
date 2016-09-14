@@ -299,8 +299,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
             else:
                 #return dvr_local_router.DvrLocalRouter(*args, **kwargs)
                 #import ipdb;ipdb.set_trace()
-                return fortigate.Router(self.fortigate,
-                                        task_manager=self.task_manager)
+                return fortigate.Router(self.fortigate, **kwargs)
 
         if router.get('ha'):
             kwargs['state_change_callback'] = self.enqueue_state_change
