@@ -187,19 +187,19 @@ class Router(router_info.RouterInfo):
         try:
             if 'vdom' in cfg:
                 self.fgt.add_resource(task_id, resources.Vdom,
-                                  name=cfg['vdom']['vdom'])
+                                      name=cfg['vdom']['vdom'])
             if 'vlink' in cfg:
                 vlinkinfo = cfg['vlink']
                 if 'vdomlink' in vlinkinfo:
                     self.fgt.add_resource(task_id, resources.VdomLink,
-                                      name=vlinkinfo['vdomlink']['name'])
+                                          name=vlinkinfo['vdomlink']['name'])
                 if 'vlaninterface' in vlinkinfo:
                     for inf in vlinkinfo['vlaninterface']:
                         self.fgt.set_resource(task_id, resources.VlanInterface,
-                                          **inf)
+                                              **inf)
                 if 'routestatic' in vlinkinfo:
                     r = self.fgt.add_resource(task_id, resources.RouterStatic,
-                                          **vlinkinfo['routestatic'])
+                                              **vlinkinfo['routestatic'])
                     if 'ADD' == r['http_method']:
                         res['routestatic'] = vlinkinfo['routestatic']
                         res['routestatic']['edit_id'] = r['results']['mkey']
