@@ -67,7 +67,7 @@ class RouterInfo(object):
         #    namespace=self.ns_name)
         self.routes = []
         self.agent_conf = agent_conf
-        self.driver = interface.FortinetOVSInterfaceDriver or interface_driver
+        self.driver = interface_driver or interface.FortinetOVSInterfaceDriver
         # radvd is a neutron.agent.linux.ra.DaemonMonitor
         self.radvd = None
 
