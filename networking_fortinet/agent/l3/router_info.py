@@ -325,7 +325,7 @@ class RouterInfo(object):
                                 interface_name, prefix):
         LOG.debug("adding internal network: prefix(%s), port(%s)",
                   prefix, port_id)
-        import ipdb;ipd.set_trace()
+        import ipdb;ipdb.set_trace()
         self.driver.plug(network_id, port_id, interface_name, mac_address,
                          namespace=ns_name,
                          prefix=prefix)
