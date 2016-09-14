@@ -48,6 +48,9 @@ class Fortigate(object):
 
     @log_helpers.log_method_call
     def initialize(self):
+        """
+        :return:
+        """
         if not getattr(self.cfg, 'address', None):
             # samsu: it means use general network nodes instead of a fgt
             return
@@ -58,6 +61,9 @@ class Fortigate(object):
 
     @log_helpers.log_method_call
     def setup_env(self):
+        """
+        :return:
+        """
         # Prepare a fortigate vdom for external network in advance
         session = db_api.get_session()
         try:
@@ -75,7 +81,6 @@ class Fortigate(object):
         """Fortinet api client initialization."""
         if not self.cfg.address:
             return None
-
         api_server = [(self.cfg.address, self.cfg.port,
                        'https' == self.cfg.protocol)]
         return client.FortiosApiClient(
@@ -83,6 +88,7 @@ class Fortigate(object):
 
     @log_helpers.log_method_call
     def sync_conf_to_db(self, param):
+        """sync conf to database"""
         cls = getattr(fortinet_db, const.FORTINET_PARAMS[param]['cls'])
         conf_list = self.get_range(param)
         session = db_api.get_session()
@@ -125,17 +131,6 @@ class Fortigate(object):
 
         return result if isinstance(result, list) else list(result)
 
-
-class Base(object):
-    def __init__(self, fortigate, task_manager=None, *args, **kwargs):
-        self.fortigate = fortigate
-        self.api_client = fortigate.api_client
-        if task_manager:
-            self.task_manager = task_manager
-        else:
-            self.task_manager = tasks.TaskManager()
-            self.task_manager.start()
-
     def getid(self, context):
         id = getattr(context, 'request_id', None)
         if not id:
@@ -171,12 +166,14 @@ class Base(object):
         return self.op(resource.delete, task_id=task_id, **kwargs)
 
 
-class Router(Base, router.RouterInfo):
-    def __init__(self, fortigate, task_manager=None, *args, **kwargs):
-        self.fortigate = fortigate
+class Router(router.RouterInfo):
+    def __init__(self, fortigate, router_id, router, agent_conf,
+                 interface_driver, use_ipv6=False):
+        self.fgt = fortigate
         # A bunch of resources in the Fortigate
-        self.cfg = None
-        super(Router, self).__init__(fortigate, task_manager=task_manager, *args, **kwargs)
+        self.cfg = {}
+        super(Router, self).__init__(router_id, router, agent_conf,
+                                     interface_driver, use_ipv6)
 
     @log_helpers.log_method_call
     def create_router(self, router):
@@ -188,19 +185,19 @@ class Router(Base, router.RouterInfo):
         task_id = router.get('id', None)
         try:
             if 'vdom' in cfg:
-                self.add_resource(task_id, resources.Vdom,
+                self.fgt.add_resource(task_id, resources.Vdom,
                                   name=cfg['vdom']['vdom'])
             if 'vlink' in cfg:
                 vlinkinfo = cfg['vlink']
                 if 'vdomlink' in vlinkinfo:
-                    self.add_resource(task_id, resources.VdomLink,
+                    self.fgt.add_resource(task_id, resources.VdomLink,
                                       name=vlinkinfo['vdomlink']['name'])
                 if 'vlaninterface' in vlinkinfo:
                     for inf in vlinkinfo['vlaninterface']:
-                        self.set_resource(task_id, resources.VlanInterface,
+                        self.fgt.set_resource(task_id, resources.VlanInterface,
                                           **inf)
                 if 'routestatic' in vlinkinfo:
-                    r = self.add_resource(task_id, resources.RouterStatic,
+                    r = self.fgt.add_resource(task_id, resources.RouterStatic,
                                           **vlinkinfo['routestatic'])
                     if 'ADD' == r['http_method']:
                         res['routestatic'] = vlinkinfo['routestatic']
@@ -210,8 +207,8 @@ class Router(Base, router.RouterInfo):
             with excutils.save_and_reraise_exception():
                 LOG.error(_LE("Failed to create_router router=%(router)s"),
                           {"router": router})
-                self.rollback(task_id)
-        self.finish(task_id)
+                self.fgt.rollback(task_id)
+        self.fgt.finish(task_id)
         return res
 
     def process(self, agent):
