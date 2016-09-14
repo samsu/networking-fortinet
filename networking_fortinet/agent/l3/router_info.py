@@ -26,11 +26,11 @@ from neutron.common import ipv6_utils
 from neutron.common import utils as common_utils
 from neutron.i18n import _LW
 
-from networking_fortinet.common import constants as const
+from networking_fortinet.common import constants as consts
 
 LOG = logging.getLogger(__name__)
-INTERNAL_DEV_PREFIX = const.INTERNAL_DEV_PORT
-EXTERNAL_DEV_PREFIX = const.EXTERNAL_DEV_PORT
+INTERNAL_DEV_PREFIX = consts.INTERNAL_DEV_PORT
+EXTERNAL_DEV_PREFIX = consts.EXTERNAL_DEV_PORT
 
 FLOATINGIP_STATUS_NOCHANGE = object()
 
