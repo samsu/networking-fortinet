@@ -326,8 +326,7 @@ class RouterInfo(object):
     def _internal_network_added(self, ns_name, network_id, port_id,
                                 fixed_ips, mac_address,
                                 interface_name):
-        LOG.debug("adding internal network: prefix(%s), port(%s)",
-                  prefix, port_id)
+        LOG.debug("adding internal network: port(%s)", port_id)
         import ipdb;ipdb.set_trace()
         self.driver.plug(network_id, port_id, interface_name, mac_address,
                          namespace=ns_name)
