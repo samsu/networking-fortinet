@@ -172,6 +172,7 @@ class Router(router.RouterInfo):
         self.fgt = fortigate
         # A bunch of resources in the Fortigate
         self.cfg = {}
+        import ipdb;ipdb.set_trace()
         super(Router, self).__init__(router_id, router, agent_conf,
                                      interface_driver, use_ipv6)
 
