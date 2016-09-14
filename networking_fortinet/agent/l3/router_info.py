@@ -29,8 +29,10 @@ from neutron.i18n import _LW
 from networking_fortinet.common import constants as consts
 
 LOG = logging.getLogger(__name__)
-INTERNAL_DEV_PREFIX = consts.INTERNAL_DEV_PORT
-EXTERNAL_DEV_PREFIX = consts.EXTERNAL_DEV_PORT
+INTERNAL_DEV_PORT = consts.INTERNAL_DEV_PORT
+EXTERNAL_DEV_PORT = consts.EXTERNAL_DEV_PORT
+INTERNAL_DEV_PREFIX = INTERNAL_DEV_PORT
+EXTERNAL_DEV_PREFIX = EXTERNAL_DEV_PORT
 
 FLOATINGIP_STATUS_NOCHANGE = object()
 
@@ -110,7 +112,7 @@ class RouterInfo(object):
         #return (INTERNAL_DEV_PREFIX + port_id)[:self.driver.DEV_NAME_LEN]
         LOG.debug('### get_internal_device_name*() port_id %(port_id)s', {'port_id': port_id})
         print "### get_internal_device_name*() port_id = %s" % port_id
-        return const.INTERNAL_DEV_PORT
+        return INTERNAL_DEV_PORT
 
     @log_helpers.log_method_call
     def get_external_device_name(self, port_id):

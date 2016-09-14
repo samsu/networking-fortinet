@@ -37,8 +37,8 @@ from networking_fortinet.tasks import tasks
 LOG = logging.getLogger(__name__)
 # xor-folding mask used for IPv6 rule index
 MASK_30 = 0x3fffffff
-INTERNAL_DEV_PREFIX = consts.INTERNAL_DEV_PORT
-EXTERNAL_DEV_PREFIX = consts.EXTERNAL_DEV_PORT
+INTERNAL_DEV_PORT = consts.INTERNAL_DEV_PORT
+EXTERNAL_DEV_PORT = consts.EXTERNAL_DEV_PORT
 
 class DvrLocalRouter(dvr_local_router.DvrLocalRouter):
     def __init__(self, agent, host, *args, **kwargs):
@@ -194,7 +194,7 @@ class DvrLocalRouter(dvr_local_router.DvrLocalRouter):
 
     @log_helpers.log_method_call
     def get_internal_device_name(self, port_id):
-        return INTERNAL_DEV_PREFIX
+        return INTERNAL_DEV_PORT
 
     @log_helpers.log_method_call
     def _update_arp_entry(self, ip, mac, subnet_id, operation):
