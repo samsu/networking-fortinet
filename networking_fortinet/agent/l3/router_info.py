@@ -26,9 +26,11 @@ from neutron.common import ipv6_utils
 from neutron.common import utils as common_utils
 from neutron.i18n import _LW
 
+from networking_fortinet.common import constants as const
+
 LOG = logging.getLogger(__name__)
-INTERNAL_DEV_PREFIX = namespaces.INTERNAL_DEV_PREFIX
-EXTERNAL_DEV_PREFIX = namespaces.EXTERNAL_DEV_PREFIX
+INTERNAL_DEV_PREFIX = const.INTERNAL_DEV_PORT
+EXTERNAL_DEV_PREFIX = const.EXTERNAL_DEV_PORT
 
 FLOATINGIP_STATUS_NOCHANGE = object()
 
@@ -41,7 +43,6 @@ class RouterInfo(object):
                  agent_conf,
                  interface_driver,
                  use_ipv6=False):
-        import ipdb;ipdb.set_trace()
         self.router_id = router_id
         self.ex_gw_port = None
         self._snat_enabled = None
@@ -109,7 +110,7 @@ class RouterInfo(object):
         #return (INTERNAL_DEV_PREFIX + port_id)[:self.driver.DEV_NAME_LEN]
         LOG.debug('### get_internal_device_name*() port_id %(port_id)s', {'port_id': port_id})
         print "### get_internal_device_name*() port_id = %s" % port_id
-        return "fgt-int-port"
+        return const.INTERNAL_DEV_PORT
 
     @log_helpers.log_method_call
     def get_external_device_name(self, port_id):
@@ -322,18 +323,18 @@ class RouterInfo(object):
     @log_helpers.log_method_call
     def _internal_network_added(self, ns_name, network_id, port_id,
                                 fixed_ips, mac_address,
-                                interface_name, prefix):
+                                interface_name):
         LOG.debug("adding internal network: prefix(%s), port(%s)",
                   prefix, port_id)
         import ipdb;ipdb.set_trace()
         self.driver.plug(network_id, port_id, interface_name, mac_address,
-                         namespace=ns_name,
-                         prefix=prefix)
+                         namespace=ns_name)
 
         ip_cidrs = common_utils.fixed_ip_cidrs(fixed_ips)
         self.driver.init_router_port(
             interface_name, ip_cidrs, namespace=ns_name)
         for fixed_ip in fixed_ips:
+            # samsu: arp maynot needed in this case
             ip_lib.send_ip_addr_adv_notif(ns_name,
                                           interface_name,
                                           fixed_ip['ip_address'],
@@ -353,8 +354,7 @@ class RouterInfo(object):
                                      port_id,
                                      fixed_ips,
                                      mac_address,
-                                     interface_name,
-                                     INTERNAL_DEV_PREFIX)
+                                     interface_name)
 
     @log_helpers.log_method_call
     def internal_network_removed(self, port):
@@ -362,8 +362,7 @@ class RouterInfo(object):
         LOG.debug("removing internal network: port(%s) interface(%s)",
                   port['id'], interface_name)
         if ip_lib.device_exists(interface_name, namespace=self.ns_name):
-            self.driver.unplug(interface_name, namespace=self.ns_name,
-                               prefix=INTERNAL_DEV_PREFIX)
+            self.driver.unplug(interface_name, namespace=self.ns_name)
 
     @log_helpers.log_method_call
     def _get_existing_devices(self):
@@ -491,8 +490,7 @@ class RouterInfo(object):
                       stale_dev)
             pd.remove_stale_ri_ifname(self.router_id, stale_dev)
             self.driver.unplug(stale_dev,
-                               namespace=self.ns_name,
-                               prefix=INTERNAL_DEV_PREFIX)
+                               namespace=self.ns_name)
 
     @log_helpers.log_method_call
     def _list_floating_ip_cidrs(self):
@@ -704,6 +702,9 @@ class RouterInfo(object):
     def process_external(self, agent):
         fip_statuses = {}
         existing_floating_ips = self.floating_ips
+        ## samsu: not handle yet, return to continue
+        if True:
+            return
         try:
             with self.iptables_manager.defer_apply():
                 ex_gw_port = self.get_ex_gw_port()
