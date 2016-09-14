@@ -167,14 +167,14 @@ class Fortigate(object):
 
 
 class Router(router.RouterInfo):
-    def __init__(self, fortigate, router_id, router, agent_conf,
-                 interface_driver, use_ipv6=False):
+    def __init__(self, fortigate, agent, host, *args, **kwargs):
         self.fgt = fortigate
         # A bunch of resources in the Fortigate
         self.cfg = {}
         import ipdb;ipdb.set_trace()
-        super(Router, self).__init__(router_id, router, agent_conf,
-                                     interface_driver, use_ipv6)
+        self.agent = agent
+        self.host = host
+        super(Router, self).__init__(*args, **kwargs)
 
     @log_helpers.log_method_call
     def create_router(self, router):
