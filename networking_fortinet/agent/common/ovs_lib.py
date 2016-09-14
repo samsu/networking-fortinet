@@ -20,7 +20,7 @@ from neutron.agent.common import ovs_lib
 from oslo_serialization import jsonutils
 
 
-class OVSBridge(ovs_lib.OVSBridge):
+class FortinetOVSBridge(ovs_lib.OVSBridge):
     def set_port(self, port, **kwargs):
         args = ['port', port]
         opts = None
@@ -55,3 +55,11 @@ class OVSBridge(ovs_lib.OVSBridge):
             ret_keys = list(set(fields) & set(keys))
             return {key: res[key] for key in ret_keys}
         return res
+
+    def set_interface(self, port_name, *interface_attr_tuples):
+        """Replace existing port attributes, and configure port interface."""
+        with self.ovsdb.transaction() as txn:
+            if interface_attr_tuples:
+                txn.add(self.ovsdb.db_set('Interface', port_name,
+                                          *interface_attr_tuples))
+        self.get_port_ofport(port_name)
