@@ -13,7 +13,6 @@
 #    under the License.
 
 
-from neutron.agent.l3 import router_info as router
 from neutron.db import api as db_api
 from oslo_config import cfg
 from oslo_log import helpers as log_helpers
@@ -21,6 +20,7 @@ from oslo_utils import excutils
 import six
 
 from networking_fortinet._i18n import _LE
+from networking_fortinet.agent.l3 import router_info as router_info
 from networking_fortinet.api_client import client
 from networking_fortinet.api_client import exception
 from networking_fortinet.common import constants as const
@@ -166,7 +166,7 @@ class Fortigate(object):
         return self.op(resource.delete, task_id=task_id, **kwargs)
 
 
-class Router(router.RouterInfo):
+class Router(router_info.RouterInfo):
     def __init__(self, fortigate, agent, host, *args, **kwargs):
         self.fgt = fortigate
         # A bunch of resources in the Fortigate
