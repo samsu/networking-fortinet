@@ -60,11 +60,12 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
                                         n_const.TAP_DEVICE_PREFIX)
         return dev_name
 
-    def _ovs_add_port(self, bridge, device_name, port_id, mac_address,
-                      internal=True):
+    def _ovs_set_port(self, bridge, device_name, network_id, port_id,
+                      mac_address, internal=True):
         attrs = [('external_ids', {'iface-id': port_id,
                                    'iface-status': 'active',
-                                   'attached-mac': mac_address})]
+                                   'attached-mac': mac_address,
+                                   'network-id': network_id})]
         if internal:
             attrs.insert(0, ('type', 'internal'))
 
@@ -72,7 +73,7 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         ovs.set_interface(device_name, *attrs)
 
     def plug_new(self, network_id, port_id, device_name, mac_address,
-                 bridge=None):
+                 bridge=None, namespace=None, prefix=None):
         """Plug in the interface."""
         if not bridge:
             bridge = self.conf.ovs_integration_bridge
@@ -80,7 +81,7 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         self.check_bridge_exists(bridge)
         tap_name = self._get_tap_name(device_name)
         internal = not self.conf.ovs_use_veth
-        self._ovs_add_port(bridge, tap_name, port_id, mac_address,
+        self._ovs_set_port(bridge, tap_name, network_id, port_id, mac_address,
                            internal=internal)
 
     def unplug(self, device_name, bridge=None, namespace=None, prefix=None):
