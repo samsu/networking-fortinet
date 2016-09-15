@@ -358,8 +358,8 @@ class RouterInfo(object):
     @log_helpers.log_method_call
     def internal_network_removed(self, port):
         interface_name = self.get_internal_device_name(port['id'])
-        LOG.debug("removing internal network: port(%s) interface(%s)",
-                  port['id'], interface_name)
+        LOG.debug("### removing internal network: port(%s) interface(%s)",
+                  port, interface_name)
         if ip_lib.device_exists(interface_name, namespace=self.ns_name):
             self.driver.unplug(interface_name, namespace=self.ns_name)
 
