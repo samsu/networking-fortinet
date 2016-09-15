@@ -78,6 +78,9 @@ AGENT_TYPE_FTNT = 'L3 agent'
 
 INTERNAL_DEV_PORT = 'fgt-int-port'
 EXTERNAL_DEV_PORT = 'fgt-ext-port'
+
+INF_Dr = 'networking_fortinet.agent.linux.interface.FortinetOVSInterfaceDriver'
+
 # Define class
 DICT_DB_MAPS = {
     'routestatic': 'Fortinet_Static_Router'

@@ -27,7 +27,6 @@ from neutron.common import utils as common_utils
 from neutron.i18n import _LW
 
 from networking_fortinet.common import constants as consts
-from networking_fortinet.agent.linux import interface
 
 LOG = logging.getLogger(__name__)
 INTERNAL_DEV_PORT = consts.INTERNAL_DEV_PORT
@@ -67,7 +66,7 @@ class RouterInfo(object):
         #    namespace=self.ns_name)
         self.routes = []
         self.agent_conf = agent_conf
-        self.driver = interface_driver or interface.FortinetOVSInterfaceDriver
+        self.driver = interface_driver
         # radvd is a neutron.agent.linux.ra.DaemonMonitor
         self.radvd = None
 

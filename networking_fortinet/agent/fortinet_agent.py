@@ -136,7 +136,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         self.process_monitor = external_process.ProcessMonitor(
             config=self.conf,
             resource_type='router')
-
+        self.conf.interface_driver = const.INF_Dr
         self.driver = common_utils.load_interface_driver(self.conf)
         self.context = n_context.get_admin_context_without_session()
         self.plugin_rpc = l3_agent.L3PluginApi(topics.L3PLUGIN, host)
