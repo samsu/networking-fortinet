@@ -19,6 +19,8 @@ from neutron.agent.ovsdb import impl_vsctl
 from neutron.agent.common import ovs_lib
 from oslo_serialization import jsonutils
 
+from networking_fortinet.common import constants as consts
+
 # Default timeout for ovs-vsctl command
 DEFAULT_OVS_VSCTL_TIMEOUT = ovs_lib.DEFAULT_OVS_VSCTL_TIMEOUT
 
@@ -30,6 +32,8 @@ UNASSIGNED_OFPORT = ovs_lib.UNASSIGNED_OFPORT
 FAILMODE_SECURE = ovs_lib.FAILMODE_SECURE
 FAILMODE_STANDALONE = ovs_lib.FAILMODE_STANDALONE
 
+INTERNAL_DEV_PORT = consts.INTERNAL_DEV_PORT
+EXTERNAL_DEV_PORT = consts.EXTERNAL_DEV_PORT
 
 class FortinetOVSBridge(ovs_lib.OVSBridge):
     """ FortinetOVSBridge class
@@ -76,3 +80,60 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 txn.add(self.ovsdb.db_set('Interface', port_name,
                                           *interface_attr_tuples))
         self.get_port_ofport(port_name)
+
+    def get_vif_port_set(self):
+        edge_ports = set()
+        results = self.get_ports_attributes(
+            'Interface', columns=['name', 'external_ids', 'ofport'],
+            if_exists=True)
+        for result in results:
+            if result['ofport'] == UNASSIGNED_OFPORT:
+                LOG.warn(_LW("Found not yet ready openvswitch port: %s"),
+                         result['name'])
+            elif result['ofport'] == INVALID_OFPORT:
+                LOG.warn(_LW("Found failed openvswitch port: %s"),
+                         result['name'])
+            elif 'attached-mac' in result['external_ids']:
+                port_id = self.portid_from_external_ids(result['external_ids'])
+                if port_id:
+                    edge_ports.add(port_id)
+        return edge_ports
+
+    def get_port_tag_dict(self):
+        """Get a dict of port names and associated vlan tags.
+
+        e.g. the returned dict is of the following form::
+
+            {u'int-br-eth2': [],
+             u'patch-tun': [],
+             u'qr-76d9e6b6-21': 1,
+             u'tapce5318ff-78': 1,
+             u'tape1400310-e6': 1}
+
+        The TAG ID is only available in the "Port" table and is not available
+        in the "Interface" table queried by the get_vif_port_set() method.
+
+        """
+        results = self.get_ports_attributes(
+            'Port', columns=['name', 'tag'], if_exists=True)
+        return self.get_fortigate_port_tags_dict(
+            {p['name']: p['tag'] for p in results})
+
+    def get_fortigate_port_tags_dict(self, port_tags):
+        """ :return the turnks for fortigate ports
+        :param port_tags:
+        e.g.
+            {u'patch-tun': [],
+            u'qvoa657dec0-e7': 2,
+            u'fgt-int-port': [],
+            u'qvo93095522-ab': 1}
+        :return:
+        """
+        ports = [INTERNAL_DEV_PORT, EXTERNAL_DEV_PORT]
+        # get port_tags like [{u'trunks': [1, 3], u'name': u'fgt-int-port'}]
+        results = self.get_ports_attributes(
+            'Port', columns=['name', 'trunks'], ports=ports, if_exists=True)
+        fgt_port_tags = {p['name']: p['trunks'] for p in results if
+                         p['trunks']}
+        port_tags.update(fgt_port_tags)
+        return port_tags
