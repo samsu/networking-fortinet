@@ -388,7 +388,7 @@ class RouterInfo(object):
         if 'subnets' in port:
             for subnet in port['subnets']:
                 if (netaddr.IPNetwork(subnet['cidr']).version == 6 and
-                    subnet['cidr'] != l3_constants.PROVISIONAL_IPV6_PD_PREFIX):
+                subnet['cidr'] != l3_constants.PROVISIONAL_IPV6_PD_PREFIX):
                     return True
 
     @log_helpers.log_method_call

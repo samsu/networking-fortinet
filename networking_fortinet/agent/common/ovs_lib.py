@@ -19,8 +19,21 @@ from neutron.agent.ovsdb import impl_vsctl
 from neutron.agent.common import ovs_lib
 from oslo_serialization import jsonutils
 
+# Default timeout for ovs-vsctl command
+DEFAULT_OVS_VSCTL_TIMEOUT = ovs_lib.DEFAULT_OVS_VSCTL_TIMEOUT
+
+# Special return value for an invalid OVS ofport
+INVALID_OFPORT = ovs_lib.INVALID_OFPORT
+UNASSIGNED_OFPORT = ovs_lib.UNASSIGNED_OFPORT
+
+# OVS bridge fail modes
+FAILMODE_SECURE = ovs_lib.FAILMODE_SECURE
+FAILMODE_STANDALONE = ovs_lib.FAILMODE_STANDALONE
+
 
 class FortinetOVSBridge(ovs_lib.OVSBridge):
+    """ FortinetOVSBridge class
+    """
     def set_port(self, port, **kwargs):
         args = ['port', port]
         opts = None
