@@ -38,6 +38,8 @@ _main_modules = {
     'ovs-ofctl': 'networking_fortinet.agent.l2.main'
 }
 
+def init_config():
+    pass
 
 def main():
     common_config.init(sys.argv[1:])
@@ -51,6 +53,3 @@ def main():
     }
     ovs_neutron_agent.main(bridge_classes)
 
-
-def init_config():
-    pass
