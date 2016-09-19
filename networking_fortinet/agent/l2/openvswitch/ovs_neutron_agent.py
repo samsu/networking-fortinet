@@ -317,7 +317,8 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
 
         # The initialization is complete; we can start receiving messages
         self.connection.consume_in_threads()
-
+        ## samsu: test
+        import ipdb;ipdb.set_trace()
         self.quitting_rpc_timeout = quitting_rpc_timeout
 
     @log_helpers.log_method_call
