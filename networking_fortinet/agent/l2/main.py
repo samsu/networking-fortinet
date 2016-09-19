@@ -45,7 +45,7 @@ def main():
     common_config.setup_logging()
     n_utils.log_opt_values(LOG)
     bridge_classes = {
-        'br_int': br_int.OVSIntegrationBridge,
+        'br_int': br_int.FortinetOVSIntegrationBridge,
         'br_phys': br_phys.OVSPhysicalBridge,
         'br_tun': br_tun.OVSTunnelBridge,
     }
