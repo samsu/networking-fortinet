@@ -317,8 +317,6 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
 
         # The initialization is complete; we can start receiving messages
         self.connection.consume_in_threads()
-        ## samsu: test
-        import ipdb;ipdb.set_trace()
         self.quitting_rpc_timeout = quitting_rpc_timeout
 
     @log_helpers.log_method_call
@@ -328,7 +326,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             self.int_br_device_count)
         self.agent_state.get('configurations')['in_distributed_mode'] = (
             self.dvr_agent.in_distributed_mode())
-
+        print "@@@#### self.agent_state.get('configurations')['in_distributed_mode']=", self.agent_state.get('configurations')['in_distributed_mode']
         try:
             self.state_rpc.report_state(self.context,
                                         self.agent_state,
