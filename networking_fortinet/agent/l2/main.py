@@ -34,7 +34,10 @@ from networking_fortinet.agent.l2.openvswitch import ovs_neutron_agent
 LOG = logging.getLogger(__name__)
 cfg.CONF.import_group('OVS', 'neutron.plugins.ml2.drivers.openvswitch.agent.'
                       'common.config')
-cls_br_int = br_int.get('FortinetOVSIntegrationBridge') or br_int.get('OVSIntegrationBridge')
+try:
+    cls_br_int = br_int.FortinetOVSIntegrationBridge
+except AttributeError:
+    cls_br_int = br_int.OVSIntegrationBridge
 
 _main_modules = {
     'ovs-ofctl': 'networking_fortinet.agent.l2.main'
