@@ -51,8 +51,7 @@ from neutron.plugins.common import constants as p_const
 from neutron.plugins.ml2.drivers.l2pop.rpc_manager import l2population_rpc
 from neutron.plugins.ml2.drivers.openvswitch.agent.common \
     import constants
-from neutron.plugins.ml2.drivers.openvswitch.agent \
-    import ovs_dvr_neutron_agent
+from networking_fortinet.agent.l2.openvswitch import ovs_dvr_neutron_agent
 
 
 LOG = logging.getLogger(__name__)
