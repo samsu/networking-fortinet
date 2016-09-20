@@ -80,9 +80,9 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
 
         self.check_bridge_exists(bridge)
         tap_name = self._get_tap_name(device_name)
-        internal = not self.conf.ovs_use_veth
+        #internal = not self.conf.ovs_use_veth
         self._ovs_set_port(bridge, tap_name, network_id, port_id, mac_address,
-                           internal=internal)
+                           internal=False)
 
     def unplug(self, device_name, bridge=None, namespace=None, prefix=None):
         """Unplug the interface."""
