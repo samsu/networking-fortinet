@@ -21,14 +21,14 @@ from oslo_config import cfg
 from oslo_log import log as logging
 from neutron.common import config as common_config
 from neutron.common import utils as n_utils
-from neutron.plugins.ml2.drivers.openvswitch.agent.openflow.ovs_ofctl \
-    import br_int
+#from neutron.plugins.ml2.drivers.openvswitch.agent.openflow.ovs_ofctl \
+#    import br_int
 from neutron.plugins.ml2.drivers.openvswitch.agent.openflow.ovs_ofctl \
     import br_phys
 from neutron.plugins.ml2.drivers.openvswitch.agent.openflow.ovs_ofctl \
     import br_tun
 
-#from networking_fortinet.agent.l2.openvswitch import br_int
+from networking_fortinet.agent.l2.openvswitch import br_int
 from networking_fortinet.agent.l2.openvswitch import ovs_neutron_agent
 
 LOG = logging.getLogger(__name__)
