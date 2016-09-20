@@ -19,6 +19,7 @@ from neutron.agent.ovsdb import impl_vsctl
 from neutron.agent.common import ovs_lib
 from oslo_serialization import jsonutils
 
+from networking_fortinet._i18n import _LW
 from networking_fortinet.common import constants as consts
 
 # Default timeout for ovs-vsctl command
