@@ -1259,6 +1259,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
 
     @log_helpers.log_method_call
     def scan_ports(self, registered_ports, sync, updated_ports=None):
+        print "@@@## self.int_br.get_vif_port_set=", self.int_br.get_vif_port_set
         cur_ports = self.int_br.get_vif_port_set()
         self.int_br_device_count = len(cur_ports)
         port_info = self._get_port_info(registered_ports, cur_ports, sync)
