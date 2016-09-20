@@ -35,10 +35,14 @@ FAILMODE_STANDALONE = ovs_lib.FAILMODE_STANDALONE
 INTERNAL_DEV_PORT = consts.INTERNAL_DEV_PORT
 EXTERNAL_DEV_PORT = consts.EXTERNAL_DEV_PORT
 
+LOG = ovs_lib.LOG
+
 class FortinetOVSBridge(ovs_lib.OVSBridge):
     """ FortinetOVSBridge class
     """
     def set_port(self, port, **kwargs):
+        LOG.debug("## set_port() called, port = %(port)s, kwargs = %(kwargs)s",
+                  {'port': port, 'kwargs': kwargs})
         args = ['port', port]
         opts = None
         if kwargs:
@@ -75,6 +79,9 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
 
     def set_interface(self, port_name, *interface_attr_tuples):
         """Replace existing port attributes, and configure port interface."""
+        LOG.debug("### set_interface() called, port_name = %(port_name)s, "
+                  "attrs = %(attrs)s",
+                  {'port_name': port_name, 'attrs': interface_attr_tuples})
         with self.ovsdb.transaction() as txn:
             if interface_attr_tuples:
                 txn.add(self.ovsdb.db_set('Interface', port_name,
@@ -82,6 +89,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         self.get_port_ofport(port_name)
 
     def get_vif_port_set(self):
+        LOG.debug("### get_vif_port_set() called")
         edge_ports = set()
         results = self.get_ports_attributes(
             'Interface', columns=['name', 'external_ids', 'ofport'],
@@ -114,6 +122,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         in the "Interface" table queried by the get_vif_port_set() method.
 
         """
+        LOG.debug("### get_port_tag_dict() called")
         results = self.get_ports_attributes(
             'Port', columns=['name', 'tag'], if_exists=True)
         return self.get_fortigate_port_tags_dict(
