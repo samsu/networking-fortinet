@@ -90,6 +90,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
 
     def get_vif_port_set(self):
         LOG.debug("### get_vif_port_set() called")
+        print "### get_vif_port_set() called"
         edge_ports = set()
         results = self.get_ports_attributes(
             'Interface', columns=['name', 'external_ids', 'ofport'],
