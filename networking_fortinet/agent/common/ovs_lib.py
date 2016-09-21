@@ -107,7 +107,6 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         LOG.debug("### cur_attrs = %(cur_attrs)s, interface attrs "
                   "after update new_attrs = %(new_attrs)s",
                   {'cur_attrs': cur_attrs, 'new_attrs': new_attrs})
-        import ipdb;ipdb.set_trace()
         with self.ovsdb.transaction() as txn:
             if interface_attr_tuples:
                 txn.add(self.ovsdb.db_set('Interface', port_name, *new_attrs))
