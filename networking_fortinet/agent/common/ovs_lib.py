@@ -78,6 +78,21 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             return {key: res[key] for key in ret_keys}
         return res
 
+    def update_attributes(self, cur_attrs, interface_attr_tuples):
+        if not cur_attrs:
+            return interface_attr_tuples
+
+        cur_attrs = cur_attrs[0]
+        new_attrs = dict(interface_attr_tuples)
+        for k, v in new_attrs.iteritems():
+            if k in cur_attrs:
+                if isinstance(v, dict):
+                    cur_attrs[k].update(new_attrs[k])
+                    continue
+            cur_attrs[k] = new_attrs[k]
+        return tuple(cur_attrs.items())
+
+
     def set_interface(self, port_name, *interface_attr_tuples):
         """Replace existing port attributes, and configure port interface."""
         LOG.debug("### set_interface() called, port_name = %(port_name)s, "
