@@ -15,6 +15,8 @@
 #    under the License.
 #
 
+import copy
+
 from neutron.agent.ovsdb import impl_vsctl
 from neutron.agent.common import ovs_lib
 from oslo_serialization import jsonutils
@@ -82,15 +84,15 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         if not cur_attrs:
             return interface_attr_tuples
 
-        cur_attrs = cur_attrs[0]
-        new_attrs = dict(interface_attr_tuples)
-        for k, v in new_attrs.iteritems():
-            if k in cur_attrs:
+        new_attrs = copy.copy(cur_attrs[0])
+        added_attrs = dict(interface_attr_tuples)
+        for k, v in added_attrs.iteritems():
+            if k in new_attrs:
                 if isinstance(v, dict):
-                    cur_attrs[k].update(new_attrs[k])
+                    cur_attrs[k].update(added_attrs[k])
                     continue
-            cur_attrs[k] = new_attrs[k]
-        return tuple(cur_attrs.items())
+            new_attrs[k] = added_attrs[k]
+        return tuple(new_attrs.items())
 
     def set_interface(self, port_name, *interface_attr_tuples):
         """Replace existing port attributes, and configure port interface."""
