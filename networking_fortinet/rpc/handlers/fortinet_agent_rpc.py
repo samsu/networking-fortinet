@@ -195,7 +195,7 @@ class FortinetAgentRpcCallback(object):
         """
         # import ipdb;ipdb.set_trace()
         host = kwargs.get('host')
-        routers = kwargs.get('routers')
+        routers = kwargs.get('routers') or {}
         fortigate = fortinet_db.query_record(
             context, fortinet_db.Fortinet_Fortigate, host=host)
         for router in routers:
