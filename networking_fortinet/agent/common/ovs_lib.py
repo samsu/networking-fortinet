@@ -90,8 +90,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     cur_attrs[k].update(new_attrs[k])
                     continue
             cur_attrs[k] = new_attrs[k]
-        interface_attr_tuples = tuple(cur_attrs.items())
-        return interface_attr_tuples
+        return tuple(cur_attrs.items())
 
     def set_interface(self, port_name, *interface_attr_tuples):
         """Replace existing port attributes, and configure port interface."""
@@ -102,15 +101,14 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         cur_attrs = self.get_ports_attributes('Interface', columns=columns,
                                               ports=[port_name],
                                               if_exists=True)
-        self.update_attributes(cur_attrs, interface_attr_tuples)
-        LOG.debug("### cur_attrs = %(cur_attrs)s, interface_attr_tuples "
-                  "after update attrs = %(attrs)s",
-                  {'cur_attrs': cur_attrs, 'attrs': interface_attr_tuples})
+        new_attrs = self.update_attributes(cur_attrs, interface_attr_tuples)
+        LOG.debug("### cur_attrs = %(cur_attrs)s, interface attrs "
+                  "after update new_attrs = %(new_attrs)s",
+                  {'cur_attrs': cur_attrs, 'new_attrs': new_attrs})
         import ipdb;ipdb.set_trace()
         with self.ovsdb.transaction() as txn:
             if interface_attr_tuples:
-                txn.add(self.ovsdb.db_set('Interface', port_name,
-                                          *interface_attr_tuples))
+                txn.add(self.ovsdb.db_set('Interface', port_name, *new_attrs))
         self.get_port_ofport(port_name)
 
     def get_vif_port_set(self):
