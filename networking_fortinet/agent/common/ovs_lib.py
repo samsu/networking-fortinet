@@ -89,7 +89,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         for k, v in added_attrs.iteritems():
             if k in new_attrs:
                 if isinstance(v, dict):
-                    cur_attrs[k].update(added_attrs[k])
+                    new_attrs[k].update(added_attrs[k])
                     continue
             new_attrs[k] = added_attrs[k]
         return tuple(new_attrs.items())
