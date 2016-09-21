@@ -84,7 +84,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         if not cur_attrs:
             return interface_attr_tuples
 
-        new_attrs = copy.copy(cur_attrs[0])
+        new_attrs = copy.deepcopy(cur_attrs[0])
         added_attrs = dict(interface_attr_tuples)
         for k, v in added_attrs.iteritems():
             if k in new_attrs:
