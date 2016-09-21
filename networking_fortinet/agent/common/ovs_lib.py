@@ -166,7 +166,6 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         # get port_tags like [{u'trunks': [1, 3], u'name': u'fgt-int-port'}]
         results = self.get_ports_attributes(
             'Port', columns=['name', 'trunks'], ports=ports, if_exists=True)
-        fgt_port_tags = {p['name']: p['trunks'] for p in results if
-                         p['trunks']}
+        fgt_port_tags = {p['name']: p['trunks'] for p in results}
         port_tags.update(fgt_port_tags)
         return port_tags
