@@ -1410,7 +1410,8 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             [vif['device'] for vif in devices])
         for details in devices:
             device = details['device']
-            LOG.debug("Processing port: %s", device)
+            LOG.debug("## Processing port details: %s", details)
+            LOG.debug("## Processing port: %s", device)
             port = vif_by_id.get(device)
             if not port:
                 # The port disappeared and cannot be processed
