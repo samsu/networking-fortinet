@@ -401,6 +401,7 @@ class OVSDVRNeutronAgent(object):
 
         subnet_info = ldm.get_subnet_info()
         ip_version = subnet_info['ip_version']
+        import ipdb;ipdb.set_trace()
         local_compute_ports = (
             self.plugin_rpc.get_ports_on_host_by_subnet(
                 self.context, self.host, subnet_uuid))
