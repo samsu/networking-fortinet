@@ -51,8 +51,9 @@ from neutron.plugins.common import constants as p_const
 from neutron.plugins.ml2.drivers.l2pop.rpc_manager import l2population_rpc
 from neutron.plugins.ml2.drivers.openvswitch.agent.common \
     import constants
-from networking_fortinet.agent.l2.openvswitch import ovs_dvr_neutron_agent
 
+from networking_fortinet.agent.l2.openvswitch import ovs_dvr_neutron_agent
+from networking_fortinet.common import constants as consts
 
 LOG = logging.getLogger(__name__)
 cfg.CONF.import_group('AGENT', 'neutron.plugins.ml2.drivers.openvswitch.'
@@ -982,6 +983,9 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         :param port: a ovs_lib.VifPort object.
         '''
         # Don't kill a port if it's already dead
+        if getattr(port, 'port_name', None) in consts.FTNT_PORTS:
+            return
+
         cur_tag = self.int_br.db_get_val("Port", port.port_name, "tag",
                                          log_errors=log_errors)
         if cur_tag != DEAD_VLAN_TAG:
@@ -1446,7 +1450,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 self.ext_manager.handle_port(self.context, details)
             else:
                 LOG.warn(_LW("Device %s not defined on plugin"), device)
-                if (port and port.ofport != -1):
+                if port and port.ofport != -1:
                     self.port_dead(port)
         return skipped_devices, need_binding_devices, security_disabled_devices
 
