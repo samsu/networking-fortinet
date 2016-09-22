@@ -445,6 +445,7 @@ class OVSDVRNeutronAgent(object):
         # TODO(vivek) remove the IPv6 related flows once SNAT is not
         # used for IPv6 DVR.
         if ip_version == 4:
+            # todo: samsu need to think about arp is still needed or not for fgt
             br.install_dvr_process_ipv4(
                 vlan_tag=lvm.vlan, gateway_ip=subnet_info['gateway_ip'])
         else:
