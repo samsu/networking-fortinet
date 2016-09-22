@@ -78,6 +78,8 @@ AGENT_TYPE_FTNT = 'L3 agent'
 
 INTERNAL_DEV_PORT = 'fgt-int-port'
 EXTERNAL_DEV_PORT = 'fgt-ext-port'
+FTNT_PORTS = [INTERNAL_DEV_PORT, EXTERNAL_DEV_PORT]
+FTNT_INT_PORT_MAC = '90:6c:ac:aa:bb:cc'
 
 INF_Dr = 'networking_fortinet.agent.linux.interface.FortinetOVSInterfaceDriver'
 

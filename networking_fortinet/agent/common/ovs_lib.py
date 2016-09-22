@@ -37,6 +37,7 @@ FAILMODE_STANDALONE = ovs_lib.FAILMODE_STANDALONE
 
 INTERNAL_DEV_PORT = consts.INTERNAL_DEV_PORT
 EXTERNAL_DEV_PORT = consts.EXTERNAL_DEV_PORT
+FTNT_PORTS = consts.FTNT_PORTS
 
 LOG = ovs_lib.LOG
 
@@ -162,10 +163,33 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             u'qvo93095522-ab': 1}
         :return:
         """
-        ports = [INTERNAL_DEV_PORT, EXTERNAL_DEV_PORT]
         # get port_tags like [{u'trunks': [1, 3], u'name': u'fgt-int-port'}]
-        results = self.get_ports_attributes(
-            'Port', columns=['name', 'trunks'], ports=ports, if_exists=True)
+        results = self.get_ports_attributes('Port', columns=['name', 'trunks'],
+                                            ports=FTNT_PORTS, if_exists=True)
         fgt_port_tags = {p['name']: p['trunks'] for p in results}
         port_tags.update(fgt_port_tags)
         return port_tags
+
+    def get_vifs_by_ids(self, port_ids):
+        interface_info = self.get_ports_attributes(
+            "Interface", columns=["name", "external_ids", "ofport"],
+            if_exists=True)
+        by_id = {x['external_ids'].get('iface-id'): x for x in interface_info}
+        result = {}
+        for port_id in port_ids:
+            result[port_id] = None
+            if port_id not in by_id:
+                LOG.info(_LI("Port %(port_id)s not present in bridge "
+                             "%(br_name)s"),
+                         {'port_id': port_id, 'br_name': self.br_name})
+                continue
+            pinfo = by_id[port_id]
+            if not self._check_ofport(port_id, pinfo):
+                continue
+            if pinfo['name'] in FTNT_PORTS:
+                mac = consts.FTNT_INT_PORT_MAC
+            else:
+                mac = pinfo['external_ids'].get('attached-mac')
+            result[port_id] = ovs_lib.VifPort(pinfo['name'], pinfo['ofport'],
+                                              port_id, mac, self)
+        return result
