@@ -29,6 +29,7 @@ from neutron.common import ipv6_utils
 from neutron.i18n import _LE, _LI
 
 from networking_fortinet.agent.common import ovs_lib
+from networking_fortinet.common import constants as consts
 
 LOG = logging.getLogger(__name__)
 
@@ -42,6 +43,10 @@ OPTS = [
     cfg.IntOpt('network_device_mtu',
                help=_('MTU setting for device.')),
 ]
+
+INTERNAL_DEV_PORT = consts.INTERNAL_DEV_PORT
+EXTERNAL_DEV_PORT = consts.EXTERNAL_DEV_PORT
+FTNT_PORTS = consts.FTNT_PORTS
 
 
 class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
@@ -60,12 +65,14 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
                                         n_const.TAP_DEVICE_PREFIX)
         return dev_name
 
-    def _ovs_set_port(self, bridge, device_name, network_id, port_id,
-                      mac_address, internal=True):
+    def _ovs_set_port(self, bridge, device_name, port_id, mac_address,
+                      add_network_id=None, del_network_id=None, internal=True):
         attrs = [('external_ids', {'iface-id': port_id,
                                    'iface-status': 'active',
                                    'attached-mac': mac_address,
-                                   'network-id': network_id})]
+                                   'add-network-id': add_network_id,
+                                   'del-network-id': del_network_id,
+                                   })]
         if internal:
             attrs.insert(0, ('type', 'internal'))
 
@@ -80,25 +87,24 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
 
         self.check_bridge_exists(bridge)
         tap_name = self._get_tap_name(device_name)
-        #internal = not self.conf.ovs_use_veth
-        self._ovs_set_port(bridge, tap_name, network_id, port_id, mac_address,
-                           internal=False)
+        if tap_name in FTNT_PORTS:
+            self._ovs_set_port(bridge, tap_name, port_id, mac_address,
+                               add_network_id=network_id, internal=False)
+        else:
+            super(FortinetOVSInterfaceDriver,
+                  self).plug_new(network_id, port_id, device_name, mac_address,
+                                 bridge=bridge,
+                                 namespace=namespace,
+                                 prefix=prefix)
 
     def unplug(self, device_name, bridge=None, namespace=None, prefix=None):
         """Unplug the interface."""
-        if not bridge:
-            bridge = self.conf.ovs_integration_bridge
-
         tap_name = self._get_tap_name(device_name, prefix)
-        self.check_bridge_exists(bridge)
-        ovs = ovs_lib.FortinetOVSBridge(bridge)
-
-        try:
-            ovs.delete_port(tap_name)
-            if self.conf.ovs_use_veth:
-                device = ip_lib.IPDevice(device_name, namespace=namespace)
-                device.link.delete()
-                LOG.debug("Unplugged interface '%s'", device_name)
-        except RuntimeError:
-            LOG.error(_LE("Failed unplugging interface '%s'"),
-                      device_name)
+        if tap_name in FTNT_PORTS:
+            LOG.debug("## Unplugged interface '%s'", tap_name)
+            return
+        else:
+            super(FortinetOVSInterfaceDriver, self).unplug(device_name,
+                                                           bridge=bridge,
+                                                           namespace=namespace,
+                                                           prefix=prefix)
