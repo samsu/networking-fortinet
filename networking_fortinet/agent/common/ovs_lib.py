@@ -59,6 +59,16 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         return self.list_port(port, *fields)
 
     def list_port(self, port, *fields):
+        """
+        :param port:
+        :param fields:
+        :return:
+        examples:
+        1) ovs.list_port(FGT_INT_PORT, 'trunks')
+        #return {'trunks': set([1, 5])}
+        2) ovs.list_port(FGT_INT_PORT, 'name', 'trunks')
+        #return {'trunks': set([1, 5]), 'name': u'fgt-int-port'}
+        """
         args = ['port', port]
         opts = None
         with self.ovsdb.transaction() as txn:

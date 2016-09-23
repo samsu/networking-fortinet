@@ -857,6 +857,11 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 if_exists=True)
             ftnt_tags_by_name = {x['name']: x['trunks'] for x in
                                  ftnt_port_info}
+            for name, trunks in ftnt_tags_by_name.iteritems():
+                if not isinstance(trunks, list):
+                    trunks = list(trunks)
+                trunks = [str(tag) for tag in trunks]
+                ftnt_tags_by_name[name] = trunks
             tags_by_name.update(ftnt_tags_by_name)
         #import ipdb;ipdb.set_trace()
         for port_detail in need_binding_ports:
