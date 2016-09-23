@@ -846,9 +846,18 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         devices_up = []
         devices_down = []
         port_names = [p['vif_port'].port_name for p in need_binding_ports]
+        ftnt_ports = list(set(port_names) & set(consts.FTNT_PORTS))
+        port_names = list(set(port_names) - set(consts.FTNT_PORTS))
         port_info = self.int_br.get_ports_attributes(
             "Port", columns=["name", "tag"], ports=port_names, if_exists=True)
         tags_by_name = {x['name']: x['tag'] for x in port_info}
+        if ftnt_ports:
+            ftnt_port_info = self.int_br.get_ports_attributes(
+                "Port", columns=["name", "trunk"], ports=ftnt_ports,
+                if_exists=True)
+            ftnt_tags_by_name = {x['name']: x['trunks'] for x in
+                                 ftnt_port_info}
+            tags_by_name.update(ftnt_tags_by_name)
         import ipdb;ipdb.set_trace()
         for port_detail in need_binding_ports:
             lvm = self.local_vlan_map.get(port_detail['network_id'])
@@ -864,14 +873,19 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 LOG.info(_LI("Port %s was deleted concurrently, skipping it"),
                          port.port_name)
                 continue
-            if cur_tag != lvm.vlan:
+            if cur_tag != lvm.vlan or lvm.vlan not in cur_tag:
                 self.int_br.delete_flows(in_port=port.ofport)
             if self.prevent_arp_spoofing:
                 self.setup_arp_spoofing_protection(self.int_br,
                                                    port, port_detail)
-            if cur_tag != lvm.vlan:
-                self.int_br.set_db_attribute(
-                    "Port", port.port_name, "tag", lvm.vlan)
+            if cur_tag != lvm.vlan or lvm.vlan not in cur_tag:
+                if isinstance(cur_tag, list):
+                    cur_tag.append(lvm.vlan)
+                    self.int_br.set_db_attribute(
+                        "Port", port.port_name, "trunks", cur_tag)
+                else:
+                    self.int_br.set_db_attribute(
+                        "Port", port.port_name, "tag", lvm.vlan)
 
             # update plugin about port status
             # FIXME(salv-orlando): Failures while updating device status
