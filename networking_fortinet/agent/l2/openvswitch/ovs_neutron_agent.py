@@ -873,6 +873,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 LOG.info(_LI("Port %s was deleted concurrently, skipping it"),
                          port.port_name)
                 continue
+            import ipdb;ipdb.set_trace()
             if cur_tag != lvm.vlan or str(lvm.vlan) not in cur_tag:
                 self.int_br.delete_flows(in_port=port.ofport)
             if self.prevent_arp_spoofing:
