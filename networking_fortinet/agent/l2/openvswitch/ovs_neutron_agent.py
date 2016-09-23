@@ -810,7 +810,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         :param ovs_restarted: indicates if this is called for an OVS restart.
         '''
 
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
 
         if net_uuid not in self.local_vlan_map or ovs_restarted:
             self.provision_local_vlan(net_uuid, network_type,
@@ -1344,6 +1344,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         # for being treated. If that does not happen, it is a potential
         # error condition of which operators should be aware
         port_needs_binding = True
+        import ipdb;ipdb.set_trace()
         if not vif_port.ofport:
             LOG.warn(_LW("VIF port: %s has no ofport configured, "
                          "and might not be able to transmit"), vif_port.vif_id)
@@ -1471,7 +1472,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                     security_disabled_devices.append(device)
                 self._update_port_network(details['port_id'],
                                           details['network_id'])
-                ###import ipdb;ipdb.set_trace()
+
                 self.ext_manager.handle_port(self.context, details)
             else:
                 LOG.warn(_LW("Device %s not defined on plugin"), device)
