@@ -1319,6 +1319,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         vlan tag loss.
         """
         port_tags = self.int_br.get_port_tag_dict()
+        import ipdb;ipdb.set_trace()
         changed_ports = set()
         for lvm in self.local_vlan_map.values():
             for port in lvm.vif_ports.values():
