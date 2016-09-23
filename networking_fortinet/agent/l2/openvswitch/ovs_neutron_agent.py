@@ -873,21 +873,24 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 LOG.info(_LI("Port %s was deleted concurrently, skipping it"),
                          port.port_name)
                 continue
-            if cur_tag != lvm.vlan or (isinstance(cur_tag, list) and
-                                       str(lvm.vlan) not in cur_tag):
+
+            if (isinstance(cur_tag, list) and str(
+                    lvm.vlan) not in cur_tag) or cur_tag != lvm.vlan:
                 self.int_br.delete_flows(in_port=port.ofport)
             if self.prevent_arp_spoofing:
                 self.setup_arp_spoofing_protection(self.int_br,
                                                    port, port_detail)
-            if cur_tag != lvm.vlan or (isinstance(cur_tag, list) and
-                                       str(lvm.vlan) not in cur_tag):
-                if isinstance(cur_tag, list):
+
+            if port.port_name in consts.FTNT_PORTS:
+                if isinstance(cur_tag, list) and str(lvm.vlan) not in cur_tag:
                     cur_tag.append(str(lvm.vlan))
-                    self.int_br.set_db_attribute(
-                        "Port", port.port_name, "trunks", cur_tag)
-                else:
-                    self.int_br.set_db_attribute(
-                        "Port", port.port_name, "tag", lvm.vlan)
+                    self.int_br.set_db_attribute("Port", port.port_name,
+                                                 "trunks", cur_tag)
+            else:
+                if cur_tag != lvm.vlan:
+                    self.int_br.set_db_attribute("Port", port.port_name,
+                                                 "tag", lvm.vlan)
+
 
             # update plugin about port status
             # FIXME(salv-orlando): Failures while updating device status
