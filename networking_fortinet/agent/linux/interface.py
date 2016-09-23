@@ -101,8 +101,8 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
     def unplug(self, device_name, bridge=None, namespace=None, prefix=None):
         """Unplug the interface."""
         tap_name = self._get_tap_name(device_name, prefix)
+        import ipdb;ipdb.set_trace()
         if tap_name in FTNT_PORTS:
-            import ipdb;ipdb.set_trace()
             LOG.debug("## Unplugged interface '%s'", tap_name)
             return
         else:
