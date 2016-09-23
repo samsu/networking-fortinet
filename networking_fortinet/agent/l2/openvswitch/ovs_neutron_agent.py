@@ -874,12 +874,14 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                          port.port_name)
                 continue
             import ipdb;ipdb.set_trace()
-            if cur_tag != lvm.vlan or str(lvm.vlan) not in cur_tag:
+            if cur_tag != lvm.vlan or (isinstance(cur_tag, list) and
+                                       str(lvm.vlan) not in cur_tag):
                 self.int_br.delete_flows(in_port=port.ofport)
             if self.prevent_arp_spoofing:
                 self.setup_arp_spoofing_protection(self.int_br,
                                                    port, port_detail)
-            if cur_tag != lvm.vlan or str(lvm.vlan) not in cur_tag:
+            if cur_tag != lvm.vlan or (isinstance(cur_tag, list) and
+                                       str(lvm.vlan) not in cur_tag):
                 if isinstance(cur_tag, list):
                     cur_tag.append(str(lvm.vlan))
                     self.int_br.set_db_attribute(
