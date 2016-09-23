@@ -810,7 +810,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         :param ovs_restarted: indicates if this is called for an OVS restart.
         '''
 
-        ###import ipdb;ipdb.set_trace()
+        import ipdb;ipdb.set_trace()
 
         if net_uuid not in self.local_vlan_map or ovs_restarted:
             self.provision_local_vlan(net_uuid, network_type,
@@ -863,7 +863,6 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 trunks = [str(tag) for tag in trunks]
                 ftnt_tags_by_name[name] = trunks
             tags_by_name.update(ftnt_tags_by_name)
-        #import ipdb;ipdb.set_trace()
         for port_detail in need_binding_ports:
             lvm = self.local_vlan_map.get(port_detail['network_id'])
             if not lvm:
@@ -889,6 +888,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             if port.port_name in consts.FTNT_PORTS:
                 if isinstance(cur_tag, list) and str(lvm.vlan) not in cur_tag:
                     cur_tag.append(str(lvm.vlan))
+                    import ipdb;ipdb.set_trace()
                     self.int_br.set_db_attribute("Port", port.port_name,
                                                  "trunks", cur_tag)
             else:
