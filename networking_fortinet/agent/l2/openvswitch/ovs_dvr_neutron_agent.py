@@ -401,7 +401,7 @@ class OVSDVRNeutronAgent(object):
 
         subnet_info = ldm.get_subnet_info()
         ip_version = subnet_info['ip_version']
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
         local_compute_ports = (
             self.plugin_rpc.get_ports_on_host_by_subnet(
                 self.context, self.host, subnet_uuid))
@@ -572,7 +572,7 @@ class OVSDVRNeutronAgent(object):
             return
 
         if device_owner == n_const.DEVICE_OWNER_DVR_INTERFACE:
-            import ipdb;ipdb.set_trace()
+            #import ipdb;ipdb.set_trace()
             self._bind_distributed_router_interface_port(port,
                                                          local_vlan_map,
                                                          fixed_ips,

@@ -200,7 +200,7 @@ class DvrLocalRouter(dvr_local_router.DvrLocalRouter):
     def _update_arp_entry(self, ip, mac, subnet_id, operation):
         """Add or delete arp entry into router namespace for the subnet."""
         port = self._get_internal_port(subnet_id)
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
         # update arp entry only if the subnet is attached to the router
         if not port:
             return
@@ -464,7 +464,7 @@ class DvrLocalRouter(dvr_local_router.DvrLocalRouter):
     def process(self, agent):
         ex_gw_port = self.get_ex_gw_port()
         print "###@@@   ex_gw_port=%s" % ex_gw_port
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
         if ex_gw_port:
             self.fip_ns = agent.get_fip_ns(ex_gw_port['network_id'])
             self.fip_ns.scan_fip_ports(self)

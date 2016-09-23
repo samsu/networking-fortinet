@@ -315,7 +315,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
 
         self.router_info[router_id] = ri
         res = ri.create_router(router)
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
         if res:
             self.plugin_rpc.update_data(self.context, data=res)
 

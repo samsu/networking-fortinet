@@ -417,7 +417,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         # Even if full port details might be provided to this call,
         # they are not used since there is no guarantee the notifications
         # are processed in the same order as the relevant API requests
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
         self.updated_ports.add(port['id'])
         LOG.debug("port_update message processed for port %s", port['id'])
 
@@ -858,7 +858,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             ftnt_tags_by_name = {x['name']: x['trunks'] for x in
                                  ftnt_port_info}
             tags_by_name.update(ftnt_tags_by_name)
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
         for port_detail in need_binding_ports:
             lvm = self.local_vlan_map.get(port_detail['network_id'])
             if not lvm:
@@ -1412,7 +1412,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         skipped_devices = []
         need_binding_devices = []
         security_disabled_devices = []
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
         devices_details_list = (
             self.plugin_rpc.get_devices_details_list_and_failed_devices(
                 self.context,
@@ -1786,7 +1786,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                     self.setup_tunnel_br_flows()
                     tunnel_sync = True
                 if self.enable_distributed_routing:
-                    import ipdb;ipdb.set_trace()
+                    #import ipdb;ipdb.set_trace()
                     self.dvr_agent.reset_ovs_parameters(self.int_br,
                                                  self.tun_br,
                                                  self.patch_int_ofport,
