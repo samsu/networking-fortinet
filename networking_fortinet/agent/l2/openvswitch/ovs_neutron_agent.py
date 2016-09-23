@@ -887,7 +887,6 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                                                    port, port_detail)
 
             if port.port_name in consts.FTNT_PORTS:
-                import ipdb;ipdb.set_trace()
                 if isinstance(cur_tag, list) and str(lvm.vlan) not in cur_tag:
                     cur_tag.append(str(lvm.vlan))
                     self.int_br.set_db_attribute("Port", port.port_name,
