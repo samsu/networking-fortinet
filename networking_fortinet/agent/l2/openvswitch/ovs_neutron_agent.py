@@ -880,7 +880,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                                                    port, port_detail)
             if cur_tag != lvm.vlan or lvm.vlan not in cur_tag:
                 if isinstance(cur_tag, list):
-                    cur_tag.append(lvm.vlan)
+                    cur_tag.append(str(lvm.vlan))
                     self.int_br.set_db_attribute(
                         "Port", port.port_name, "trunks", cur_tag)
                 else:
