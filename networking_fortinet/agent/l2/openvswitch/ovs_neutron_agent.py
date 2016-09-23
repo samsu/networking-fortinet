@@ -1325,7 +1325,9 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             for port in lvm.vif_ports.values():
                 if (
                     port.port_name in port_tags
-                    and port_tags[port.port_name] != lvm.vlan
+                    and (port_tags[port.port_name] != lvm.vlan
+                         or (isinstance(port_tags[port.port_name], list)
+                             and lvm.vlan not in port_tags[port.port_name]))
                 ):
                     LOG.info(
                         _LI("Port '%(port_name)s' has lost "
