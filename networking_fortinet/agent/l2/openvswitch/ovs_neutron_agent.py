@@ -1319,26 +1319,20 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         vlan tag loss.
         """
         port_tags = self.int_br.get_port_tag_dict()
-        import ipdb;ipdb.set_trace()
         changed_ports = set()
-        changed = False
         for lvm in self.local_vlan_map.values():
             for port in lvm.vif_ports.values():
                 #if (port.port_name in port_tags
                 #    and port_tags[port.port_name] != lvm.vlan
                 #        and (isinstance(port_tags[port.port_name], list)
                 #             and lvm.vlan not in port_tags[port.port_name])):
-                if port.port_name in port_tags:
-                    if port.port_name in consts.FTNT_PORTS:
-                        if isinstance(port_tags[port.port_name], list):
-                            if lvm.vlan not in port_tags[port.port_name]:
-                                changed = True
-                        elif port_tags[port.port_name] != lvm.vlan:
-                            changed = True
-                    else:
-                        if port_tags[port.port_name] != lvm.vlan:
-                            changed = True
-                if changed:
+                pname = port.port_name
+                import ipdb;ipdb.set_trace()
+                if pname in port_tags and (
+                    port_tags[pname] != lvm.vlan or
+                        pname in consts.FTNT_PORTS and
+                        isinstance(port_tags[pname], list) and
+                        lvm.vlan not in port_tags[pname]):
                     LOG.info(
                         _LI("Port '%(port_name)s' has lost "
                             "its vlan tag '%(vlan_tag)d'!"),
