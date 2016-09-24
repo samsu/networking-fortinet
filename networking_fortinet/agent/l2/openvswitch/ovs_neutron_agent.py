@@ -885,16 +885,16 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 self.setup_arp_spoofing_protection(self.int_br,
                                                    port, port_detail)
 
-            if port.port_name in consts.FTNT_PORTS:
-                if isinstance(cur_tag, list) and str(lvm.vlan) not in cur_tag:
-                    cur_tag.append(str(lvm.vlan))
-                    import ipdb;ipdb.set_trace()
-                    self.int_br.set_db_attribute("Port", port.port_name,
-                                                 "trunks", cur_tag)
-            else:
-                if cur_tag != lvm.vlan:
-                    self.int_br.set_db_attribute("Port", port.port_name,
-                                                 "tag", lvm.vlan)
+            if port.port_name in consts.FTNT_PORTS \
+                    and isinstance(cur_tag, list) \
+                    and str(lvm.vlan) not in cur_tag:
+                cur_tag.append(str(lvm.vlan))
+                import ipdb;ipdb.set_trace()
+                self.int_br.set_db_attribute("Port", port.port_name,
+                                             "trunks", cur_tag)
+            elif cur_tag != lvm.vlan:
+                self.int_br.set_db_attribute("Port", port.port_name,
+                                             "tag", lvm.vlan)
 
 
             # update plugin about port status
