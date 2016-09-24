@@ -1329,10 +1329,10 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 pname = port.port_name
                 import ipdb;ipdb.set_trace()
                 if pname in port_tags and (
-                    port_tags[pname] != lvm.vlan or
-                        pname in consts.FTNT_PORTS and
-                        isinstance(port_tags[pname], list) and
-                        lvm.vlan not in port_tags[pname]):
+                    pname in consts.FTNT_PORTS and
+                    isinstance(port_tags[pname], list) and
+                    lvm.vlan not in port_tags[pname]
+                        or port_tags[pname] != lvm.vlan):
                     LOG.info(
                         _LI("Port '%(port_name)s' has lost "
                             "its vlan tag '%(vlan_tag)d'!"),
