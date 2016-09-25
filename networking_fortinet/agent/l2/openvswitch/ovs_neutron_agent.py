@@ -859,8 +859,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                                  ftnt_port_info}
             for name, trunks in ftnt_tags_by_name.iteritems():
                 if not isinstance(trunks, list):
-                    trunks = list(trunks)
-                trunks = [str(tag) for tag in trunks]
+                    trunks = [trunks]
                 ftnt_tags_by_name[name] = trunks
             tags_by_name.update(ftnt_tags_by_name)
         for port_detail in need_binding_ports:
@@ -878,18 +877,18 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                          port.port_name)
                 continue
 
-            if (isinstance(cur_tag, list) and str(
-                    lvm.vlan) not in cur_tag) or cur_tag != lvm.vlan:
+            if isinstance(cur_tag, list) and lvm.vlan not in cur_tag \
+                    or cur_tag != lvm.vlan:
                 self.int_br.delete_flows(in_port=port.ofport)
             if self.prevent_arp_spoofing:
                 self.setup_arp_spoofing_protection(self.int_br,
                                                    port, port_detail)
 
             if port.port_name in consts.FTNT_PORTS \
-                    and isinstance(cur_tag, list) \
-                    and str(lvm.vlan) not in cur_tag:
-                cur_tag.append(str(lvm.vlan))
+                    and isinstance(cur_tag, list) and lvm.vlan not in cur_tag:
+                cur_tag.append(lvm.vlan)
                 import ipdb;ipdb.set_trace()
+                cur_tag = [str(tag) for tag in cur_tag]
                 self.int_br.set_db_attribute("Port", port.port_name,
                                              "trunks", cur_tag)
             elif cur_tag != lvm.vlan:
