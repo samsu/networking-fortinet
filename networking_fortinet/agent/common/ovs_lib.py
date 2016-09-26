@@ -112,7 +112,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                         ext_k) if isinstance(new_attr.get(ext_k, None),
                                              set) else ext_v
                 else:
-                    new_attr[ext_k] = added_attrs[ext_k]
+                    new_attr[ext_k] = ext_v
         return tuple(new_attrs.items())
 
     def set_interface(self, port_name, *interface_attr_tuples):
