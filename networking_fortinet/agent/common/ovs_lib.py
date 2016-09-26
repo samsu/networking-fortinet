@@ -102,7 +102,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             import ipdb;ipdb.set_trace()
             for ext_k, ext_v in attr.iteritems():
                 if isinstance(ext_v, dict):
-                    for int_k, int_v in attr.iteritems():
+                    for int_k, int_v in ext_v.iteritems():
                         new_attrs[ext_k].update(list(added_attrs[ext_k]))
                 elif isinstance(ext_v, set):
                     new_attrs[ext_k] = ext_v | set([added_attrs[ext_k]])
