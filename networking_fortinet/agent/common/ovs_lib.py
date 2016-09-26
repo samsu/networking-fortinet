@@ -99,6 +99,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         added_attrs = dict(interface_attr_tuples)
         import ipdb;ipdb.set_trace()
         for attr in cur_attrs:
+            # k is the column name, v is the column value
             for k, v in attr.iteritems():
                 if k in added_attrs:
                     if isinstance(v, dict):
