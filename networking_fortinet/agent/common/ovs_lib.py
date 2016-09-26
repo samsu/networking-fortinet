@@ -97,6 +97,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
 
         new_attrs = copy.deepcopy(cur_attrs[0])
         added_attrs = dict(interface_attr_tuples)
+        import ipdb;ipdb.set_trace()
         for k, v in cur_attrs.iteritems():
             if k in added_attrs:
                 if isinstance(v, dict):
