@@ -97,22 +97,23 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
 
         new_attrs = copy.deepcopy(cur_attrs[0])
         added_attrs = dict(interface_attr_tuples)
-        for attr in added_attrs.values():
+        for col, attr in added_attrs.values():
             # k is the column name, v is the column value
             import ipdb;ipdb.set_trace()
+            new_attr = new_attrs[col]
             for ext_k, ext_v in attr.iteritems():
                 if isinstance(ext_v, dict):
                     for int_k, int_v in ext_v.iteritems():
                         if isinstance(int_v, dict):
-                            new_attrs[ext_k][int_k].update(int_v)
+                            new_attr[ext_k][int_k].update(int_v)
                         elif isinstance(int_v, set):
-                            new_attrs[ext_k][int_k] |= int_v
+                            new_attr[ext_k][int_k] |= int_v
                         else:
-                            new_attrs[ext_k][int_k] = int_v
+                            new_attr[ext_k][int_k] = int_v
                 elif isinstance(ext_v, set):
-                    new_attrs[ext_k] = ext_v | set([added_attrs[ext_k]])
+                    new_attr[ext_k] = ext_v | set(new_attr.get(ext_k, ()))
                 else:
-                    new_attrs[ext_k] = added_attrs[ext_k]
+                    new_attr[ext_k] = added_attrs[ext_k]
         return tuple(new_attrs.items())
 
     def set_interface(self, port_name, *interface_attr_tuples):
