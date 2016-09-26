@@ -103,15 +103,14 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             new_attr = new_attrs[col]
             for ext_k, ext_v in attr.iteritems():
                 if isinstance(ext_v, dict):
-                    for int_k, int_v in ext_v.iteritems():
-                        if isinstance(int_v, dict):
-                            new_attr[ext_k][int_k].update(int_v)
-                        elif isinstance(int_v, set):
-                            new_attr[ext_k][int_k] |= int_v
-                        else:
-                            new_attr[ext_k][int_k] = int_v
+                    if isinstance((new_attr.get(ext_k), None), dict):
+                        new_attr[ext_k].update(ext_v)
+                    else:
+                        new_attr[ext_k] = ext_v
                 elif isinstance(ext_v, set):
-                    new_attr[ext_k] = ext_v | set([new_attr.get(ext_k, ())])
+                    new_attr[ext_k] = ext_v | new_attr.get(
+                        ext_k) if isinstance(new_attr.get(ext_k, None),
+                                             set) else ext_v
                 else:
                     new_attr[ext_k] = added_attrs[ext_k]
         return tuple(new_attrs.items())
