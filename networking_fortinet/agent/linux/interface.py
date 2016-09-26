@@ -77,6 +77,7 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
             attrs.insert(0, ('type', 'internal'))
 
         ovs = ovs_lib.FortinetOVSBridge(bridge)
+        print "## attrs = ", attrs
         ovs.set_interface(device_name, *attrs)
 
     def plug_new(self, network_id, port_id, device_name, mac_address,
