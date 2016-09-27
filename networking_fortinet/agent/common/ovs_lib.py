@@ -108,7 +108,6 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         added_attrs = dict(interface_attr_tuples)
         for col, attr in added_attrs.iteritems():
             # col is the ovs table interface fields, attr is the field's value
-            import ipdb;ipdb.set_trace()
             new_attr = self._format_attr(new_attrs[col])
             for ext_k, ext_v in attr.iteritems():
                 if isinstance(ext_v, dict):
@@ -131,6 +130,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
 
         new_attrs = copy.deepcopy(cur_attrs[0])
         del_attrs = dict(interface_attr_tuples)
+        import ipdb;ipdb.set_trace()
         for col, attr in del_attrs.iteritems():
             # col is the ovs table interface fields, attr is the field's value
             new_attr = self._format_attr(new_attrs[col])
