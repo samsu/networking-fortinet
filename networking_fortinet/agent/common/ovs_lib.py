@@ -97,7 +97,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             for key, val in attr.iteritems():
                 try:
                     attr[key] = ast.literal_eval(val)
-                except SyntaxError:
+                except (SyntaxError, ValueError):
                     continue
         return attr
 
