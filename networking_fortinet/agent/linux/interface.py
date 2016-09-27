@@ -86,6 +86,14 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         ovs = ovs_lib.FortinetOVSBridge(bridge)
         ovs.del_interface_attr(device_name, *attrs)
 
+    def fgt_check_port(self, bridge, port_id, device_name=None):
+        if not bridge:
+            bridge = self.conf.ovs_integration_bridge
+        device_name = device_name if device_name else consts.FTNT_PORTS
+        attrs = [('external_ids', {'iface-id': set([port_id])})]
+        ovs = ovs_lib.FortinetOVSBridge(bridge)
+        ovs.chk_interface_attr(device_name, *attrs)
+
     def plug_new(self, network_id, port_id, device_name, mac_address,
                  bridge=None, namespace=None, prefix=None):
         """Plug in the interface."""

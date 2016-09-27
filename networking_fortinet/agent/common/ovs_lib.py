@@ -125,6 +125,26 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     new_attr[ext_k] = ext_v
         return tuple(new_attrs.items())
 
+    def check_attributes(self, cur_attrs, interface_attr_tuples):
+        if not cur_attrs:
+            return False
+        new_attrs = cur_attrs[0]
+        chk_attrs = dict(interface_attr_tuples)
+        import ipdb;ipdb.set_trace()
+        for col, attr in chk_attrs.iteritems():
+            # col is the ovs table interface fields, attr is the field's value
+            new_attr = self._format_attr(new_attrs[col])
+            for ext_k, ext_v in attr.iteritems():
+                if isinstance(ext_v, dict) and set(ext_v.items()).issubset(
+                        set(new_attr[ext_k].items())):
+                    return True
+                elif isinstance(ext_v, set) and ext_v.issubset(
+                        set(new_attr.get(ext_k))):
+                    return True
+                elif new_attr[ext_k] == ext_v:
+                    return True
+        return False
+
     def delete_attributes(self, cur_attrs, interface_attr_tuples):
         if not cur_attrs:
             return cur_attrs
@@ -165,6 +185,23 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             if interface_attr_tuples:
                 txn.add(self.ovsdb.db_set('Interface', port_name, *new_attrs))
         self.get_port_ofport(port_name)
+
+    def chk_interface_attr(self, port_name, *interface_attr_tuples):
+        """
+        :param port_name:
+        :param interface_attr_tuples:
+         [('external_ids', {'iface-id': set([port_id])})]
+        :return:
+        """
+        LOG.debug("## chk_interface_attr() called, port_name = %(port_name)s,"
+                  "attrs = %(attrs)s",
+                  {'port_name': port_name, 'attrs': interface_attr_tuples})
+        columns = [attr[0] for attr in interface_attr_tuples]
+        cur_attrs = self.get_ports_attributes('Interface', columns=columns,
+                                              ports=[port_name],
+                                              if_exists=True)
+        self.check_attributes(cur_attrs, interface_attr_tuples)
+
 
     def del_interface_attr(self, port_name, *interface_attr_tuples):
         """delete existing port attributes, and configure port interface."""
