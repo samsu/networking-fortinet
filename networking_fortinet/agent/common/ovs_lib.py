@@ -200,7 +200,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         cur_attrs = self.get_ports_attributes('Interface', columns=columns,
                                               ports=[port_name],
                                               if_exists=True)
-        self.check_attributes(cur_attrs, interface_attr_tuples)
+        return self.check_attributes(cur_attrs, interface_attr_tuples)
 
 
     def del_interface_attr(self, port_name, *interface_attr_tuples):
