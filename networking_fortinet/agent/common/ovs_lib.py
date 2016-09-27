@@ -16,6 +16,7 @@
 #
 
 import copy
+import ast
 
 from neutron.agent.ovsdb import impl_vsctl
 from neutron.agent.common import ovs_lib
@@ -101,6 +102,12 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             # k is the column name, v is the column value
             import ipdb;ipdb.set_trace()
             new_attr = new_attrs[col]
+            for key, val in new_attr.iteritems():
+                try:
+                    new_attr[key] = ast.literal_eval(val)
+                except SyntaxError:
+                    continue
+
             for ext_k, ext_v in attr.iteritems():
                 if isinstance(ext_v, dict):
                     if isinstance(new_attr.get(ext_k, None), dict):
@@ -108,6 +115,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     else:
                         new_attr[ext_k] = ext_v
                 elif isinstance(ext_v, set):
+                    ast.literal_eval(new_attr[ext_k])
                     new_attr[ext_k] = ext_v | set(new_attr.get(ext_k)) \
                         if isinstance(new_attr.get(ext_k, None),
                                       list) else ext_v
