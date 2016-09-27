@@ -17,6 +17,7 @@
 
 import copy
 import ast
+import unicodedata
 
 from neutron.agent.ovsdb import impl_vsctl
 from neutron.agent.common import ovs_lib
@@ -184,9 +185,10 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 txn.add(self.ovsdb.db_set('Interface', port_name, *new_attrs))
         self.get_port_ofport(port_name)
 
-    def fgt_portid_from_external_ids(self, external_ids):
-        if 'iface-id' in external_ids:
-            return self._format_attr(external_ids['iface-id'])
+    def portid_from_external_ids(self, external_ids):
+        external_ids = self._format_attr(external_ids)
+        return super(FortinetOVSBridge, self).portid_from_external_ids(
+            external_ids)
 
     def get_vif_port_set(self):
         LOG.debug("### get_vif_port_set() called")
@@ -203,14 +205,9 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 LOG.warn(_LW("Found failed openvswitch port: %s"),
                          result['name'])
             elif 'attached-mac' in result['external_ids']:
-                if result['name'] in consts.FTNT_PORTS:
-                    import ipdb;ipdb.set_trace()
-                    port_id = self.fgt_portid_from_external_ids(
-                        result['external_ids'])
-                else:
-                    port_id = self.portid_from_external_ids(
-                        result['external_ids'])
+                port_id = self.portid_from_external_ids(result['external_ids'])
                 if port_id:
+                    import ipdb;ipdb.set_trace()
                     port_id = set(port_id) if isinstance(port_id, list) \
                         else set([port_id])
                     edge_ports |= port_id
