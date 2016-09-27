@@ -577,6 +577,8 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
             raise n_exc.AbortSyncRouters()
         else:
             LOG.debug('Processing :%r', routers)
+            if not routers:
+                routers = []
             for r in routers:
                 ns_manager.keep_router(r['id'])
                 if r.get('distributed'):
