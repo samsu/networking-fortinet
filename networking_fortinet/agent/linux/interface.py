@@ -96,7 +96,7 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         tap_name = self._get_tap_name(device_name)
         if tap_name in FTNT_PORTS:
             self._ovs_set_port(bridge, tap_name, port_id, mac_address,
-                               add_network_id=network_id, internal=False)
+                               network_id=network_id, internal=False)
         else:
             super(FortinetOVSInterfaceDriver,
                   self).plug_new(network_id, port_id, device_name, mac_address,
