@@ -138,6 +138,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 id = 'iface-id'
                 if isinstance(attr, dict) and id in attr.keys():
                     v = attr[id]
+                    v = v.pop() if isinstance(v, set) else v
                     if isinstance(new_attr[id], list) and v in new_attr[id]:
                         new_attr[id].remove(v)
                         for key in ['iface-status', 'network-id']:
