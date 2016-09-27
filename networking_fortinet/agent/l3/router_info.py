@@ -360,8 +360,11 @@ class RouterInfo(object):
         interface_name = self.get_internal_device_name(port['id'])
         LOG.debug("### removing internal network: port(%s) interface(%s)",
                   port, interface_name)
-        if ip_lib.device_exists(interface_name, namespace=self.ns_name):
-            self.driver.unplug(interface_name, namespace=self.ns_name)
+        if interface_name in consts.FTNT_PORTS:
+            self.driver.unplug(port['id'], namespace=self.ns_name)
+        else:
+            if ip_lib.device_exists(interface_name, namespace=self.ns_name):
+                self.driver.unplug(interface_name, namespace=self.ns_name)
 
     @log_helpers.log_method_call
     def _get_existing_devices(self):
@@ -488,8 +491,10 @@ class RouterInfo(object):
             LOG.debug('Deleting stale internal router device: %s',
                       stale_dev)
             pd.remove_stale_ri_ifname(self.router_id, stale_dev)
-            self.driver.unplug(stale_dev,
-                               namespace=self.ns_name)
+            if stale_dev not in consts.FTNT_PORTS:
+                self.driver.unplug(stale_dev,
+                                   namespace=self.ns_name)
+
 
     @log_helpers.log_method_call
     def _list_floating_ip_cidrs(self):

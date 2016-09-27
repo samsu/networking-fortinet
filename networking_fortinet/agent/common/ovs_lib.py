@@ -92,6 +92,15 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             return {key: res[key] for key in ret_keys}
         return res
 
+    def _format_attr(self, attr):
+        if isinstance(attr, dict):
+            for key, val in attr.iteritems():
+                try:
+                    attr[key] = ast.literal_eval(val)
+                except SyntaxError:
+                    continue
+        return attr
+
     def update_attributes(self, cur_attrs, interface_attr_tuples):
         if not cur_attrs:
             return interface_attr_tuples
@@ -100,13 +109,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         for col, attr in added_attrs.iteritems():
             # col is the ovs table interface fields, attr is the field's value
             import ipdb;ipdb.set_trace()
-            new_attr = new_attrs[col]
-            for key, val in new_attr.iteritems():
-                try:
-                    new_attr[key] = ast.literal_eval(val)
-                except SyntaxError:
-                    continue
-
+            new_attr = self._format_attr(new_attrs[col])
             for ext_k, ext_v in attr.iteritems():
                 if isinstance(ext_v, dict):
                     if isinstance(new_attr.get(ext_k, None), dict):
@@ -122,9 +125,26 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     new_attr[ext_k] = ext_v
         return tuple(new_attrs.items())
 
-    def set_interface(self, port_name, *interface_attr_tuples):
+    def delete_attributes(self, cur_attrs, interface_attr_tuples):
+        if not cur_attrs:
+            return cur_attrs
+
+        new_attrs = copy.deepcopy(cur_attrs[0])
+        del_attrs = dict(interface_attr_tuples)
+        for col, attr in del_attrs.iteritems():
+            # col is the ovs table interface fields, attr is the field's value
+            new_attr = self._format_attr(new_attrs[col])
+            if col in ['external_ids']:
+                if 'iface-id' in attr.iteritems():
+                    v = attr['iface-id']
+                    for key in ['iface-id', 'iface-status', 'network-id']:
+                        new_attr[key].pop(v, None)
+        return tuple(new_attrs.items())
+
+
+    def set_interface_attr(self, port_name, *interface_attr_tuples):
         """Replace existing port attributes, and configure port interface."""
-        LOG.debug("### set_interface() called, port_name = %(port_name)s, "
+        LOG.debug("## set_interface_attr() called, port_name = %(port_name)s,"
                   "attrs = %(attrs)s",
                   {'port_name': port_name, 'attrs': interface_attr_tuples})
         columns = [attr[0] for attr in interface_attr_tuples]
@@ -140,6 +160,26 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             if interface_attr_tuples:
                 txn.add(self.ovsdb.db_set('Interface', port_name, *new_attrs))
         self.get_port_ofport(port_name)
+
+    def del_interface_attr(self, port_name, *interface_attr_tuples):
+        """delete existing port attributes, and configure port interface."""
+        LOG.debug("## del_interface_attr() called, port_name = %(port_name)s,"
+                  "attrs = %(attrs)s",
+                  {'port_name': port_name, 'attrs': interface_attr_tuples})
+        columns = [attr[0] for attr in interface_attr_tuples]
+        # The neutron ovs.lib name 'ports' related functions to operate
+        # the ovs table 'interface'
+        cur_attrs = self.get_ports_attributes('Interface', columns=columns,
+                                              ports=[port_name],
+                                              if_exists=True)
+        new_attrs = self.delete_attributes(cur_attrs, interface_attr_tuples)
+        LOG.debug("### cur_attrs = %(cur_attrs)s, new_attrs = %(new_attrs)s",
+                  {'cur_attrs': cur_attrs, 'new_attrs': new_attrs})
+        with self.ovsdb.transaction() as txn:
+            if interface_attr_tuples:
+                txn.add(self.ovsdb.db_set('Interface', port_name, *new_attrs))
+        self.get_port_ofport(port_name)
+
 
     def get_vif_port_set(self):
         LOG.debug("### get_vif_port_set() called")
