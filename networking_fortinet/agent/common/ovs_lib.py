@@ -204,6 +204,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                          result['name'])
             elif 'attached-mac' in result['external_ids']:
                 if result['name'] in consts.FTNT_PORTS:
+                    import ipdb;ipdb.set_trace()
                     port_id = self.fgt_portid_from_external_ids(
                         result['external_ids'])
                 else:
