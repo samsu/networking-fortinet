@@ -184,6 +184,13 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 txn.add(self.ovsdb.db_set('Interface', port_name, *new_attrs))
         self.get_port_ofport(port_name)
 
+    def fgt_portid_from_external_ids(self, external_ids):
+        if 'iface-id' in external_ids:
+            return external_ids['iface-id']
+        if 'xs-vif-uuid' in external_ids:
+            iface_id = self.get_xapi_iface_id(
+                external_ids['xs-vif-uuid'])
+            return iface_id
 
     def get_vif_port_set(self):
         LOG.debug("### get_vif_port_set() called")
@@ -200,6 +207,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 LOG.warn(_LW("Found failed openvswitch port: %s"),
                          result['name'])
             elif 'attached-mac' in result['external_ids']:
+                import ipdb;ipdb.set_trace()
                 port_id = self.portid_from_external_ids(result['external_ids'])
                 if port_id:
                     edge_ports.add(port_id)
