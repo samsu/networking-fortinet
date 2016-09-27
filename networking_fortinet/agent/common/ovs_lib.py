@@ -115,7 +115,6 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     else:
                         new_attr[ext_k] = ext_v
                 elif isinstance(ext_v, set):
-                    ast.literal_eval(new_attr[ext_k])
                     new_attr[ext_k] = ext_v | set(new_attr.get(ext_k)) \
                         if isinstance(new_attr.get(ext_k, None),
                                       list) else ext_v
