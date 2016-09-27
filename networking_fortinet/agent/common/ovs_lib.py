@@ -99,8 +99,8 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         new_attrs = copy.deepcopy(cur_attrs[0])
         added_attrs = dict(interface_attr_tuples)
         for col, attr in added_attrs.iteritems():
-            # k is the column name, v is the column value
-            import ipdb;ipdb.set_trace()
+            # col is the ovs table interface fields, attr is the field's value
+            #import ipdb;ipdb.set_trace()
             new_attr = new_attrs[col]
             for key, val in new_attr.iteritems():
                 try:
