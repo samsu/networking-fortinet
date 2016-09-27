@@ -135,7 +135,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             # col is the ovs table interface fields, attr is the field's value
             new_attr = self._format_attr(new_attrs[col])
             if col in ['external_ids']:
-                if isinstance(attr, dict) and 'iface-id' in attr.items():
+                if isinstance(attr, dict) and 'iface-id' in attr.keys():
                     v = attr['iface-id']
                     for key in ['iface-id', 'iface-status', 'network-id']:
                         new_attr[key].pop(v, None)
