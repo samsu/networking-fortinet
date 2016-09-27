@@ -69,7 +69,7 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
                       network_id=None, internal=True):
         attrs = [('external_ids',
                   {'iface-id': set([port_id]),
-                   'iface-status': 'active',
+                   'iface-status': {port_id: 'active'},
                    'attached-mac': mac_address,
                    'network-id': {port_id: network_id if network_id else ''}
                    })]
@@ -77,7 +77,12 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
             attrs.insert(0, ('type', 'internal'))
 
         ovs = ovs_lib.FortinetOVSBridge(bridge)
-        ovs.set_interface(device_name, *attrs)
+        ovs.set_interface_attr(device_name, *attrs)
+
+    def _ovs_del_port(self, bridge, device_name, port_id):
+        attrs = [('external_ids', {'iface-id': set([port_id])})]
+        ovs = ovs_lib.FortinetOVSBridge(bridge)
+        ovs.del_interface_attr(device_name, *attrs)
 
     def plug_new(self, network_id, port_id, device_name, mac_address,
                  bridge=None, namespace=None, prefix=None):
@@ -97,12 +102,14 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
                                  namespace=namespace,
                                  prefix=prefix)
 
-    def unplug(self, device_name, bridge=None, namespace=None, prefix=None):
+    def unplug(self, device_name, port_id=None, bridge=None, namespace=None,
+               prefix=None):
         """Unplug the interface."""
         tap_name = self._get_tap_name(device_name, prefix)
         import ipdb;ipdb.set_trace()
         if tap_name in FTNT_PORTS:
             LOG.debug("## Unplugged interface '%s'", tap_name)
+            self._ovs_del_port(bridge, device_name, port_id)
             return
         else:
             super(FortinetOVSInterfaceDriver, self).unplug(device_name,
