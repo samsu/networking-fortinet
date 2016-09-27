@@ -141,7 +141,6 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                         new_attr[key].pop(v, None)
         return tuple(new_attrs.items())
 
-
     def set_interface_attr(self, port_name, *interface_attr_tuples):
         """Replace existing port attributes, and configure port interface."""
         LOG.debug("## set_interface_attr() called, port_name = %(port_name)s,"
