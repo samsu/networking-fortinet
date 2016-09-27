@@ -128,6 +128,8 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                   "attrs = %(attrs)s",
                   {'port_name': port_name, 'attrs': interface_attr_tuples})
         columns = [attr[0] for attr in interface_attr_tuples]
+        # The neutron ovs.lib name ports related functions to operate
+        # the ovs table 'interface'
         cur_attrs = self.get_ports_attributes('Interface', columns=columns,
                                               ports=[port_name],
                                               if_exists=True)
