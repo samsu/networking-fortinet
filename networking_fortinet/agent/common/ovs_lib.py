@@ -310,3 +310,20 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             result[port_id] = ovs_lib.VifPort(pinfo['name'], pinfo['ofport'],
                                               port_id, mac, self)
         return result
+
+    def get_vif_port_by_id(self, port_id):
+        ports = self.ovsdb.db_find(
+            'Interface', ('external_ids', '=', {'iface-id': port_id}),
+            ('external_ids', '!=', {'attached-mac': ''}),
+            columns=['external_ids', 'name', 'ofport']).execute()
+        for port in ports:
+            if self.br_name != self.get_bridge_for_iface(port['name']):
+                continue
+            if not self._check_ofport(port_id, port):
+                continue
+            mac = port['external_ids'].get('attached-mac')
+            return VifPort(port['name'], port['ofport'], port_id, mac, self)
+
+        import ipdb;ipdb.set_trace()
+        LOG.info(_LI("Port %(port_id)s not present in bridge %(br_name)s"),
+                 {'port_id': port_id, 'br_name': self.br_name})
