@@ -15,11 +15,12 @@
 #
 
 import abc
-
 import netaddr
+import six
+
 from oslo_config import cfg
 from oslo_log import log as logging
-import six
+from oslo_utils import uuidutils
 
 from neutron.agent.linux import interface
 from neutron.agent.linux import utils
@@ -63,8 +64,9 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         if self.conf.ovs_use_veth:
             dev_name = dev_name.replace(prefix or self.DEV_NAME_PREFIX,
                                         n_const.TAP_DEVICE_PREFIX)
-        if dev_name == dev_name:
-            self._ovs_chk_port(None, dev_name)
+        #if uuidutils.is_uuid_like(dev_name):
+        #    if self._ovs_chk_port(None, dev_name, consts.INTERNAL_DEV_PORT):
+        #        return consts.INTERNAL_DEV_PORT
         return dev_name
 
     def _ovs_set_port(self, bridge, device_name, port_id, mac_address,
@@ -122,6 +124,7 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         LOG.debug("## Unplugged interface '%s'", tap_name)
         import ipdb;ipdb.set_trace()
         if tap_name in FTNT_PORTS and port_id:
+            ## device_name is the portid
             self._ovs_del_port(bridge, device_name, port_id)
             return
         else:

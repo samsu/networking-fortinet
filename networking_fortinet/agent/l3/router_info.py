@@ -361,7 +361,7 @@ class RouterInfo(object):
         LOG.debug("### removing internal network: port(%s) interface(%s)",
                   port, interface_name)
         if interface_name in consts.FTNT_PORTS:
-            self.driver.unplug(port['id'], namespace=self.ns_name)
+            self.driver.unplug(interface_name, port_id=port['id'])
         else:
             if ip_lib.device_exists(interface_name, namespace=self.ns_name):
                 self.driver.unplug(interface_name, namespace=self.ns_name)
