@@ -405,7 +405,8 @@ class RouterInfo(object):
     def disable_radvd(self):
         LOG.debug('Terminating radvd daemon in router device: %s',
                   self.router_id)
-        self.radvd.disable()
+        if self.radvd:
+            self.radvd.disable()
 
     @log_helpers.log_method_call
     def internal_network_updated(self, interface_name, ip_cidrs):
