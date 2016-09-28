@@ -296,6 +296,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         for port_id in port_ids:
             result[port_id] = None
             if port_id not in by_id:
+                import ipdb;ipdb.set_trace()
                 LOG.info(_LI("Port %(port_id)s not present in bridge "
                              "%(br_name)s"),
                          {'port_id': port_id, 'br_name': self.br_name})
