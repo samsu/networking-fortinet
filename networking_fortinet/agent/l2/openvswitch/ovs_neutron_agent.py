@@ -1444,7 +1444,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         devices = devices_details_list.get('devices')
         vif_by_id = self.int_br.get_vifs_by_ids(
             [vif['device'] for vif in devices])
-        import ipdb;ipdb.set_trace()
+        ##import ipdb;ipdb.set_trace()
         for details in devices:
             device = details['device']
             LOG.debug("## Processing port details: %s", details)
