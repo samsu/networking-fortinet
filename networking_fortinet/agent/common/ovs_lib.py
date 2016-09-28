@@ -300,7 +300,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 if_ids = set(external_ids.get('iface-id')) & (set(port_ids))
                 import ipdb;ipdb.set_trace()
                 for if_id in if_ids:
-                    result[if_id] = ovs_lib.vifPort(
+                    result[if_id] = ovs_lib.VifPort(
                         x['name'], x['ofport'], if_id,
                         external_ids['attached-mac'], self)
                 port_ids = set(port_ids) - if_ids
