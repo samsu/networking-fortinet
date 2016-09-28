@@ -292,28 +292,19 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         fgt_itf_infos = self.get_ports_attributes(
             "Interface", columns=["name", "external_ids", "ofport"],
             ports=consts.FTNT_PORTS, if_exists=True)
-        import ipdb;ipdb.set_trace()
-        interface_info = self.get_ports_attributes(
-            "Interface", columns=["name", "external_ids", "ofport"],
-            if_exists=True)
-        by_id = {x['external_ids'].get('iface-id'): x for x in interface_info}
         result = {}
-        for port_id in port_ids:
-            result[port_id] = None
-            if port_id not in by_id:
-                LOG.info(_LI("Port %(port_id)s not present in bridge "
-                             "%(br_name)s"),
-                         {'port_id': port_id, 'br_name': self.br_name})
-                continue
-            pinfo = by_id[port_id]
-            if not self._check_ofport(port_id, pinfo):
-                continue
-            if pinfo['name'] in FTNT_PORTS:
-                mac = consts.FTNT_INT_PORT_MAC
-            else:
-                mac = pinfo['external_ids'].get('attached-mac')
-            result[port_id] = ovs_lib.VifPort(pinfo['name'], pinfo['ofport'],
-                                              port_id, mac, self)
+        for x in fgt_itf_infos:
+            external_ids = self._format_attr(x['external_ids'])
+            x['external_ids'] = external_ids
+            if isinstance(external_ids.get('iface-id'), list):
+                if_ids = set(external_ids.get('iface-id')) & (set(port_ids))
+                for if_id in if_ids:
+                    result[if_id] = ovs_lib.vifPort(
+                        x['name'], x['ofport'], if_id,
+                        external_ids['attached-mac'], self)
+                port_ids = set(port_ids) - if_ids
+
+        result.update(super(FortinetOVSBridge, self).get_vifs_by_ids(port_ids))
         return result
 
     def get_vif_port_by_id(self, port_id):
