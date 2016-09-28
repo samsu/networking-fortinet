@@ -403,9 +403,9 @@ class RouterInfo(object):
 
     @log_helpers.log_method_call
     def disable_radvd(self):
-        LOG.debug('Terminating radvd daemon in router device: %s',
-                  self.router_id)
         if self.radvd:
+            LOG.debug('Terminating radvd daemon in router device: %s',
+                      self.router_id)
             self.radvd.disable()
 
     @log_helpers.log_method_call
