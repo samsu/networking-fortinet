@@ -93,7 +93,8 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             return {key: res[key] for key in ret_keys}
         return res
 
-    def _format_attr(self, attr):
+    @staticmethod
+    def _format_attr(attr):
         if isinstance(attr, dict):
             for key, val in attr.iteritems():
                 try:
@@ -288,6 +289,10 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         return port_tags
 
     def get_vifs_by_ids(self, port_ids):
+        fgt_itf_infos = self.get_ports_attributes(
+            "Interface", columns=["name", "external_ids", "ofport"],
+            ports=consts.FTNT_PORTS, if_exists=True)
+        import ipdb;ipdb.set_trace()
         interface_info = self.get_ports_attributes(
             "Interface", columns=["name", "external_ids", "ofport"],
             if_exists=True)
@@ -296,7 +301,6 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         for port_id in port_ids:
             result[port_id] = None
             if port_id not in by_id:
-                import ipdb;ipdb.set_trace()
                 LOG.info(_LI("Port %(port_id)s not present in bridge "
                              "%(br_name)s"),
                          {'port_id': port_id, 'br_name': self.br_name})
