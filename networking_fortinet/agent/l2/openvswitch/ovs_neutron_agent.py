@@ -1351,7 +1351,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         # for being treated. If that does not happen, it is a potential
         # error condition of which operators should be aware
         port_needs_binding = True
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
         if not vif_port.ofport:
             LOG.warn(_LW("VIF port: %s has no ofport configured, "
                          "and might not be able to transmit"), vif_port.vif_id)
