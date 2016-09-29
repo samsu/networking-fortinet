@@ -360,7 +360,8 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             if (net_uuid and net_uuid not in self._local_vlan_hints
                 and local_vlan != DEAD_VLAN_TAG):
                 import ipdb;ipdb.set_trace()
-                ## samsu: use discard to replace the remove temporarily
+                ## samsu: use discard to replace the remove temporarily, here
+                ## need to rewrite and handle 'other_config' info later.
                 self.available_local_vlans.discard(local_vlan)
                 self._local_vlan_hints[local_vlan_map['net_uuid']] = \
                     local_vlan
