@@ -926,6 +926,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
 
     @staticmethod
     def setup_arp_spoofing_protection(bridge, vif, port_details):
+        import ipdb;ipdb.set_trace()
         if not port_details.get('port_security_enabled', True):
             LOG.info(_LI("Skipping ARP spoofing rules for port '%s' because "
                          "it has port security disabled"), vif.port_name)
