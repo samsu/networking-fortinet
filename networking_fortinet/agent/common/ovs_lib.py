@@ -139,6 +139,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             cur_attrs = self.db_get_val(table_name, record, column,
                                         check_error=check_error,
                                         log_errors=log_errors)
+            cur_attrs = self._format_attr(cur_attrs)
             if isinstance(value, dict) and isinstance(cur_attrs, dict):
                 if value.items() not in cur_attrs.items():
                     value.update(cur_attrs)
