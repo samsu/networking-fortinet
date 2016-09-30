@@ -143,7 +143,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             elif value and isinstance(value, list):
                 value = set(value) | set(cur_attrs)
 
-        return super(FortinetOVSBridge, self).set_db_attribute(
+        super(FortinetOVSBridge, self).set_db_attribute(
             table_name, record, column, value, check_error=check_error,
             log_errors=log_errors)
 
