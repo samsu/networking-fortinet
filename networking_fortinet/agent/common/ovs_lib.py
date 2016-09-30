@@ -136,7 +136,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             return super(FortinetOVSBridge, self).set_db_attribute(
                 table_name, record, column, value, check_error=check_error,
                 log_errors=log_errors)
-        cur_attrs = self.db_get_val(table_name, record, column, value,
+        cur_attrs = self.db_get_val(table_name, record, column,
                                     check_error=check_error,
                                     log_errors=log_errors)
         new_attrs = self.update_attributes(cur_attrs, interface_attr_tuples)
