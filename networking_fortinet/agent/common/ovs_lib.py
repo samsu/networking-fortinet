@@ -368,19 +368,19 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 if isinstance(external_ids['iface-id'], list):
                     for id in external_ids['iface-id']:
                         p = ovs_lib.VifPort(name, ofport, id,
-                                            external_ids["attached-mac"], self)
+                                            external_ids['attached-mac'], self)
                         edge_ports.append(p)
                 else:
-                    p = ovs_lib.VifPort(name, ofport, external_ids["iface-id"],
-                                        external_ids["attached-mac"], self)
+                    p = ovs_lib.VifPort(name, ofport, external_ids['iface-id'],
+                                        external_ids['attached-mac'], self)
                     edge_ports.append(p)
             elif ("xs-vif-uuid" in external_ids and
                   "attached-mac" in external_ids):
                 # if this is a xenserver and iface-id is not automatically
                 # synced to OVS from XAPI, we grab it from XAPI directly
-                iface_id = self.get_xapi_iface_id(external_ids["xs-vif-uuid"])
+                iface_id = self.get_xapi_iface_id(external_ids['xs-vif-uuid'])
                 p = ovs_lib.VifPort(name, ofport, iface_id,
-                                    external_ids["attached-mac"], self)
+                                    external_ids['attached-mac'], self)
                 edge_ports.append(p)
 
         return edge_ports
