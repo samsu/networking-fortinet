@@ -103,7 +103,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                         key = str(key)
                     fmt_attr[key] = ast.literal_eval(val)
                 except (SyntaxError, ValueError):
-                    continue
+                    fmt_attr[key] = val
         return fmt_attr
 
     def update_attributes(self, cur_attrs, interface_attr_tuples):
