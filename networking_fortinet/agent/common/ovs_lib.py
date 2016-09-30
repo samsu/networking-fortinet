@@ -106,6 +106,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     except (SyntaxError, ValueError):
                         fmt_attr[key] = val
                 return fmt_attr
+            return attr
 
         if isinstance(attrs, list):
             fmt_attrs = []
