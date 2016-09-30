@@ -360,14 +360,18 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 continue
             if not local_vlan:
                 continue
-            net_uuid = local_vlan_map.get('net_uuid')
-            if (net_uuid and net_uuid not in self._local_vlan_hints
-                and local_vlan != DEAD_VLAN_TAG):
-                ## samsu: use discard to replace the remove temporarily, here
-                ## need to rewrite and handle 'other_config' info later.
-                self.available_local_vlans.remove(local_vlan)
-                self._local_vlan_hints[local_vlan_map['net_uuid']] = \
-                    local_vlan
+            if port.port_name in consts.FTNT_PORTS:
+                ## todo:
+                pass
+            else:
+                net_uuid = local_vlan_map.get('net_uuid')
+                if (net_uuid and net_uuid not in self._local_vlan_hints
+                    and local_vlan != DEAD_VLAN_TAG):
+                    ## samsu: use discard to replace the remove temporarily, here
+                    ## need to rewrite and handle 'other_config' info later.
+                    self.available_local_vlans.remove(local_vlan)
+                    self._local_vlan_hints[local_vlan_map['net_uuid']] = \
+                        local_vlan
 
     @log_helpers.log_method_call
     def _dispose_local_vlan_hints(self):
