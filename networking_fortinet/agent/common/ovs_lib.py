@@ -94,18 +94,25 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         return res
 
     @staticmethod
-    def _format_attr(attr):
-        if isinstance(attr, dict):
-            fmt_attr = {}
-            for key, val in attr.iteritems():
-                try:
-                    if isinstance(key, unicode):
-                        key = str(key)
-                    fmt_attr[key] = ast.literal_eval(val)
-                except (SyntaxError, ValueError):
-                    fmt_attr[key] = val
-            return fmt_attr
-        return attr
+    def _format_attr(attrs):
+        def _fmt_attr(attr):
+            if isinstance(attr, dict):
+                fmt_attr = {}
+                for key, val in attr.iteritems():
+                    try:
+                        if isinstance(key, unicode):
+                            key = str(key)
+                        fmt_attr[key] = ast.literal_eval(val)
+                    except (SyntaxError, ValueError):
+                        fmt_attr[key] = val
+                return fmt_attr
+
+        if isinstance(attrs, list):
+            return [_fmt_attr(attr) for attr in attrs]
+        elif isinstance(attrs, dict):
+            return {k: _fmt_attr(v) for k, v in attrs.iteritems()}
+        else:
+            return attrs
 
     @staticmethod
     def _ftnt_columns(columns):
