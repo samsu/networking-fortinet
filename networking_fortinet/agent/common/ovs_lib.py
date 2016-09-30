@@ -126,6 +126,28 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     new_attr[ext_k] = ext_v
         return tuple(new_attrs.items())
 
+    def set_db_attribute(self, table_name, record, column, value,
+                         check_error=False, log_errors=True):
+        LOG.debug("## set_db_attribute() called, table_name = %(table_name)s,"
+                  "record = %(record)s, column=%(col)s, value=%(val)s",
+                  {'table_name': table_name, 'record': record,
+                   'col': column, 'val': value})
+        if record not in consts.FTNT_PORTS:
+            return super(FortinetOVSBridge, self).set_db_attribute(
+                table_name, record, column, value, check_error=check_error,
+                log_errors=log_errors)
+        cur_attrs = self.db_get_val(table_name, record, column, value,
+                                    check_error=check_error,
+                                    log_errors=log_errors)
+        new_attrs = self.update_attributes(cur_attrs, interface_attr_tuples)
+        LOG.debug("### cur_attrs = %(cur_attrs)s, new_attrs = %(new_attrs)s",
+                  {'cur_attrs': cur_attrs, 'new_attrs': new_attrs})
+        with self.ovsdb.transaction() as txn:
+            if interface_attr_tuples:
+                txn.add(self.ovsdb.db_set('Interface', port_name, *new_attrs))
+        self.get_port_ofport(port_name)
+
+
     def check_attributes(self, cur_attrs, interface_attr_tuples):
         if not cur_attrs:
             return False
