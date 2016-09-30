@@ -361,7 +361,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 and local_vlan != DEAD_VLAN_TAG):
                 ## samsu: use discard to replace the remove temporarily, here
                 ## need to rewrite and handle 'other_config' info later.
-                self.available_local_vlans.discard(local_vlan)
+                self.available_local_vlans.remove(local_vlan)
                 self._local_vlan_hints[local_vlan_map['net_uuid']] = \
                     local_vlan
 
