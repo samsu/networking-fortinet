@@ -108,9 +108,12 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 return fmt_attr
 
         if isinstance(attrs, list):
-            return [_fmt_attr(attr) for attr in attrs]
-        elif isinstance(attrs, dict):
-            return {k: _fmt_attr(v) for k, v in attrs.iteritems()}
+            fmt_attrs = []
+            for record in attrs:
+                if isinstance(record, dict):
+                    record = {k: _fmt_attr(v) for k, v in record.iteritems()}
+                fmt_attrs.append(record)
+            return fmt_attrs
         else:
             return _fmt_attr(attrs)
 
