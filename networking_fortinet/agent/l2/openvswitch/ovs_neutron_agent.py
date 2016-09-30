@@ -350,6 +350,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             # get_ports_attributes, we
             # will get a KeyError
             try:
+                print "port.port_name=", port.port_name
                 if port.port_name in consts.FTNT_PORTS:
                     import ipdb;ipdb.set_trace()
                 local_vlan_map = by_name[port.port_name]['other_config']
@@ -370,7 +371,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                     and local_vlan != DEAD_VLAN_TAG):
                     ## samsu: use discard to replace the remove temporarily, here
                     ## need to rewrite and handle 'other_config' info later.
-                    self.available_local_vlans.remove(local_vlan)
+                    self.available_local_vlans.discard(local_vlan)
                     self._local_vlan_hints[local_vlan_map['net_uuid']] = \
                         local_vlan
 
