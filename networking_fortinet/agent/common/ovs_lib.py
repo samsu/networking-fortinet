@@ -144,7 +144,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                                         log_errors=log_errors)
             cur_attrs = self._format_attr(cur_attrs)
             if isinstance(value, dict) and isinstance(cur_attrs, dict):
-                if all((k in value and cur_attrs[k] == v) for k, v in
+                if all((k in value and cur_attrs.get(k, None) == v) for k, v in
                        value.iteritems()):
                     return
                 else:
