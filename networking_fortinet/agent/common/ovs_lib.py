@@ -348,8 +348,39 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             if not self._check_ofport(port_id, port):
                 continue
             mac = port['external_ids'].get('attached-mac')
-            return VifPort(port['name'], port['ofport'], port_id, mac, self)
+            return ovs_lib.VifPort(port['name'], port['ofport'],
+                                   port_id, mac, self)
 
         import ipdb;ipdb.set_trace()
         LOG.info(_LI("Port %(port_id)s not present in bridge %(br_name)s"),
                  {'port_id': port_id, 'br_name': self.br_name})
+
+    def get_vif_ports(self):
+        edge_ports = []
+        port_info = self.get_ports_attributes(
+            'Interface', columns=['name', 'external_ids', 'ofport'],
+            if_exists=True)
+        for port in port_info:
+            name = port['name']
+            external_ids = self._format_attr(port['external_ids'])
+            ofport = port['ofport']
+            if "iface-id" in external_ids and "attached-mac" in external_ids:
+                if isinstance(external_ids['iface-id'], list):
+                    for id in external_ids['iface-id']:
+                        p = ovs_lib.VifPort(name, ofport, id,
+                                            external_ids["attached-mac"], self)
+                        edge_ports.append(p)
+                else:
+                    p = ovs_lib.VifPort(name, ofport, external_ids["iface-id"],
+                                        external_ids["attached-mac"], self)
+                    edge_ports.append(p)
+            elif ("xs-vif-uuid" in external_ids and
+                  "attached-mac" in external_ids):
+                # if this is a xenserver and iface-id is not automatically
+                # synced to OVS from XAPI, we grab it from XAPI directly
+                iface_id = self.get_xapi_iface_id(external_ids["xs-vif-uuid"])
+                p = ovs_lib.VifPort(name, ofport, iface_id,
+                                    external_ids["attached-mac"], self)
+                edge_ports.append(p)
+
+        return edge_ports
