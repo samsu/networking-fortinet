@@ -871,6 +871,8 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 # network for port was deleted. skip this port since it
                 # will need to be handled as a DEAD port in the next scan
                 continue
+            print "port_detail['network_id'] = ", port_detail['network_id']
+            print "lvm.vlan = ", lvm.vlan
             port = port_detail['vif_port']
             device = port_detail['device']
             # Do not bind a port if it's already bound
