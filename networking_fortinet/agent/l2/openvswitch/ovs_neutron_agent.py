@@ -893,7 +893,8 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 cur_tag = [str(tag) for tag in cur_tag]
                 self.int_br.set_db_attribute("Port", port.port_name,
                                              "trunks", cur_tag)
-            elif cur_tag != lvm.vlan:
+            elif port.port_name not in consts.FTNT_PORTS \
+                    and cur_tag != lvm.vlan:
                 self.int_br.set_db_attribute("Port", port.port_name,
                                              "tag", lvm.vlan)
 
