@@ -133,7 +133,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                   {'table_name': table_name, 'record': record,
                    'col': column, 'val': value})
         if not value:
-            return self.clear_db_attribute(self, table_name, record, column)
+            return self.clear_db_attribute(table_name, record, column)
 
         if record in consts.FTNT_PORTS:
             cur_attrs = self.db_get_val(table_name, record, column,
