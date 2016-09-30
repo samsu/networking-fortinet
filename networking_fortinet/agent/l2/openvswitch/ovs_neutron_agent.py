@@ -352,7 +352,10 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             # will get a KeyError
             try:
                 local_vlan_map = by_name[port.port_name]['other_config']
-                local_vlan = by_name[port.port_name]['tag']
+                if port.port_name in consts.FTNT_PORTS:
+                    local_vlan = by_name[port.port_name]['trunks']
+                else:
+                    local_vlan = by_name[port.port_name]['tag']
             except KeyError:
                 continue
             if not local_vlan:

@@ -104,7 +104,17 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     fmt_attr[key] = ast.literal_eval(val)
                 except (SyntaxError, ValueError):
                     fmt_attr[key] = val
-        return fmt_attr
+            return fmt_attr
+        return attr
+
+    @staticmethod
+    def _ftnt_columns(columns):
+        new_columns = copy.copy(columns)
+        if isinstance(columns, list):
+            if 'tag' in columns:
+                new_columns.remove('tag')
+                new_columns.append('trunks')
+        return new_columns
 
     def update_attributes(self, cur_attrs, interface_attr_tuples):
         if not cur_attrs:
@@ -252,6 +262,26 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 txn.add(self.ovsdb.db_set('Interface', port_name, *new_attrs))
         self.get_port_ofport(port_name)
 
+    def get_ports_attributes(self, table, columns=None, ports=None,
+                             check_error=True, log_errors=True,
+                             if_exists=False):
+        port_names = ports or self.get_port_name_list()
+        if not port_names:
+            return []
+        ftnt_port_names = [name for name in consts.FTNT_PORTS if
+                           name in port_names]
+        port_names = set(port_names) - set(ftnt_port_names)
+        attrs = super(FortinetOVSBridge, self).get_ports_attributes(
+            table, columns=columns, ports=port_names,
+            check_error=check_error, log_errors=log_errors,
+            if_exists=if_exists)
+        if ftnt_port_names:
+            attrs += super(FortinetOVSBridge, self).get_ports_attributes(
+                table, columns=self._ftnt_columns(columns),
+                ports=ftnt_port_names, check_error=check_error,
+                log_errors=log_errors, if_exists=if_exists)
+        return self._format_attr(attrs)
+
     def portid_from_external_ids(self, external_ids):
         external_ids = self._format_attr(external_ids)
         return super(FortinetOVSBridge, self).portid_from_external_ids(
@@ -355,6 +385,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         LOG.info(_LI("Port %(port_id)s not present in bridge %(br_name)s"),
                  {'port_id': port_id, 'br_name': self.br_name})
 
+"""
     def get_vif_ports(self):
         edge_ports = []
         port_info = self.get_ports_attributes(
@@ -384,3 +415,5 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 edge_ports.append(p)
 
         return edge_ports
+"""
+
