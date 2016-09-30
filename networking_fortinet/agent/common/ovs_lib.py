@@ -96,12 +96,15 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
     @staticmethod
     def _format_attr(attr):
         if isinstance(attr, dict):
+            fmt_attr = {}
             for key, val in attr.iteritems():
                 try:
-                    attr[key] = ast.literal_eval(val)
+                    if isinstance(key, unicode):
+                        key = str(key)
+                    fmt_attr[key] = ast.literal_eval(val)
                 except (SyntaxError, ValueError):
                     continue
-        return attr
+        return fmt_attr
 
     def update_attributes(self, cur_attrs, interface_attr_tuples):
         if not cur_attrs:
