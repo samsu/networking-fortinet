@@ -144,20 +144,9 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     value.update(cur_attrs)
             elif isinstance(value, list):
                 value = set(value) | set(cur_attrs)
-
         super(FortinetOVSBridge, self).set_db_attribute(
             table_name, record, column, value, check_error=check_error,
             log_errors=log_errors)
-
-
-        new_attrs = self.update_attributes(cur_attrs, interface_attr_tuples)
-        LOG.debug("### cur_attrs = %(cur_attrs)s, new_attrs = %(new_attrs)s",
-                  {'cur_attrs': cur_attrs, 'new_attrs': new_attrs})
-        with self.ovsdb.transaction() as txn:
-            if interface_attr_tuples:
-                txn.add(self.ovsdb.db_set('Interface', port_name, *new_attrs))
-        self.get_port_ofport(port_name)
-
 
     def check_attributes(self, cur_attrs, interface_attr_tuples):
         if not cur_attrs:
