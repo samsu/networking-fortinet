@@ -340,7 +340,6 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
     @log_helpers.log_method_call
     def _restore_local_vlan_map(self):
         self._local_vlan_hints = {}
-        import ipdb;ipdb.set_trace()
         cur_ports = self.int_br.get_vif_ports()
         port_names = [p.port_name for p in cur_ports]
         port_info = self.int_br.get_ports_attributes(
@@ -351,6 +350,8 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             # get_ports_attributes, we
             # will get a KeyError
             try:
+                if port.port_name in consts.FTNT_PORTS:
+                    import ipdb;ipdb.set_trace()
                 local_vlan_map = by_name[port.port_name]['other_config']
                 if port.port_name in consts.FTNT_PORTS:
                     local_vlan = by_name[port.port_name]['trunks']
