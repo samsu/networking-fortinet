@@ -345,6 +345,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         port_info = self.int_br.get_ports_attributes(
             "Port", columns=["name", "other_config", "tag"], ports=port_names)
         by_name = {x['name']: x for x in port_info}
+        import ipdb;ipdb.set_trace()
         for port in cur_ports:
             # if a port was deleted between get_vif_ports and
             # get_ports_attributes, we
@@ -838,6 +839,8 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                         'physical_network': physical_network}
         if segmentation_id is not None:
             vlan_mapping['segmentation_id'] = segmentation_id
+        if port.port_name in consts.FTNT_PORTS:
+            vlan_mapping = {port.vif_id: vlan_mapping}
         port_other_config.update(vlan_mapping)
         self.int_br.set_db_attribute("Port", port.port_name, "other_config",
                                      port_other_config)
