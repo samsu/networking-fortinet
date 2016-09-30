@@ -144,7 +144,10 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                                         log_errors=log_errors)
             cur_attrs = self._format_attr(cur_attrs)
             if isinstance(value, dict) and isinstance(cur_attrs, dict):
-                if set(value.items()).issubset(set(cur_attrs.items())):
+                if all((k in value and cur_attrs[k] == v) for k, v in
+                       value.iteritems()):
+                    return
+                else:
                     value.update(cur_attrs)
             elif isinstance(value, list):
                 value = set(value) | set(cur_attrs)
