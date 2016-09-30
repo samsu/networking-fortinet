@@ -812,7 +812,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         :param ovs_restarted: indicates if this is called for an OVS restart.
         '''
 
-        #import ipdb;ipdb.set_trace()
+        import ipdb;ipdb.set_trace()
 
         if net_uuid not in self.local_vlan_map or ovs_restarted:
             self.provision_local_vlan(net_uuid, network_type,
