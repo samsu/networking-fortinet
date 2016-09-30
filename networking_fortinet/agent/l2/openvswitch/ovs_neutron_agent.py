@@ -886,7 +886,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 self.setup_arp_spoofing_protection(self.int_br,
                                                    port, port_detail)
             if port.port_name in consts.FTNT_PORTS:
-                print "port.port_name=", port.port_name
+                print "port_detail=", port_detail
                 print "cur_tag=", cur_tag
                 print "lvm.vlan=", lvm.vlan
                 import ipdb;ipdb.set_trace()
