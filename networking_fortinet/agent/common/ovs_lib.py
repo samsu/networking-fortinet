@@ -112,7 +112,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         elif isinstance(attrs, dict):
             return {k: _fmt_attr(v) for k, v in attrs.iteritems()}
         else:
-            return attrs
+            return _fmt_attr(attrs)
 
     @staticmethod
     def _ftnt_columns(columns):
