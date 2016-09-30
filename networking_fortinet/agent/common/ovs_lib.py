@@ -132,15 +132,17 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                   "record = %(record)s, column=%(col)s, value=%(val)s",
                   {'table_name': table_name, 'record': record,
                    'col': column, 'val': value})
+        if not value:
+            return self.clear_db_attribute(self, table_name, record, column)
+
         if record in consts.FTNT_PORTS:
             cur_attrs = self.db_get_val(table_name, record, column,
                                         check_error=check_error,
                                         log_errors=log_errors)
             if isinstance(value, dict) and isinstance(cur_attrs, dict):
-                if value and value.items() not in cur_attrs.items():
-                    #cur_attrs.update(value)
+                if value.items() not in cur_attrs.items():
                     value.update(cur_attrs)
-            elif value and isinstance(value, list):
+            elif isinstance(value, list):
                 value = set(value) | set(cur_attrs)
 
         super(FortinetOVSBridge, self).set_db_attribute(
