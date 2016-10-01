@@ -370,6 +370,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             "Interface", columns=["name", "external_ids", "ofport"],
             ports=consts.FTNT_PORTS, if_exists=True)
         result = {}
+        import ipdb;ipdb.set_trace()
         for x in fgt_itf_infos:
             external_ids = self._format_attr(x['external_ids'])
             x['external_ids'] = external_ids
