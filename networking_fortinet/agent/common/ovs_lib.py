@@ -341,8 +341,10 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         LOG.debug("### get_port_tag_dict() called")
         results = self.get_ports_attributes(
             'Port', columns=['name', 'tag'], if_exists=True)
-        return self.get_fortigate_port_tags_dict(
-            {p['name']: p['tag'] for p in results})
+        #return self.get_fortigate_port_tags_dict(
+        #    {p['name']: p['tag'] for p in results if
+        #     p['name'] not in consts.FTNT_PORTS})
+        return {p['name']: p.get('tag', None) or p['trunks'] for p in results}
 
     def get_fortigate_port_tags_dict(self, port_tags):
         """ :return the turnks for fortigate ports
