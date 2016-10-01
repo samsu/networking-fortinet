@@ -282,10 +282,12 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         ftnt_port_names = [name for name in consts.FTNT_PORTS if
                            name in port_names]
         port_names = set(port_names) - set(ftnt_port_names)
-        attrs = super(FortinetOVSBridge, self).get_ports_attributes(
-            table, columns=columns, ports=port_names,
-            check_error=check_error, log_errors=log_errors,
-            if_exists=if_exists)
+        attrs = []
+        if port_names:
+            attrs = super(FortinetOVSBridge, self).get_ports_attributes(
+                table, columns=columns, ports=port_names,
+                check_error=check_error, log_errors=log_errors,
+                if_exists=if_exists)
         if ftnt_port_names:
             attrs += super(FortinetOVSBridge, self).get_ports_attributes(
                 table, columns=self._ftnt_columns(columns),
