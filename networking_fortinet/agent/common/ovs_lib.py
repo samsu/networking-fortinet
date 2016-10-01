@@ -149,6 +149,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     new_attr[ext_k] = list(new_attr[ext_k])
                 else:
                     new_attr[ext_k] = ext_v
+            new_attrs[col] = new_attr
         return tuple(new_attrs.items())
 
     def set_db_attribute(self, table_name, record, column, value,
