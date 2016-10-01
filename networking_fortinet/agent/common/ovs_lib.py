@@ -128,7 +128,6 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         return new_columns
 
     def update_attributes(self, cur_attrs, interface_attr_tuples):
-        import ipdb;ipdb.set_trace()
         if not cur_attrs:
             return interface_attr_tuples
         new_attrs = copy.deepcopy(cur_attrs[0])
