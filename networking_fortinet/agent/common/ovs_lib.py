@@ -366,24 +366,32 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         return port_tags
 
     def get_vifs_by_ids(self, port_ids):
-        fgt_itf_infos = self.get_ports_attributes(
+        interface_info = self.get_ports_attributes(
             "Interface", columns=["name", "external_ids", "ofport"],
-            ports=consts.FTNT_PORTS, if_exists=True)
-        result = {}
-        import ipdb;ipdb.set_trace()
-        for x in fgt_itf_infos:
+            if_exists=True)
+        by_id = {}
+        for x in interface_info:
             external_ids = self._format_attr(x['external_ids'])
-            x['external_ids'] = external_ids
-            if isinstance(external_ids.get('iface-id'), list):
-                if_ids = set(external_ids.get('iface-id')) & (set(port_ids))
-                #import ipdb;ipdb.set_trace()
-                for if_id in if_ids:
-                    result[if_id] = ovs_lib.VifPort(
-                        x['name'], x['ofport'], if_id,
-                        external_ids['attached-mac'], self)
-                port_ids = set(port_ids) - if_ids
-
-        result.update(super(FortinetOVSBridge, self).get_vifs_by_ids(port_ids))
+            if x['name'] in consts.FTNT_PORTS and \
+                    isinstance(external_ids.get('iface-id'), list):
+                if_ids = set(external_ids.get('iface-id'))
+                by_id.update({if_id: x for if_id in if_ids})
+            elif x['name'] not in consts.FTNT_PORTS:
+                by_id.update({external_ids.get('iface-id'): x})
+        result = {}
+        for port_id in port_ids:
+            result[port_id] = None
+            if port_id not in by_id:
+                LOG.info(_LI("Port %(port_id)s not present in bridge "
+                             "%(br_name)s"),
+                         {'port_id': port_id, 'br_name': self.br_name})
+                continue
+            pinfo = by_id[port_id]
+            if not self._check_ofport(port_id, pinfo):
+                continue
+            mac = pinfo['external_ids'].get('attached-mac')
+            result[port_id] = ovs_lib.VifPort(pinfo['name'], pinfo['ofport'],
+                                      port_id, mac, self)
         return result
 
     def get_vif_port_by_id(self, port_id):
