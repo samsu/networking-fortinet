@@ -360,6 +360,9 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             if not local_vlan:
                 continue
             net_uuid = local_vlan_map.get('net_uuid')
+            print "# net_uuid=", net_uuid
+            print "# local_vlan=", local_vlan
+            print "# local_vlan_map['%s']=" % net_uuid, local_vlan_map['net_uuid']
             if (net_uuid and net_uuid not in self._local_vlan_hints
                 and local_vlan != DEAD_VLAN_TAG):
                 self.available_local_vlans.remove(local_vlan)
@@ -894,7 +897,6 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 print "port_detail=", port_detail
                 print "cur_tag=", cur_tag
                 print "lvm.vlan=", lvm.vlan
-                import ipdb;ipdb.set_trace()
 
             if port.port_name in consts.FTNT_PORTS \
                     and isinstance(cur_tag, list) and lvm.vlan not in cur_tag:
