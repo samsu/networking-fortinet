@@ -188,7 +188,7 @@ class Router(router_info.RouterInfo):
             if 'vdom' in cfg:
                 #self.ns_name = cfg['vdom']['vdom']
                 self.fgt.add_resource(task_id, resources.Vdom,
-                                      name=self.ns_name)
+                                      name=cfg['vdom']['vdom'])
             if 'vlink' in cfg:
                 vlinkinfo = cfg['vlink']
                 if 'vdomlink' in vlinkinfo:
