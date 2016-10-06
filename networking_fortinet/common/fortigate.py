@@ -186,7 +186,7 @@ class Router(router_info.RouterInfo):
         task_id = router.get('id', None)
         try:
             if 'vdom' in cfg:
-                self.ns_name = cfg['vdom']['vdom']
+                #self.ns_name = cfg['vdom']['vdom']
                 self.fgt.add_resource(task_id, resources.Vdom,
                                       name=self.ns_name)
             if 'vlink' in cfg:
