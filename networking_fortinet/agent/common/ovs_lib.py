@@ -179,6 +179,54 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             table_name, record, column, value, check_error=check_error,
             log_errors=log_errors)
 
+    def del_db_attributes(self, table_name, record, *interface_attr_tuples):
+        LOG.debug("## del_db_attribute() called, table_name = %(table_name)s,"
+                  "record = %(record)s, interface_attr_tuples=%(attrs)s",
+                  {'table_name': table_name, 'record': record,
+                   'attrs': interface_attr_tuples})
+        if record not in consts.FTNT_PORTS:
+            return
+        del_attrs = dict(interface_attr_tuples)
+        columns = [attr[0] for attr in interface_attr_tuples]
+        cur_attrs = self._format_attr(
+            self.get_ports_attributes(table_name, columns=columns,
+                                      ports=[record]))
+        for column, value in del_attrs.iteritems():
+            # column is the ovs table interface field need to be deleted, and
+            # value is the field's value, if it is a dict or list, then need
+            # to find the sub attribute in the value, and handle the deletion.
+            # e.g. column is 'external_ids', value is a dict.
+            if not value:
+                self.clear_db_attribute(table_name, record, column)
+            cur_attr =cur_attrs.get(column, None)
+
+            if isinstance(value, dict):
+                for subattr, subval in value.iteritems():
+                    # The subattr is the sub-attribute in the column, and
+                    # the subval is it's value.
+                    # e.g. 'iface-id' is a subattr in 'external_ids', and
+                    # the subval would be a port id in it.
+                    if not subval:
+                        cur_attr[subattr] = None
+                    if isinstance(cur_attr[subattr], dict):
+                        cur_attr[subattr].pop(subval, None)
+                    elif (isinstance(cur_attr[subattr], (list, set)) and
+                          subval in cur_attr[subattr]):
+                        cur_attr[subattr].remove(subval)
+
+            elif isinstance(value, list):
+                if isinstance(cur_attr, int):
+                    cur_attr = [str(cur_attr)]
+                cur_attr = list(set(cur_attr) - set(value))
+
+            elif isinstance(value, (str, int)):
+                if isinstance(cur_attr, dict):
+                        cur_attr.pop(value, None)
+                elif isinstance(cur_attr, list) and value in cur_attr:
+                    cur_attr.remove(subval)
+            super(FortinetOVSBridge, self).set_db_attribute(
+                table_name, record, column, cur_attr)
+
     def check_attributes(self, cur_attrs, interface_attr_tuples):
         if not cur_attrs:
             return False
