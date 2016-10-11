@@ -225,6 +225,8 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                         cur_attr.pop(value, None)
                 elif isinstance(cur_attr, list) and value in cur_attr:
                     cur_attr.remove(subval)
+                elif cur_attr == value:
+                    cur_attr = None
             super(FortinetOVSBridge, self).set_db_attribute(
                 table_name, record, column, cur_attr)
 
