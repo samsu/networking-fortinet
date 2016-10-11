@@ -191,6 +191,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         cur_attrs = self._format_attr(
             self.get_ports_attributes(table_name, columns=columns,
                                       ports=[record]))
+        cur_attrs = cur_attrs[0]
         for column, value in del_attrs.iteritems():
             # column is the ovs table interface field need to be deleted, and
             # value is the field's value, if it is a dict or list, then need
