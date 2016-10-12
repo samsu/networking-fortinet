@@ -122,7 +122,6 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         """Unplug the interface."""
         tap_name = self._get_tap_name(device_name, prefix)
         LOG.debug("## Unplugged interface '%s'", tap_name)
-        import ipdb;ipdb.set_trace()
         if tap_name in FTNT_PORTS and port_id:
             ## device_name is the portid
             self._ovs_del_port(bridge, device_name, port_id)
