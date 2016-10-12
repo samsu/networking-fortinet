@@ -746,7 +746,8 @@ class RouterInfo(object):
         """
         LOG.debug("process router updates")
         self._process_internal_ports(agent.pd)
-        agent.pd.sync_router(self.router['id'])
+        ## samsu: todo later
+        #agent.pd.sync_router(self.router['id'])
         self.process_external(agent)
         # Process static routes for router
         self.routes_updated()
