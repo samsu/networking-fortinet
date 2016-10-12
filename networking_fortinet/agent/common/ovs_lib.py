@@ -186,6 +186,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                    'attrs': interface_attr_tuples})
         if record not in consts.FTNT_PORTS:
             return
+        import ipdb;ipdb.set_trace()
         del_attrs = dict(interface_attr_tuples)
         columns = [attr[0] for attr in interface_attr_tuples]
         cur_attrs = self._format_attr(
