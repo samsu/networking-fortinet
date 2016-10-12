@@ -817,7 +817,6 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         '''
 
         if net_uuid not in self.local_vlan_map or ovs_restarted:
-            import ipdb;ipdb.set_trace()
             self.provision_local_vlan(net_uuid, network_type,
                                       physical_network, segmentation_id)
         lvm = self.local_vlan_map[net_uuid]
