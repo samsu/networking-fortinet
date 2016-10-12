@@ -464,7 +464,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             return ovs_lib.VifPort(port['name'], port['ofport'],
                                    port_id, mac, self)
 
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
         LOG.info(_LI("Port %(port_id)s not present in bridge %(br_name)s"),
                  {'port_id': port_id, 'br_name': self.br_name})
 
