@@ -590,7 +590,6 @@ class OVSDVRNeutronAgent(object):
                                                            device_owner)
 
     def _unbind_distributed_router_interface_port(self, port, lvm):
-        import ipdb;ipdb.set_trace()
         ovsport = self.local_ports[port.vif_id]
         # removal of distributed router interface
         subnet_ids = ovsport.get_subnets()
