@@ -695,7 +695,6 @@ class OVSDVRNeutronAgent(object):
     def unbind_port_from_dvr(self, vif_port, local_vlan_map):
         if not self.in_distributed_mode():
             return
-        import ipdb;ipdb.set_trace()
         # Handle port removed use-case
         if vif_port and vif_port.vif_id not in self.local_ports:
             LOG.debug("DVR: Non distributed port, ignoring %s", vif_port)
