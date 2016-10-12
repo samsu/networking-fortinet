@@ -858,7 +858,6 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         port_info = self.int_br.get_ports_attributes(
             "Port", columns=["name", "tag"], ports=port_names, if_exists=True)
         tags_by_name = {x['name']: x['tag'] for x in port_info}
-        import ipdb;ipdb.set_trace()
         if ftnt_ports:
             ftnt_port_info = self.int_br.get_ports_attributes(
                 "Port", columns=["name", "trunk"], ports=ftnt_ports,
