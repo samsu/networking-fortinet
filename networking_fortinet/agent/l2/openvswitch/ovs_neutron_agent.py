@@ -1013,6 +1013,11 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         if vif_id in lvm.vif_ports:
             vif_port = lvm.vif_ports[vif_id]
             self.dvr_agent.unbind_port_from_dvr(vif_port, lvm)
+            port_config = [('other_config', vif_port.vif_id),
+                           ('trunks', lvm.vlan)]
+            self.int_br.del_db_attributes('Port', vif_port.port_name,
+                                          *port_config)
+
         lvm.vif_ports.pop(vif_id, None)
 
         if not lvm.vif_ports:
