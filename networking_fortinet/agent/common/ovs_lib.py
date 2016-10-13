@@ -350,6 +350,8 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 table, columns=self._ftnt_columns(columns),
                 ports=ftnt_port_names, check_error=check_error,
                 log_errors=log_errors, if_exists=if_exists)
+        LOG.debug("### get_ports_attributes() attrs=%(attrs)s",
+                  {'attrs': attrs})
         return self._format_attr(attrs)
 
     def portid_from_external_ids(self, external_ids):
