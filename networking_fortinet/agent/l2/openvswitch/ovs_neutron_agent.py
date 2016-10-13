@@ -849,13 +849,15 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
 
     @log_helpers.log_method_call
     def _bind_devices(self, need_binding_ports):
+        if not need_binding_ports:
+            return
         devices_up = []
         devices_down = []
         port_names = [p['vif_port'].port_name for p in need_binding_ports]
         ftnt_ports = list(set(port_names) & set(consts.FTNT_PORTS))
         port_names = list(set(port_names) - set(consts.FTNT_PORTS))
         port_info = self.int_br.get_ports_attributes(
-            "Port", columns=["name", "tag"], ports=port_names, if_exists=True)
+            'Port', columns=['name', 'tag'], ports=port_names, if_exists=True)
         tags_by_name = {x['name']: x['tag'] for x in port_info}
         if ftnt_ports:
             ftnt_port_info = self.int_br.get_ports_attributes(
