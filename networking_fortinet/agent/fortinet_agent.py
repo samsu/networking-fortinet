@@ -198,13 +198,13 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
 
         self.target_ex_net_id = None
         self.use_ipv6 = ipv6_utils.is_enabled()
-        self.pd = None
-        """
-        self.pd = pd.PrefixDelegation(self.context, self.process_monitor,
-                                      self.driver,
-                                      self.plugin_rpc.process_prefix_update,
-                                      self.create_pd_router_update,
-                                      self.conf)"""
+        if self.conf.agent_mode == l3_constants.L3_AGENT_MODE_DVR:
+            self.pd = None
+        else:
+            self.pd = pd.PrefixDelegation(
+                self.context, self.process_monitor, self.driver,
+                self.plugin_rpc.process_prefix_update,
+                self.create_pd_router_update, self.conf)
 
     @log_helpers.log_method_call
     def initialize_fortigate(self):

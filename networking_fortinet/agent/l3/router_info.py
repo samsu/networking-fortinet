@@ -491,7 +491,8 @@ class RouterInfo(object):
         for stale_dev in stale_devs:
             LOG.debug('Deleting stale internal router device: %s',
                       stale_dev)
-            pd.remove_stale_ri_ifname(self.router_id, stale_dev)
+            if pd:
+                pd.remove_stale_ri_ifname(self.router_id, stale_dev)
             if stale_dev not in consts.FTNT_PORTS:
                 self.driver.unplug(stale_dev,
                                    namespace=self.ns_name)
