@@ -226,6 +226,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                         cur_attr.pop(value, None)
                 elif isinstance(cur_attr, list) and value in cur_attr:
                     cur_attr.remove(value)
+                    cur_attr = [str(element) for element in cur_attr]
                 elif cur_attr == value:
                     cur_attr = None
             if cur_attr:
