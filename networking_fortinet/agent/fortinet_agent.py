@@ -198,12 +198,13 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
 
         self.target_ex_net_id = None
         self.use_ipv6 = ipv6_utils.is_enabled()
-
+        self.pd = None
+        """
         self.pd = pd.PrefixDelegation(self.context, self.process_monitor,
                                       self.driver,
                                       self.plugin_rpc.process_prefix_update,
                                       self.create_pd_router_update,
-                                      self.conf)
+                                      self.conf)"""
 
     @log_helpers.log_method_call
     def initialize_fortigate(self):
@@ -462,7 +463,8 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
             LOG.debug("Starting router update for %s, action %s, router %s",
                       update.id, update.action, update.router)
             if update.action == queue.PD_UPDATE:
-                self.pd.process_prefix_update()
+                # todo: ignore the pd handle first
+                #self.pd.process_prefix_update()
                 LOG.debug("Finished a router update for %s", update.id)
                 continue
             router = update.router
