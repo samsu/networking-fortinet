@@ -229,10 +229,13 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     cur_attr = [str(element) for element in cur_attr]
                 elif cur_attr == value:
                     cur_attr = None
-            self.clear_db_attribute(table_name, record, column)
+            # it is better to clear db column when no cur_attr left, however
+            # the other_config cannot set
             if cur_attr:
                 super(FortinetOVSBridge, self).set_db_attribute(
                     table_name, record, column, cur_attr)
+            else:
+                self.clear_db_attribute(table_name, record, column)
 
     def check_attributes(self, cur_attrs, interface_attr_tuples):
         if not cur_attrs:
