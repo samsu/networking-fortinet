@@ -1458,6 +1458,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 devices,
                 self.agent_id,
                 self.conf.host))
+        LOG.debug("## devices_details_list: %s", devices_details_list)
         if devices_details_list.get('failed_devices'):
             #TODO(rossella_s) handle better the resync in next patches,
             # this is just to preserve the current behavior
