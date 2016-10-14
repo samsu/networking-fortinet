@@ -230,6 +230,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 elif cur_attr == value:
                     cur_attr = None
             if cur_attr:
+                self.clear_db_attribute(table_name, record, column)
                 super(FortinetOVSBridge, self).set_db_attribute(
                     table_name, record, column, cur_attr)
             else:
