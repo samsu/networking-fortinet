@@ -857,7 +857,8 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         port_names = list(set(port_names) - set(consts.FTNT_PORTS))
         port_info = self.int_br.get_ports_attributes(
             'Port', columns=['name', 'tag'], ports=port_names, if_exists=True)
-        tags_by_name = {x['name']: x['tag'] for x in port_info}
+        tags_by_name = {x['name']: x['tag'] for x in port_info if
+                        x['name'] not in consts.FTNT_PORTS}
         if ftnt_ports:
             ftnt_port_info = self.int_br.get_ports_attributes(
                 'Port', columns=['name', 'trunk'], ports=ftnt_ports,
