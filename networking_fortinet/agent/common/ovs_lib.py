@@ -230,6 +230,8 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     cur_attr = None
             # it is better to clear db column when no cur_attr left, however
             # the other_config cannot set
+            if 'other_config' == column:
+                self.clear_db_attribute(table_name, record, column)
             if cur_attr:
                 super(FortinetOVSBridge, self).set_db_attribute(
                     table_name, record, column, cur_attr)
