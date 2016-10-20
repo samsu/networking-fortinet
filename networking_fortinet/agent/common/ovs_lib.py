@@ -110,10 +110,10 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
 
         if isinstance(attrs, list):
             fmt_attrs = []
-            for record in attrs:
-                if isinstance(record, dict):
-                    record = {k: _fmt_attr(v) for k, v in record.iteritems()}
-                fmt_attrs.append(record)
+            for _attr in attrs:
+                if isinstance(_attr, dict):
+                    _attr = {k: _fmt_attr(v) for k, v in _attr.iteritems()}
+                fmt_attrs.append(_attr)
             return fmt_attrs
         else:
             return _fmt_attr(attrs)
@@ -179,6 +179,34 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             table_name, record, column, value, check_error=check_error,
             log_errors=log_errors)
 
+    def _del_attr(self, cur_attr, del_attr):
+        if not cur_attr:
+            return
+
+        for field, value in del_attr.iteritems():
+            cur_field =cur_attr.get(field, None)
+            if not cur_field:
+                continue
+            if not value:
+                cur_attr[field] = None
+
+            elif isinstance(value, dict):
+                self._del_attr(cur_field, value)
+
+            elif isinstance(value, list):
+                if isinstance(cur_attr, int):
+                    cur_attr = [str(cur_attr)]
+                cur_attr = list(set(cur_attr) - set(value))
+
+            elif isinstance(value, (str, int, unicode)):
+                if isinstance(cur_attr, dict):
+                        cur_attr.pop(value, None)
+                elif isinstance(cur_attr, (list, set)) and value in cur_attr:
+                    cur_attr.remove(value)
+                    cur_attr = [str(element) for element in cur_attr]
+                elif cur_attr == value:
+                    cur_attr = None
+
     def del_db_attributes(self, table_name, record, *interface_attr_tuples):
         LOG.debug("## del_db_attribute() called, table_name = %(table_name)s,"
                   "record = %(record)s, interface_attr_tuples=%(attrs)s",
@@ -200,36 +228,10 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             if not value:
                 self.clear_db_attribute(table_name, record, column)
             cur_attr =cur_attrs.get(column, None)
-
-            if isinstance(value, dict):
-                for subattr, subval in value.iteritems():
-                    # The subattr is the sub-attribute in the column, and
-                    # the subval is it's value.
-                    # e.g. 'iface-id' is a subattr in 'external_ids', and
-                    # the subval would be a port id in it.
-                    if not subval:
-                        cur_attr[subattr] = None
-                    if isinstance(cur_attr[subattr], dict):
-                        cur_attr[subattr].pop(subval, None)
-                    elif (isinstance(cur_attr[subattr], (list, set)) and
-                          subval in cur_attr[subattr]):
-                        cur_attr[subattr].remove(subval)
-
-            elif isinstance(value, list):
-                if isinstance(cur_attr, int):
-                    cur_attr = [str(cur_attr)]
-                cur_attr = list(set(cur_attr) - set(value))
-
-            elif isinstance(value, (str, int, unicode)):
-                if isinstance(cur_attr, dict):
-                        cur_attr.pop(value, None)
-                elif isinstance(cur_attr, list) and value in cur_attr:
-                    cur_attr.remove(value)
-                    cur_attr = [str(element) for element in cur_attr]
-                elif cur_attr == value:
-                    cur_attr = None
+            self._del_attr(cur_attr, value)
             # it is better to clear db column when no cur_attr left, however
-            # the other_config cannot set
+            # the 'other_config' doesn't support 'set'(like append), have to
+            # clear it's exist value then set the new value.
             if 'other_config' == column:
                 self.clear_db_attribute(table_name, record, column)
             if cur_attr:
@@ -257,7 +259,8 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     return True
         return False
 
-    def delete_attributes(self, cur_attrs, interface_attr_tuples):
+    def delete_attributes(self, cur_attrs, interface_attr_tuples,
+                          namespace=namespace):
         if not cur_attrs:
             return cur_attrs
 
@@ -276,6 +279,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                         for key in ['iface-status']:
                             if isinstance(new_attr[key], dict):
                                 new_attr[key].pop(v, None)
+
         return tuple(new_attrs.items())
 
     def set_interface_attr(self, port_name, *interface_attr_tuples):
@@ -313,7 +317,6 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                                               if_exists=True)
         return self.check_attributes(cur_attrs, interface_attr_tuples)
 
-
     def del_interface_attr(self, port_name, *interface_attr_tuples):
         """delete existing port attributes, and configure port interface."""
         LOG.debug("## del_interface_attr() called, port_name = %(port_name)s,"
@@ -325,7 +328,8 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         cur_attrs = self.get_ports_attributes('Interface', columns=columns,
                                               ports=[port_name],
                                               if_exists=True)
-        new_attrs = self.delete_attributes(cur_attrs, interface_attr_tuples)
+        new_attrs = self.delete_attributes(cur_attrs, interface_attr_tuples,
+                                           namespace=namespace)
         LOG.debug("### cur_attrs = %(cur_attrs)s, new_attrs = %(new_attrs)s",
                   {'cur_attrs': cur_attrs, 'new_attrs': new_attrs})
         with self.ovsdb.transaction() as txn:
