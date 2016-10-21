@@ -194,6 +194,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 self._del_attr(cur_value, value)
 
             elif isinstance(value, list):
+                import ipdb;ipdb.set_trace()
                 if isinstance(cur_attr, int):
                     cur_attr = [str(cur_attr)]
                 cur_attr = list(set(cur_attr) - set(value))
