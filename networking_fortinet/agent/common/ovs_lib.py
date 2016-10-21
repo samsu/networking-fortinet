@@ -184,14 +184,14 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             return
 
         for field, value in del_attr.iteritems():
-            cur_field =cur_attr.get(field, None)
-            if not cur_field:
+            cur_value =cur_attr.get(field, None)
+            if not cur_value:
                 continue
             if not value:
                 cur_attr[field] = None
 
             elif isinstance(value, dict):
-                self._del_attr(cur_field, value)
+                self._del_attr(cur_value, value)
 
             elif isinstance(value, list):
                 if isinstance(cur_attr, int):
