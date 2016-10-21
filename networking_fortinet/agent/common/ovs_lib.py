@@ -260,7 +260,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         return False
 
     def delete_attributes(self, cur_attrs, interface_attr_tuples,
-                          namespace=namespace):
+                          namespace=None):
         if not cur_attrs:
             return cur_attrs
 
