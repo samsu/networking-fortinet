@@ -194,7 +194,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 self._del_attr(cur_value, value)
 
             elif isinstance(value, (list, set)):
-                import ipdb;ipdb.set_trace()
+
                 if isinstance(cur_value, int):
                     cur_value = [str(cur_value)]
                 cur_value = list(set(cur_value) - set(value))
@@ -207,10 +207,11 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     cur_value = [str(element) for element in cur_value]
                 elif cur_value == value:
                     cur_value = None
-            if cur_value:
-                cur_attr[field] = cur_value
-            else:
+            import ipdb;ipdb.set_trace()
+            if cur_value is None:
                 cur_attr.pop(field, None)
+            else:
+                cur_attr[field] = cur_value
 
     def del_db_attributes(self, table_name, record, *interface_attr_tuples):
         LOG.debug("## del_db_attribute() called, table_name = %(table_name)s,"
