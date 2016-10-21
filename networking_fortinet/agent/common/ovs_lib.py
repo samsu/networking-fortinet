@@ -207,6 +207,10 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     cur_value = [str(element) for element in cur_value]
                 elif cur_value == value:
                     cur_value = None
+            if cur_value:
+                cur_attr[field] = cur_value
+            else:
+                cur_attr.pop(field, None)
 
     def del_db_attributes(self, table_name, record, *interface_attr_tuples):
         LOG.debug("## del_db_attribute() called, table_name = %(table_name)s,"
