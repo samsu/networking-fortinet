@@ -188,6 +188,19 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         return cur_attr
 
     def _del_attr(self, cur_attr, del_attr):
+        """
+        :param cur_attr:
+        :param del_attr:
+        the attribute format to be added:
+        del_attr = {
+            'iface-id': ['port-uuid'],
+            'iface-status': 'port-uuid',
+            'namespaces': {
+                'namespace-uuid(router-uuid)_vdom-name(osvdm3)': ['port-uuid']
+            }
+        }
+        :return:
+        """
         LOG.debug("## _del_attr() called, cur_attr=%(cur_attr)s, "
                   "del_attr=%(del_attr)s",
                   {'cur_attr': cur_attr, 'del_attr': del_attr})
@@ -196,7 +209,6 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
 
         for field, value in del_attr.iteritems():
             cur_value = cur_attr.get(field, None)
-            import ipdb;ipdb.set_trace()
             if not cur_value:
                 continue
             if not value:
@@ -264,18 +276,6 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                                         log_errors=log_errors)
             cur_attrs = self._format_attr(cur_attrs)
             value = self._add_attr(cur_attrs, value)
-            '''
-            if isinstance(value, dict) and isinstance(cur_attrs, dict):
-                if all((k in value and cur_attrs.get(k, None) == v) for k, v in
-                       value.iteritems()):
-                    return
-                else:
-                    value.update(cur_attrs)
-            elif isinstance(value, list):
-                if isinstance(cur_attrs, int):
-                    cur_attrs = str(cur_attrs)
-                value = list(set(value) | set(cur_attrs))
-            '''
         super(FortinetOVSBridge, self).set_db_attribute(
             table_name, record, column, value, check_error=check_error,
             log_errors=log_errors)
