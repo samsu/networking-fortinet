@@ -127,6 +127,68 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 new_columns.append('trunks')
         return new_columns
 
+    def _add_attr(self, cur_attr, add_attr):
+        LOG.debug("## _add_attr() called, cur_attr=%(cur_attr)s, "
+                  "add_attr=%(add_attr)s",
+                  {'cur_attr': cur_attr, 'add_attr': add_attr})
+        if not add_attr:
+            return
+        if isinstance(add_attr, dict):
+            for field, value in add_attr.iteritems():
+                cur_value = cur_attr.get(field, None)
+                if isinstance(value, dict) and isinstance(cur_value, dict):
+                    if all((k in value and cur_value.get(k, None) == v) \
+                           for k, v in value.iteritems()):
+                        return
+                    else:
+                        self._add_attr(cur_value, value)
+                elif isinstance(value, (set, list)) or \
+                        isinstance(cur_value, list):
+                    if isinstance(cur_value, int):
+                        cur_value = str(cur_value)
+                    cur_attr[field] = list(set(value) | set(cur_value))
+        elif isinstance(add_attr, (list, set)):
+            cur_attr = set(add_attr) | set(cur_attr) \
+                if isinstance(cur_attr, list) else add_attr
+            cur_attr = list(cur_attr)
+        else:
+            cur_attr = add_attr
+        return cur_attr
+
+    def _del_attr(self, cur_attr, del_attr):
+        if not cur_attr:
+            return
+
+        for field, value in del_attr.iteritems():
+            cur_value =cur_attr.get(field, None)
+            if not cur_value:
+                continue
+            if not value:
+                cur_attr[field] = None
+
+            elif isinstance(value, dict):
+                self._del_attr(cur_value, value)
+
+            elif isinstance(value, (list, set)):
+
+                if isinstance(cur_value, int):
+                    cur_value = [str(cur_value)]
+                cur_value = list(set(cur_value) - set(value))
+
+            elif isinstance(value, (str, int, unicode)):
+                if isinstance(cur_value, dict):
+                        cur_value.pop(value, None)
+                elif isinstance(cur_value, (list, set)) and value in cur_value:
+                    cur_value.remove(value)
+                    cur_value = [str(element) for element in cur_value]
+                elif cur_value == value:
+                    cur_value = None
+            import ipdb;ipdb.set_trace()
+            if cur_value is None:
+                cur_attr.pop(field, None)
+            else:
+                cur_attr[field] = cur_value
+
     def update_attributes(self, cur_attrs, interface_attr_tuples):
         if not cur_attrs:
             return interface_attr_tuples
@@ -165,6 +227,8 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                                         check_error=check_error,
                                         log_errors=log_errors)
             cur_attrs = self._format_attr(cur_attrs)
+            value = self._add_attr(cur_attrs, value)
+            '''
             if isinstance(value, dict) and isinstance(cur_attrs, dict):
                 if all((k in value and cur_attrs.get(k, None) == v) for k, v in
                        value.iteritems()):
@@ -175,43 +239,10 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 if isinstance(cur_attrs, int):
                     cur_attrs = str(cur_attrs)
                 value = list(set(value) | set(cur_attrs))
+            '''
         super(FortinetOVSBridge, self).set_db_attribute(
             table_name, record, column, value, check_error=check_error,
             log_errors=log_errors)
-
-    def _del_attr(self, cur_attr, del_attr):
-        if not cur_attr:
-            return
-
-        for field, value in del_attr.iteritems():
-            cur_value =cur_attr.get(field, None)
-            if not cur_value:
-                continue
-            if not value:
-                cur_attr[field] = None
-
-            elif isinstance(value, dict):
-                self._del_attr(cur_value, value)
-
-            elif isinstance(value, (list, set)):
-
-                if isinstance(cur_value, int):
-                    cur_value = [str(cur_value)]
-                cur_value = list(set(cur_value) - set(value))
-
-            elif isinstance(value, (str, int, unicode)):
-                if isinstance(cur_value, dict):
-                        cur_value.pop(value, None)
-                elif isinstance(cur_value, (list, set)) and value in cur_value:
-                    cur_value.remove(value)
-                    cur_value = [str(element) for element in cur_value]
-                elif cur_value == value:
-                    cur_value = None
-            import ipdb;ipdb.set_trace()
-            if cur_value is None:
-                cur_attr.pop(field, None)
-            else:
-                cur_attr[field] = cur_value
 
     def del_db_attributes(self, table_name, record, *interface_attr_tuples):
         LOG.debug("## del_db_attribute() called, table_name = %(table_name)s,"
