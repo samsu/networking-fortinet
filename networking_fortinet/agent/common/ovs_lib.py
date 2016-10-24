@@ -173,11 +173,15 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         return cur_attr
 
     def _del_attr(self, cur_attr, del_attr):
+        LOG.debug("## _del_attr() called, cur_attr=%(cur_attr)s, "
+                  "del_attr=%(del_attr)s",
+                  {'cur_attr': cur_attr, 'del_attr': del_attr})
         if not cur_attr:
             return
 
         for field, value in del_attr.iteritems():
-            cur_value =cur_attr.get(field, None)
+            cur_value = cur_attr.get(field, None)
+            import ipdb;ipdb.set_trace()
             if not cur_value:
                 continue
             if not value:
@@ -200,7 +204,6 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     cur_value = [str(element) for element in cur_value]
                 elif cur_value == value:
                     cur_value = None
-            import ipdb;ipdb.set_trace()
             if cur_value is None:
                 cur_attr.pop(field, None)
             else:
