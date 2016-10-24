@@ -134,7 +134,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         :param cur_attr:
         :param add_attr:
         the attribute format to be added:
-        attr1 = {
+        add_attr = {
             'iface-id': 'port-uuid',
             'iface-status': {'port-uuid': 'active'},
             'namespaces': {
