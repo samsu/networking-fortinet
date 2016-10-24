@@ -128,6 +128,21 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         return new_columns
 
     def _add_attr(self, cur_attr, add_attr):
+        """
+        The function was called by set_db_attribute(), it's parameters don't
+        include any column(e.g. 'external_ids').
+        :param cur_attr:
+        :param add_attr:
+        the attribute format to be added:
+        attr1 = {
+            'iface-id': 'port-uuid',
+            'iface-status': {'port-uuid': 'active'},
+            'namespaces': {
+                'namespace-uuid(router-uuid)_vdom-name(osvdm3)': ['port-uuid']
+            }
+        }
+        :return:
+        """
         LOG.debug("## _add_attr() called, cur_attr=%(cur_attr)s, "
                   "add_attr=%(add_attr)s",
                   {'cur_attr': cur_attr, 'add_attr': add_attr})
