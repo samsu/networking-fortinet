@@ -192,7 +192,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                   "del_attr=%(del_attr)s",
                   {'cur_attr': cur_attr, 'del_attr': del_attr})
         if not cur_attr:
-            return
+            return cur_attr
 
         for field, value in del_attr.iteritems():
             cur_value = cur_attr.get(field, None)
@@ -203,7 +203,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 cur_attr[field] = None
 
             elif isinstance(value, dict):
-                self._del_attr(cur_value, value)
+                cur_value = self._del_attr(cur_value, value)
 
             elif isinstance(value, (list, set)):
 
@@ -223,6 +223,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 cur_attr.pop(field, None)
             else:
                 cur_attr[field] = cur_value
+        return cur_attr
 
     def update_attributes(self, cur_attrs, interface_attr_tuples):
         if not cur_attrs:
@@ -299,8 +300,8 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             # e.g. column is 'external_ids', value is a dict.
             if not value:
                 self.clear_db_attribute(table_name, record, column)
-            cur_attr =cur_attrs.get(column, None)
-            self._del_attr(cur_attr, value)
+            cur_attr = cur_attrs.get(column, None)
+            cur_attr = self._del_attr(cur_attr, value)
             # it is better to clear db column when no cur_attr left, however
             # the 'other_config' doesn't support 'set'(like append), have to
             # clear it's exist value then set the new value.
