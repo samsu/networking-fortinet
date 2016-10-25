@@ -46,12 +46,17 @@ class Fortigate(object):
         self.task_manager = task_manager
         self.task_manager.start()
 
+    def exist(self):
+        if self.api_client:
+            return True
+        return False
+
     @log_helpers.log_method_call
     def initialize(self):
         """
         :return:
         """
-        if not getattr(self.cfg, 'address', None):
+        if not self.exist():
             # samsu: it means use general network nodes instead of a fgt
             return
 

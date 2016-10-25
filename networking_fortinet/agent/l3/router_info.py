@@ -328,7 +328,8 @@ class RouterInfo(object):
                                 interface_name):
         LOG.debug("adding internal network: port(%s)", port_id)
         import ipdb;ipdb.set_trace()
-        self.driver.plug_new(network_id, port_id, interface_name, mac_address)
+        self.driver.plug_new(network_id, port_id, interface_name, mac_address,
+                             namespace=ns_name)
         ip_cidrs = common_utils.fixed_ip_cidrs(fixed_ips)
         self.driver.init_router_port(
             interface_name, ip_cidrs, namespace=ns_name)
