@@ -24,7 +24,7 @@ from oslo_utils import excutils
 from oslo_utils import timeutils
 from oslo_utils import uuidutils
 
-from neutron.agent.l3 import agent
+from neutron.db import l3_db
 from neutron.api.rpc.handlers import l3_rpc
 from neutron.common import constants
 from neutron.common import rpc as n_rpc
@@ -45,6 +45,7 @@ LOG = logging.getLogger(__name__)
 
 def checktimestamp(method):
     """
+    :param method
     compare the start time of rpc server with the message time to be sent,
     if the message generated time is older than the start time, then discard.
     """
@@ -209,7 +210,11 @@ class FortinetAgentRpcCallback(object):
         if not router.get('id', None):
             return
         rinfo = {}
-        tenant_id = router['tenant_id']
+        tenant_id = router.get('tenant_id', None)
+        if not tenant_id:
+            router_db = fortinet_db.query_record(
+                context, l3_db.Router, id=router['id'])
+            tenant_id = getattr(router_db, tenant_id, None)
         try:
             namespace = utils.allocate_vdom(self, context, tenant_id=tenant_id)
             rinfo['vdom'] = namespace.make_dict() if namespace else {}
