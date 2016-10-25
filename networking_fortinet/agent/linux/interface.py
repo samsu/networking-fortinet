@@ -83,6 +83,19 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         ovs = ovs_lib.FortinetOVSBridge(bridge)
         ovs.set_interface_attr(device_name, *attrs)
 
+    def init_router_port(self, device_name, ip_cidrs, namespace,
+                         preserve_ips=None, gateway_ips=None,
+                         extra_subnets=None, enable_ra_on_gw=False,
+                         clean_connections=False):
+        if device_name not in consts.FTNT_PORTS:
+            super(FortinetOVSInterfaceDriver, self).init_router_port(
+                device_name, ip_cidrs, namespace,
+                preserve_ips=preserve_ips,
+                gateway_ips=gateway_ips,
+                extra_subnets=extra_subnets,
+                enable_ra_on_gw=enable_ra_on_gw,
+                clean_connections=clean_connections)
+
     def _ovs_del_port(self, bridge, device_name, port_id, namespace=None):
         if not bridge:
             bridge = self.conf.ovs_integration_bridge
