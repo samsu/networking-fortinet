@@ -362,13 +362,18 @@ class RouterInfo(object):
         LOG.debug("### removing internal network: port(%s) interface(%s)",
                   port, interface_name)
         if interface_name in consts.FTNT_PORTS:
-            self.driver.unplug(interface_name, port_id=port['id'])
+            self.driver.unplug(interface_name, port_id=port['id'],
+                               namespace=self.ns_name)
         else:
             if ip_lib.device_exists(interface_name, namespace=self.ns_name):
                 self.driver.unplug(interface_name, namespace=self.ns_name)
 
     @log_helpers.log_method_call
     def _get_existing_devices(self):
+        """
+        check existing route ports
+        :return:
+        """
         ip_wrapper = ip_lib.IPWrapper(namespace=self.ns_name)
         ip_devs = ip_wrapper.get_devices(exclude_loopback=True)
         return [ip_dev.name for ip_dev in ip_devs]
@@ -494,9 +499,9 @@ class RouterInfo(object):
                       stale_dev)
             if pd:
                 pd.remove_stale_ri_ifname(self.router_id, stale_dev)
-            if stale_dev not in consts.FTNT_PORTS:
                 self.driver.unplug(stale_dev,
-                                   namespace=self.ns_name)
+                                   namespace=self.ns_name,
+                                   prefix=INTERNAL_DEV_PREFIX)
 
 
     @log_helpers.log_method_call
