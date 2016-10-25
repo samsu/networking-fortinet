@@ -75,7 +75,7 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
                   {'iface-id': set([port_id]),
                    'iface-status': {port_id: 'active'},
                    'attached-mac': mac_address,
-                   'namespaces': {namespace: set[port_id]}
+                   'namespaces': {namespace: set([port_id])}
                    })]
         if internal:
             attrs.insert(0, ('type', 'internal'))
