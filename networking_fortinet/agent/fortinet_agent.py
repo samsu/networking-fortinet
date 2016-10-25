@@ -299,7 +299,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
                 return dvr_router.DvrEdgeRouter(*args, **kwargs)
             else:
                 #return dvr_local_router.DvrLocalRouter(*args, **kwargs)
-                #import ipdb;ipdb.set_trace()
+                import ipdb;ipdb.set_trace()
                 return fortigate.Router(self.fortigate, **kwargs)
 
         if router.get('ha'):
@@ -342,6 +342,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         if ri is None:
             LOG.warn(_LW("Info for router %s was not found. "
                          "Performing router cleanup"), router_id)
+            # clean up fortigate and ovs related data if exist
             self.namespaces_manager.ensure_router_cleanup(router_id)
             return
 
