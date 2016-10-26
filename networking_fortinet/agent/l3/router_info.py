@@ -627,13 +627,12 @@ class RouterInfo(object):
             enable_ra_on_gw=enable_ra_on_gw,
             clean_connections=True)
 
-        if interface_name in consts.FTNT_PORTS:
-            ns_name = None
-        for fixed_ip in ex_gw_port['fixed_ips']:
-            ip_lib.send_ip_addr_adv_notif(ns_name,
-                                          interface_name,
-                                          fixed_ip['ip_address'],
-                                          self.agent_conf)
+        if interface_name not in consts.FTNT_PORTS:
+            for fixed_ip in ex_gw_port['fixed_ips']:
+                ip_lib.send_ip_addr_adv_notif(ns_name,
+                                              interface_name,
+                                              fixed_ip['ip_address'],
+                                              self.agent_conf)
 
     @log_helpers.log_method_call
     def is_v6_gateway_set(self, gateway_ips):
