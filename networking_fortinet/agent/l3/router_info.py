@@ -342,6 +342,43 @@ class RouterInfo(object):
 
     @log_helpers.log_method_call
     def internal_network_added(self, port):
+        """
+        :param port:
+        example format:
+        {
+            u'allowed_address_pairs': [],
+            u'extra_dhcp_opts': [],
+            u'device_owner': u'network:router_interface_distributed',
+            u'binding:profile': {},
+            u'binding:vnic_type': u'normal',
+            u'fixed_ips': [{
+                u'subnet_id': u'6356d82a-9f4d-477c-91ca-25e8f24639a1',
+                u'prefixlen': 24,
+                u'ip_address': u'192.168.10.254'}],
+            u'id': u'02fe7cb3-a812-47e3-817a-1f30dfb79702',
+            u'security_groups': [],
+            u'binding:vif_details': {},
+            u'binding:vif_type': u'distributed',
+            u'mac_address': u'90:6c:ac:aa:bb:cc',
+            u'status': u'DOWN',
+            u'subnets': [{
+                u'ipv6_ra_mode': None,
+                u'cidr': u'192.168.10.0/24',
+                u'gateway_ip': u'192.168.10.254',
+                u'id': u'6356d82a-9f4d-477c-91ca-25e8f24639a1',
+                u'subnetpool_id': None}],
+            u'binding:host_id': u'',
+            u'device_id': u'6d0f940c-a779-4761-ac57-e642076ceb0f',
+            u'name': u'',
+            u'admin_state_up': True,
+            u'network_id': u'9cf7617f-e528-49ae-b6bc-10a8d5957d73',
+            u'dns_name': u'',
+            u'mtu': 0,
+            u'tenant_id': u'a1aaba9826b74fb58c7fd3e71a926ff6',
+            u'extra_subnets': []
+        }
+        :return:
+        """
         network_id = port['network_id']
         port_id = port['id']
         fixed_ips = port['fixed_ips']
@@ -369,14 +406,21 @@ class RouterInfo(object):
                 self.driver.unplug(interface_name, namespace=self.ns_name)
 
     @log_helpers.log_method_call
+    def _ftnt_namespace(self):
+        return consts.FTNT_NS_SPL in self.ns_name
+
+    @log_helpers.log_method_call
     def _get_existing_devices(self):
         """
         check existing route ports
         :return:
         """
-        ip_wrapper = ip_lib.IPWrapper(namespace=self.ns_name)
-        ip_devs = ip_wrapper.get_devices(exclude_loopback=True)
-        return [ip_dev.name for ip_dev in ip_devs]
+        if self._ftnt_namespace():
+            return []
+        else:
+            ip_wrapper = ip_lib.IPWrapper(namespace=self.ns_name)
+            ip_devs = ip_wrapper.get_devices(exclude_loopback=True)
+            return [ip_dev.name for ip_dev in ip_devs]
 
     @staticmethod
     def _get_updated_ports(existing_ports, current_ports):
@@ -487,7 +531,6 @@ class RouterInfo(object):
         # Enable RA
         if enable_ra:
             self.enable_radvd(internal_ports)
-
         existing_devices = self._get_existing_devices()
         current_internal_devs = set(n for n in existing_devices
                                     if n.startswith(INTERNAL_DEV_PREFIX))
