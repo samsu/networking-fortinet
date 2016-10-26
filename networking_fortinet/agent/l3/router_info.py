@@ -116,7 +116,10 @@ class RouterInfo(object):
 
     @log_helpers.log_method_call
     def get_external_device_name(self, port_id):
-        return (EXTERNAL_DEV_PREFIX + port_id)[:self.driver.DEV_NAME_LEN]
+        #return (EXTERNAL_DEV_PREFIX + port_id)[:self.driver.DEV_NAME_LEN]
+        LOG.debug('### get_external_device_name*() port_id %(port_id)s',
+                  {'port_id': port_id})
+        return EXTERNAL_DEV_PORT
 
     @log_helpers.log_method_call
     def get_external_device_interface_name(self, ex_gw_port):
@@ -681,6 +684,9 @@ class RouterInfo(object):
         interface_name = None
         if ex_gw_port_id:
             interface_name = self.get_external_device_name(ex_gw_port_id)
+        if interface_name == consts.EXTERNAL_DEV_PORT:
+            ## TODO: not handle external gateway yet
+            return
         if ex_gw_port:
             if not self.ex_gw_port:
                 self.external_gateway_added(ex_gw_port, interface_name)
