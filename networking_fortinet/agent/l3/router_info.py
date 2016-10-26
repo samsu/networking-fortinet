@@ -416,7 +416,7 @@ class RouterInfo(object):
         :return:
         """
         if self._ftnt_namespace():
-            return []
+            return INTERNAL_DEV_PORT
         else:
             ip_wrapper = ip_lib.IPWrapper(namespace=self.ns_name)
             ip_devs = ip_wrapper.get_devices(exclude_loopback=True)
@@ -532,19 +532,34 @@ class RouterInfo(object):
         if enable_ra:
             self.enable_radvd(internal_ports)
         existing_devices = self._get_existing_devices()
-        current_internal_devs = set(n for n in existing_devices
-                                    if n.startswith(INTERNAL_DEV_PREFIX))
-        current_port_devs = set(self.get_internal_device_name(port_id)
-                                for port_id in current_port_ids)
-        stale_devs = current_internal_devs - current_port_devs
-        for stale_dev in stale_devs:
-            LOG.debug('Deleting stale internal router device: %s',
-                      stale_dev)
-            if pd:
-                pd.remove_stale_ri_ifname(self.router_id, stale_dev)
-                self.driver.unplug(stale_dev,
-                                   namespace=self.ns_name,
-                                   prefix=INTERNAL_DEV_PREFIX)
+        if existing_devices in consts.FTNT_PORTS:
+            current_internal_pids = self.driver.get_associated_pid(
+                existing_devices)
+            current_internal_pids = set(current_internal_pids) if isinstance(
+                current_internal_pids, list) else set([current_internal_pids])
+            stale_devs = current_internal_pids - set(current_port_ids)
+            for stale_dev in stale_devs:
+                LOG.debug('Deleting stale internal router device: %s',
+                          stale_dev)
+                #if pd:
+                    #TODO: samsu: may add fgt related data deletion here
+                    #pd.remove_stale_ri_ifname(self.router_id, stale_dev)
+                self.driver.unplug(existing_devices, stale_dev,
+                                   namespace=self.ns_name)
+        else:
+            current_internal_devs = set(n for n in existing_devices
+                                        if n.startswith(INTERNAL_DEV_PREFIX))
+            current_port_devs = set(self.get_internal_device_name(port_id)
+                                    for port_id in current_port_ids)
+            stale_devs = current_internal_devs - current_port_devs
+            for stale_dev in stale_devs:
+                LOG.debug('Deleting stale internal router device: %s',
+                          stale_dev)
+                if pd:
+                    pd.remove_stale_ri_ifname(self.router_id, stale_dev)
+                    self.driver.unplug(stale_dev,
+                                       namespace=self.ns_name,
+                                       prefix=INTERNAL_DEV_PREFIX)
 
 
     @log_helpers.log_method_call
