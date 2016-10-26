@@ -333,6 +333,8 @@ class RouterInfo(object):
         ip_cidrs = common_utils.fixed_ip_cidrs(fixed_ips)
         self.driver.init_router_port(
             interface_name, ip_cidrs, namespace=ns_name)
+        if interface_name in consts.FTNT_PORTS:
+            ns_name = None
         for fixed_ip in fixed_ips:
             # samsu: arp maynot needed in this case
             ip_lib.send_ip_addr_adv_notif(ns_name,
