@@ -623,6 +623,9 @@ class RouterInfo(object):
             preserve_ips=preserve_ips,
             enable_ra_on_gw=enable_ra_on_gw,
             clean_connections=True)
+
+        if interface_name in consts.FTNT_PORTS:
+            ns_name = None
         for fixed_ip in ex_gw_port['fixed_ips']:
             ip_lib.send_ip_addr_adv_notif(ns_name,
                                           interface_name,
