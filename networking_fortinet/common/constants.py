@@ -34,12 +34,17 @@ POSTFIX = {
     'fip': '+'
 }
 
+HYPHEN = {
+    'ns': '_'
+}
+
+FTNT_NS_SPL = HYPHEN['ns'] + PREFIX['vdom']
+
 # TYPE
 TYPE_EXT = 'ext2int'
 TYPE_INT = 'int2int'
 TYPE_FIP = 'ext2fip'
 
-#EXT_VDOM = 'root'
 EXT_VDOM = 'osvdmext'
 EXT_DEF_DST = '0.0.0.0 0.0.0.0'
 DEF_GW = '0.0.0.0'
