@@ -147,7 +147,10 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                   "add_attr=%(add_attr)s",
                   {'cur_attr': cur_attr, 'add_attr': add_attr})
         if not add_attr:
-            return
+            return cur_attr
+        elif not cur_attr:
+            return add_attr
+
         if isinstance(add_attr, dict):
             for field, value in add_attr.iteritems():
                 import ipdb;ipdb.set_trace()
