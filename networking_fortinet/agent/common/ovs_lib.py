@@ -153,7 +153,6 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
 
         if isinstance(add_attr, dict):
             for field, value in add_attr.iteritems():
-                import ipdb;ipdb.set_trace()
                 cur_value = cur_attr.get(field, None)
                 if isinstance(value, dict) and isinstance(cur_value, dict):
                     if all((k in value and cur_value.get(k, None) == v) \
@@ -207,9 +206,9 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         LOG.debug("## _del_attr() called, cur_attr=%(cur_attr)s, "
                   "del_attr=%(del_attr)s",
                   {'cur_attr': cur_attr, 'del_attr': del_attr})
-        if not cur_attr:
+        if not cur_attr or not del_attr:
             return cur_attr
-
+        import ipdb;ipdb.set_trace()
         for field, value in del_attr.iteritems():
             cur_value = cur_attr.get(field, None)
             if not cur_value:
