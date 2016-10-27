@@ -13,10 +13,11 @@
 #    under the License.
 
 
+import netaddr
 from neutron.db import api as db_api
 from oslo_config import cfg
 from oslo_log import helpers as log_helpers
-from oslo_utils import excutils
+from oslo_utils import excutils, uuidutils
 import six
 
 from networking_fortinet._i18n import _LE
@@ -175,13 +176,20 @@ class Router(router_info.RouterInfo):
     def __init__(self, fortigate, agent, host, *args, **kwargs):
         super(Router, self).__init__(*args, **kwargs)
         self.fgt = fortigate
-        # A bunch of resources in the Fortigate
+        # A bunch of resources in the Fortigate, may deperated
         self.cfg = {}
         #import ipdb;ipdb.set_trace()
         self.vdom = kwargs['router']['fortigate']['vdom']['vdom']
         self.agent = agent
         self.host = host
+        # ns_name to group ports belong to the same router
         self.ns_name = '_'.join([kwargs['router_id'],  self.vdom])
+        # one router interface per fgt address
+        self.fgt_fwaddresses = []
+        # addr_grp name is the combination of addrgrp, _ and vdom name
+        self.fgt_addr_grp = None
+        # The set of fgt firewall policy edit ids associated with the router
+        self.fgt_fw_policies = []
 
     @log_helpers.log_method_call
     def create_router(self, router):
@@ -190,12 +198,38 @@ class Router(router_info.RouterInfo):
         if not cfg:
             return
         res = {}
-        task_id = router.get('id', None)
+        # may need to generate a uuid for task_id
+        task_id = uuidutils.generate_uuid()
         try:
             if 'vdom' in cfg:
                 #self.ns_name = cfg['vdom']['vdom']
                 self.fgt.add_resource(task_id, resources.Vdom,
                                       name=cfg['vdom']['vdom'])
+
+            for inf in router.get('_interfaces', []):
+                subnet = inf['subnets'][0]
+                cidr = netaddr.IPNetwork(subnet['cidr'])
+                name = str(cidr.network)
+                subnet = ' '.join([str(cidr.network), str(cidr.netmask)])
+                self.fgt.add_resource(task_id, resources.FirewallAddress,
+                                      vdom=self.vdom,
+                                      name= name,
+                                      subnet=subnet)
+                self.fgt_fwaddresses.append(name)
+            self.fgt_addr_grp = const.PREFIX['addrgrp'] + self.vdom
+            self.fgt.add_resource(task_id, resources.FirewallAddrgrp,
+                                  name=self.fgt_addr_grp,
+                                  vdom=self.vdom,
+                                  members=self.fgt_fwaddresses)
+            fwpolicy = self.fgt.add_resource(task_id, resources.FirewallPolicy,
+                                             vdom=self.vdom,
+                                             srcintf='any',
+                                             srcaddr=self.fgt_addr_grp,
+                                             dstintf='any',
+                                             dstaddr=self.fgt_addr_grp,
+                                             nat='disable')
+            self.fgt_fw_policies.append(fwpolicy['results']['mkey'])
+            '''
             if 'vlink' in cfg:
                 vlinkinfo = cfg['vlink']
                 if 'vdomlink' in vlinkinfo:
@@ -211,6 +245,7 @@ class Router(router_info.RouterInfo):
                     if 'ADD' == r['http_method']:
                         res['routestatic'] = vlinkinfo['routestatic']
                         res['routestatic']['edit_id'] = r['results']['mkey']
+            '''
 
         except Exception as e:
             with excutils.save_and_reraise_exception():
@@ -219,6 +254,27 @@ class Router(router_info.RouterInfo):
                 self.fgt.rollback(task_id)
         self.fgt.finish(task_id)
         return res
+
+    @log_helpers.log_method_call
+    def delete(self):
+        task_id = uuidutils.generate_uuid()
+        try:
+            for id in self.fgt_fw_policies:
+                self.fgt.delete_resource(task_id, resources.FirewallPolicy,
+                                         vdom=self.vdom,
+                                         id=id)
+            self.fgt.delete_resource(task_id, resources.FirewallAddrgrp,
+                                     vdom=self.vdom,
+                                     name=self.fgt_addr_grp)
+            for fwaddr in self.fgt_fwaddresses:
+                self.fgt.delete_resource(task_id, resources.FirewallAddress,
+                                         vdom=self.vdom, name=fwaddr)
+        except Exception as e:
+            with excutils.save_and_reraise_exception():
+                LOG.error(_LE("Failed to delete router router=%(router)s"),
+                          {"router": self.router})
+                self.fgt.finish(task_id)
+        self.fgt.finish(task_id)
 
     def process(self, agent):
         # After a router was added to the dict, still need to process
