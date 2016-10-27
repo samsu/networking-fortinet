@@ -150,6 +150,9 @@ class Base(object):
 
     @classmethod
     def _rollback_data(cls, params, **result):
+        # may use a more general model later
+        #return {key: params['data'].get(key) for key in
+        #        cls.get_kws(params['data'])}
         return {
             'vdom': params['data'].get('vdom', const.EXT_VDOM),
             'name': params['data']['name']
