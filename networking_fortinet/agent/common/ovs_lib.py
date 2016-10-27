@@ -209,34 +209,34 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         if not cur_attr or not del_attr:
             return cur_attr
         import ipdb;ipdb.set_trace()
-        for field, value in del_attr.iteritems():
-            cur_value = cur_attr.get(field, None)
-            if not cur_value:
-                continue
-            if not value:
-                cur_attr[field] = None
-
-            elif isinstance(value, dict):
+        if isinstance(del_attr, dict):
+            for field, value in del_attr.iteritems():
+                cur_value = cur_attr.get(field, None)
+                if not cur_value:
+                    continue
+                if not value:
+                    cur_attr[field] = None
                 cur_value = self._del_attr(cur_value, value)
 
-            elif isinstance(value, (list, set)):
+                if cur_value is None:
+                    cur_attr.pop(field, None)
+                else:
+                    cur_attr[field] = cur_value
 
-                if isinstance(cur_value, int):
-                    cur_value = [str(cur_value)]
-                cur_value = list(set(cur_value) - set(value))
+        elif isinstance(del_attr, (list, set)):
+            if isinstance(cur_attr, int):
+                cur_attr = [str(cur_attr)]
+            cur_attr = list(set(cur_attr) - set(del_attr))
 
-            elif isinstance(value, (str, int, unicode)):
-                if isinstance(cur_value, dict):
-                        cur_value.pop(value, None)
-                elif isinstance(cur_value, (list, set)) and value in cur_value:
-                    cur_value.remove(value)
-                    cur_value = [str(element) for element in cur_value]
-                elif cur_value == value:
-                    cur_value = None
-            if cur_value is None:
-                cur_attr.pop(field, None)
-            else:
-                cur_attr[field] = cur_value
+        elif isinstance(del_attr, (str, int, unicode)):
+            if isinstance(cur_attr, dict):
+                cur_attr.pop(del_attr, None)
+            elif (isinstance(cur_attr, (list, set)) and
+                  del_attr in cur_attr):
+                cur_attr.remove(del_attr)
+                cur_attr = [str(element) for element in cur_attr]
+            elif cur_attr == del_attr:
+                cur_attr = None
         return cur_attr
 
     def update_attributes(self, cur_attrs, interface_attr_tuples):
