@@ -79,9 +79,10 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
                    })]
         if internal:
             attrs.insert(0, ('type', 'internal'))
-
         ovs = ovs_lib.FortinetOVSBridge(bridge)
-        ovs.set_interface_attr(device_name, *attrs)
+        for attr in attrs:
+            ovs.set_db_attribute('Interface', device_name, *attr)
+        #ovs.set_interface_attr(device_name, *attrs)
 
     def init_router_port(self, device_name, ip_cidrs, namespace,
                          preserve_ips=None, gateway_ips=None,
