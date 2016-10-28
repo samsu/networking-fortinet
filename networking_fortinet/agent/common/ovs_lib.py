@@ -273,11 +273,11 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             return self.clear_db_attribute(table_name, record, column)
 
         if record in consts.FTNT_PORTS:
+            import ipdb;ipdb.set_trace()
             cur_attrs = self.db_get_val(table_name, record, column,
                                         check_error=check_error,
                                         log_errors=log_errors)
-            cur_attrs = self._format_attr(cur_attrs)
-            value = self._add_attr(cur_attrs, value)
+            value = self._add_attr(self._format_attr(cur_attrs), value)
         super(FortinetOVSBridge, self).set_db_attribute(
             table_name, record, column, value, check_error=check_error,
             log_errors=log_errors)
