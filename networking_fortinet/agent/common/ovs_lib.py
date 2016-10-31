@@ -151,8 +151,9 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
 
         if isinstance(add_attr, dict):
             for field, value in add_attr.iteritems():
-                cur_value = cur_attr.get(field, {})
-                cur_attr[field] = self._add_attr(cur_value, value)
+                cur_value = cur_attr.get(field, None)
+                cur_attr[field] = value if not cur_value else self._add_attr(
+                    cur_value, value)
 
         elif isinstance(add_attr, (list, set)):
             cur_attr = set(add_attr) | set(cur_attr) \
