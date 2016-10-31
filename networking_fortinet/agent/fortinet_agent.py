@@ -349,6 +349,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         registry.notify(resources.ROUTER, events.BEFORE_DELETE,
                         self, router=ri)
 
+        import ipdb;ipdb.set_trace()
         ri.delete(self)
         del self.router_info[router_id]
 
