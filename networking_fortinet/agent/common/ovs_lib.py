@@ -193,16 +193,13 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                   {'cur_attr': cur_attr, 'del_attr': del_attr})
         if not cur_attr or not del_attr:
             return cur_attr
-        import ipdb;ipdb.set_trace()
+
         if isinstance(del_attr, dict):
             for field, value in del_attr.iteritems():
                 cur_value = cur_attr.get(field, None)
                 if not cur_value:
                     continue
-                if not value:
-                    cur_attr[field] = None
                 cur_value = self._del_attr(cur_value, value)
-
                 if cur_value is None:
                     cur_attr.pop(field, None)
                 else:
