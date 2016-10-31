@@ -255,7 +255,6 @@ class Router(router_info.RouterInfo):
         self.fgt.finish(task_id)
         return res
 
-    @log_helpers.log_method_call
     def delete(self):
         task_id = uuidutils.generate_uuid()
         try:
