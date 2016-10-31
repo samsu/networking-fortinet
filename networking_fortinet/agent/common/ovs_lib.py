@@ -206,7 +206,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     cur_attr[field] = cur_value
 
         elif isinstance(del_attr, (list, set)):
-            if isinstance(cur_attr, (str, int)):
+            if isinstance(cur_attr, (str, int, unicode)):
                 cur_attr = [str(cur_attr)]
             cur_attr = list(set(cur_attr) - set(del_attr))
 
