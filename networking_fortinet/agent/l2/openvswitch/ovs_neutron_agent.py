@@ -843,7 +843,6 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             vlan_mapping['segmentation_id'] = segmentation_id
         if port.port_name in consts.FTNT_PORTS:
             vlan_mapping['local_vlan'] = lvm.vlan
-            import ipdb;ipdb.set_trace()
             vlan_mapping = {port.vif_id: vlan_mapping}
         port_other_config.update(vlan_mapping)
         self.int_br.set_db_attribute("Port", port.port_name, "other_config",
