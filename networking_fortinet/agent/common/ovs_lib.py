@@ -146,23 +146,18 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         LOG.debug("## _add_attr() called, cur_attr=%(cur_attr)s, "
                   "add_attr=%(add_attr)s",
                   {'cur_attr': cur_attr, 'add_attr': add_attr})
-        if not add_attr:
-            return cur_attr
-        elif not cur_attr:
-            return add_attr
+        if not add_attr or not cur_attr:
+            return cur_attr or add_attr
 
         if isinstance(add_attr, dict):
             for field, value in add_attr.iteritems():
-                cur_value = cur_attr.get(field, None)
+                cur_value = cur_attr.get(field, {})
                 cur_attr[field] = self._add_attr(cur_value, value)
 
         elif isinstance(add_attr, (list, set)):
             cur_attr = set(add_attr) | set(cur_attr) \
                 if isinstance(cur_attr, list) else add_attr
             cur_attr = list(cur_attr)
-
-        elif isinstance(add_attr, (str, int)):
-            cur_attr = add_attr
 
         elif isinstance(add_attr, (str, int, unicode)):
             if isinstance(cur_attr, dict):
