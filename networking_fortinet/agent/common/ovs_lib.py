@@ -417,6 +417,17 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                   {'attrs': attrs})
         return self._format_attr(attrs)
 
+    def get_namespaces(self, table, columns=None, port=None,
+                             check_error=True, log_errors=True,
+                             if_exists=False):
+        LOG.debug("### get_ports_attributes() attrs=%(attrs)s",
+                  {'attrs': attrs})
+        port_name = consts.INTERNAL_DEV_PORT
+        column = 'external_ids'
+        namespaces = []
+        cur_attrs = self.db_get_val('Interface', port_name, column)
+        cur_attrs = self._format_attr(cur_attrs)
+
     def portid_from_external_ids(self, external_ids):
         external_ids = self._format_attr(external_ids)
         return super(FortinetOVSBridge, self).portid_from_external_ids(
