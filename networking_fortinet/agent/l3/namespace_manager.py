@@ -146,7 +146,7 @@ class NamespaceManager(object):
 
     def _ftnt_cleanup(self, namespace):
         if self._all_namespaces[namespace]:
-            for port_id in self.self._all_namespaces[namespace]:
+            for port_id in self._all_namespaces[namespace]:
                 self.driver.unplug(const.INTERNAL_DEV_PORT, port_id=port_id,
                                    namespace=namespace)
         try:
