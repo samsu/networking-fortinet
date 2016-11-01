@@ -124,9 +124,10 @@ class NamespaceManager(object):
     def ensure_router_cleanup(self, router_id):
         """Performs cleanup for a router"""
         for ns in self.list_all():
-            if ns.endswith(router_id):
-                ns_prefix, ns_id = self.get_prefix_and_id(ns)
-                self._cleanup(ns_prefix, ns_id)
+            self._ftnt_cleanup(ns)
+            #if ns.endswith(router_id):
+                #ns_prefix, ns_id = self.get_prefix_and_id(ns)
+                #self._cleanup(ns_prefix, ns_id)
 
     def _ftnt_cleanup(self, namespace):
         if self._all_namespaces[namespace]:
