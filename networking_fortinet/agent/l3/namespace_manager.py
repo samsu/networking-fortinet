@@ -106,21 +106,6 @@ class NamespaceManager(object):
     def keep_ext_net(self, ext_net_id):
         self._ids_to_keep.add(ext_net_id)
 
-    def get_prefix_and_id(self, ns_name):
-        """Get the prefix and id from the namespace name.
-
-        :param ns_name: The name of the namespace
-        :returns: tuple with prefix and id or None if no prefix matches
-        """
-        prefix = namespaces.get_prefix_from_ns_name(ns_name)
-        if prefix in self.ns_prefix_to_class_map:
-            identifier = namespaces.get_id_from_ns_name(ns_name)
-            return (prefix, identifier)
-
-    def is_managed(self, ns_name):
-        """Return True if the namespace name passed belongs to this manager."""
-        return self.get_prefix_and_id(ns_name) is not None
-
     def list_all(self):
         """Get a set of all namespaces on host managed by this manager."""
         try:
