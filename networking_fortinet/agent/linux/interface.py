@@ -130,10 +130,17 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         return ovs.portid_from_external_ids(external_ids)
 
     def get_namespaces(self, bridge=None, port_name=None):
-        if not bridge:
-            bridge = self.conf.ovs_integration_bridge
+        bridge = bridge or self.conf.ovs_integration_bridge
+        port_name = port_name or consts.INTERNAL_DEV_PORT
         ovs = ovs_lib.FortinetOVSBridge(bridge)
         return ovs.get_namespaces(port_name=port_name)
+
+    def del_namespace(self, bridge=None, port_name=None, namespace=None):
+        bridge = bridge or self.conf.ovs_integration_bridge
+        port_name = port_name or consts.INTERNAL_DEV_PORT
+        ovs = ovs_lib.FortinetOVSBridge(bridge)
+        ns = [('external_ids', {'namespaces': namespace})]
+        return ovs.del_db_attributes('Interface', port_name, *ns)
 
     def plug_new(self, network_id, port_id, device_name, mac_address,
                  bridge=None, namespace=None, prefix=None):
