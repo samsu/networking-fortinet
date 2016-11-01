@@ -126,8 +126,7 @@ class NamespaceManager(object):
         try:
             if self.agent_conf.agent_mode == ENABLE_DVR and isinstance(
                     self.driver, FTNT_DR):
-                namespaces = self.driver.get_namespaces()
-                return set(ns for ns in namespaces)
+                return self.driver.get_namespaces()
             else:
                 root_ip = ip_lib.IPWrapper()
                 namespaces = root_ip.get_namespaces()
