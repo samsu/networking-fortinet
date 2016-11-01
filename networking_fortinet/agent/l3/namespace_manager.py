@@ -117,7 +117,7 @@ class NamespaceManager(object):
     def list_all(self):
         """Get a set of all namespaces on host managed by this manager."""
         try:
-            if self.conf.agent_mode == l3_constants.L3_AGENT_MODE_DVR:
+            if self.agent_conf.agent_mode == l3_constants.L3_AGENT_MODE_DVR:
                 namespaces = self.driver.get_namespaces()
                 return set(ns for ns in namespaces)
             else:
