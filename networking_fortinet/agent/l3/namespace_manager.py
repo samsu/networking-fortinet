@@ -75,7 +75,6 @@ class NamespaceManager(object):
     def __enter__(self):
         self._all_namespaces = set()
         self._ids_to_keep = set()
-        import ipdb;ipdb.set_trace()
         if self._clean_stale:
             self._all_namespaces = self.list_all()
         return self
@@ -145,7 +144,6 @@ class NamespaceManager(object):
                 self._cleanup(ns_prefix, ns_id)
 
     def _ftnt_cleanup(self, namespace):
-        import ipdb;ipdb.set_trace()
         if self._all_namespaces[namespace]:
             for port_id in self._all_namespaces[namespace]:
                 self.driver.unplug(const.INTERNAL_DEV_PORT, port_id=port_id,
