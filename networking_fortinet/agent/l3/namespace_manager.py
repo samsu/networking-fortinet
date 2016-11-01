@@ -17,6 +17,7 @@ from neutron.agent.l3 import dvr_snat_ns
 from neutron.agent.l3 import namespaces
 from neutron.agent.linux import external_process
 from neutron.agent.linux import ip_lib
+from neutron.common import constants as l3_constants
 from neutron.i18n import _LE
 
 LOG = logging.getLogger(__name__)
@@ -116,10 +117,13 @@ class NamespaceManager(object):
     def list_all(self):
         """Get a set of all namespaces on host managed by this manager."""
         try:
-            import ipdb;ipdb.set_trace()
-            root_ip = ip_lib.IPWrapper()
-            namespaces = root_ip.get_namespaces()
-            return set(ns for ns in namespaces if self.is_managed(ns))
+            if self.conf.agent_mode == l3_constants.L3_AGENT_MODE_DVR:
+                namespaces = self.driver.get_namespaces()
+                return set(ns for ns in namespaces)
+            else:
+                root_ip = ip_lib.IPWrapper()
+                namespaces = root_ip.get_namespaces()
+                return set(ns for ns in namespaces if self.is_managed(ns))
         except RuntimeError:
             LOG.exception(_LE('RuntimeError in obtaining namespace list for '
                               'namespace cleanup.'))
