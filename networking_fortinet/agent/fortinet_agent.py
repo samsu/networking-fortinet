@@ -570,6 +570,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         timestamp = timeutils.utcnow()
 
         try:
+            import ipdb;ipdb.set_trace()
             if self.conf.use_namespaces:
                 routers = self.plugin_rpc.get_routers(context)
             else:
