@@ -20,8 +20,12 @@ from neutron.agent.linux import ip_lib
 from neutron.common import constants as l3_constants
 from neutron.i18n import _LE
 
+from networking_fortinet.agent.linux import interface
+
 LOG = logging.getLogger(__name__)
 
+FTNT_DR = interface.FortinetOVSInterfaceDriver
+ENABLE_DVR = l3_constants.L3_AGENT_MODE_DVR
 
 class NamespaceManager(object):
 
@@ -70,7 +74,6 @@ class NamespaceManager(object):
     def __enter__(self):
         self._all_namespaces = set()
         self._ids_to_keep = set()
-        import ipdb;ipdb.set_trace()
         if self._clean_stale:
             self._all_namespaces = self.list_all()
         return self
@@ -87,11 +90,13 @@ class NamespaceManager(object):
         self._clean_stale = False
 
         for ns in self._all_namespaces:
-            _ns_prefix, ns_id = self.get_prefix_and_id(ns)
-            if ns_id in self._ids_to_keep:
+            if ns in self._ids_to_keep:
                 continue
-            self._cleanup(_ns_prefix, ns_id)
-
+            self._ftnt_cleanup(ns)
+            #_ns_prefix, ns_id = self.get_prefix_and_id(ns)
+            #if ns_id in self._ids_to_keep:
+            #    continue
+            #self._cleanup(_ns_prefix, ns_id)
         return True
 
     def keep_router(self, router_id):
@@ -118,8 +123,8 @@ class NamespaceManager(object):
     def list_all(self):
         """Get a set of all namespaces on host managed by this manager."""
         try:
-            if self.agent_conf.agent_mode == l3_constants.L3_AGENT_MODE_DVR:
-                isinstance(self.driver, )
+            if self.agent_conf.agent_mode == ENABLE_DVR and isinstance(
+                    self.driver, FTNT_DR):
                 namespaces = self.driver.get_namespaces()
                 return set(ns for ns in namespaces)
             else:
@@ -138,8 +143,9 @@ class NamespaceManager(object):
                 ns_prefix, ns_id = self.get_prefix_and_id(ns)
                 self._cleanup(ns_prefix, ns_id)
 
-    def _cleanup(self, ns_prefix, ns_id):
-        ns_class = self.ns_prefix_to_class_map[ns_prefix]
+    def _ftnt_cleanup(self, namespace):
+        if namespace:
+            pass
         ns = ns_class(ns_id, self.agent_conf, self.driver, use_ipv6=False)
         try:
             if self.metadata_driver:
