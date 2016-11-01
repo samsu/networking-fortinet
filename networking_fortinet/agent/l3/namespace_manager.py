@@ -21,6 +21,7 @@ from neutron.common import constants as l3_constants
 from neutron.i18n import _LE
 
 from networking_fortinet.agent.linux import interface
+from networking_fortinet.common import constants as const
 
 LOG = logging.getLogger(__name__)
 
@@ -144,14 +145,19 @@ class NamespaceManager(object):
                 self._cleanup(ns_prefix, ns_id)
 
     def _ftnt_cleanup(self, namespace):
-        if namespace:
-            pass
-        ns = ns_class(ns_id, self.agent_conf, self.driver, use_ipv6=False)
+        if self._all_namespaces[namespace]:
+            for port_id in self.self._all_namespaces[namespace]:
+                self.driver.unplug(const.INTERNAL_DEV_PORT, port_id=port_id,
+                                   namespace=namespace)
         try:
-            if self.metadata_driver:
-                # cleanup stale metadata proxy processes first
-                self.metadata_driver.destroy_monitored_metadata_proxy(
-                    self.process_monitor, ns_id, self.agent_conf)
-            ns.delete()
+            self.driver.del_namespace(namespace=namespace)
+        #ns = ns_class(ns_id, self.agent_conf, self.driver, use_ipv6=False)
+        #try:
+        #    if self.metadata_driver:
+        #        # cleanup stale metadata proxy processes first
+        #        self.metadata_driver.destroy_monitored_metadata_proxy(
+        #            self.process_monitor, ns_id, self.agent_conf)
+        #    ns.delete()
         except RuntimeError:
-            LOG.exception(_LE('Failed to destroy stale namespace %s'), ns)
+            LOG.exception(_LE('Failed to destroy stale namespace %s'),
+                          namespace)
