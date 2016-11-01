@@ -34,9 +34,6 @@ from neutron.agent.l3 import dvr_edge_router as dvr_router
 from neutron.agent.l3 import ha
 from neutron.agent.l3 import ha_router
 from neutron.agent.l3 import legacy_router
-from neutron.agent.l3 import namespace_manager
-from neutron.agent.l3 import namespaces
-from neutron.agent.l3 import router_info as rinf
 from neutron.agent.l3 import router_processing_queue as queue
 from neutron.agent.linux import external_process
 from neutron.agent.linux import ip_lib
@@ -55,6 +52,9 @@ from neutron import context as n_context
 from neutron.i18n import _LE, _LI, _LW
 from neutron import manager
 
+from networking_fortinet.agent.l3 import namespace_manager
+from networking_fortinet.agent.l3 import namespaces
+from networking_fortinet.agent.l3 import router_info as rinf
 from networking_fortinet.agent.l3 \
     import fortinet_dvr_local_router as dvr_local_router
 from networking_fortinet.common import config
@@ -66,6 +66,7 @@ from networking_fortinet.db import models as fortinet_db
 from networking_fortinet.rpc.handlers import fortinet_agent_rpc
 from networking_fortinet.tasks import constants as t_consts
 from networking_fortinet.tasks import tasks
+
 
 try:
     from neutron_fwaas.services.firewall.agents.l3reference \
