@@ -129,6 +129,12 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         external_ids = attrs[0]['external_ids']
         return ovs.portid_from_external_ids(external_ids)
 
+    def get_namespaces(self, bridge=None, port_name=None):
+        if not bridge:
+            bridge = self.conf.ovs_integration_bridge
+        ovs = ovs_lib.FortinetOVSBridge(bridge)
+        return ovs.get_namespaces(port_name=port_name)
+
     def plug_new(self, network_id, port_id, device_name, mac_address,
                  bridge=None, namespace=None, prefix=None):
         """Plug in the interface."""
