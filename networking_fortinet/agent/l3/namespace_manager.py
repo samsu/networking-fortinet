@@ -74,6 +74,7 @@ class NamespaceManager(object):
     def __enter__(self):
         self._all_namespaces = set()
         self._ids_to_keep = set()
+        import ipdb;ipdb.set_trace()
         if self._clean_stale:
             self._all_namespaces = self.list_all()
         return self
