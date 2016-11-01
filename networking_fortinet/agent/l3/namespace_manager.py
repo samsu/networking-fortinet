@@ -70,6 +70,7 @@ class NamespaceManager(object):
     def __enter__(self):
         self._all_namespaces = set()
         self._ids_to_keep = set()
+        import ipdb;ipdb.set_trace()
         if self._clean_stale:
             self._all_namespaces = self.list_all()
         return self
@@ -118,6 +119,7 @@ class NamespaceManager(object):
         """Get a set of all namespaces on host managed by this manager."""
         try:
             if self.agent_conf.agent_mode == l3_constants.L3_AGENT_MODE_DVR:
+                isinstance(self.driver, )
                 namespaces = self.driver.get_namespaces()
                 return set(ns for ns in namespaces)
             else:
