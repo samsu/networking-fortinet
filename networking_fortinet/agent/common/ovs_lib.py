@@ -373,26 +373,6 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                                               if_exists=True)
         return self.check_attributes(cur_attrs, interface_attr_tuples)
 
-    def del_interface_attr(self, port_name, *interface_attr_tuples):
-        """delete existing port attributes, and configure port interface."""
-        LOG.debug("## del_interface_attr() called, port_name = %(port_name)s,"
-                  "attrs = %(attrs)s",
-                  {'port_name': port_name, 'attrs': interface_attr_tuples})
-        columns = [attr[0] for attr in interface_attr_tuples]
-        # The neutron ovs.lib name 'ports' related functions to operate
-        # the ovs table 'interface'
-        cur_attrs = self.get_ports_attributes('Interface', columns=columns,
-                                              ports=[port_name],
-                                              if_exists=True)
-        new_attrs = self.delete_attributes(cur_attrs, interface_attr_tuples,
-                                           namespace=namespace)
-        LOG.debug("### cur_attrs = %(cur_attrs)s, new_attrs = %(new_attrs)s",
-                  {'cur_attrs': cur_attrs, 'new_attrs': new_attrs})
-        with self.ovsdb.transaction() as txn:
-            if interface_attr_tuples:
-                txn.add(self.ovsdb.db_set('Interface', port_name, *new_attrs))
-        self.get_port_ofport(port_name)
-
     def get_ports_attributes(self, table, columns=None, ports=None,
                              check_error=True, log_errors=True,
                              if_exists=False):

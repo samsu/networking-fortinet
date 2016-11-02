@@ -72,10 +72,9 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
     def _ovs_set_port(self, bridge, device_name, port_id, mac_address,
                       namespace=None, internal=True):
         attrs = [('external_ids',
-                  {'iface-id': [port_id],
+                  {'iface-id': {port_id: namespace},
                    'iface-status': {port_id: 'active'},
                    'attached-mac': mac_address,
-                   'port_id': {port_id: namespace},
                    'namespaces': {namespace: [port_id]}})]
         if internal:
             attrs.insert(0, ('type', 'internal'))
@@ -103,12 +102,10 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         attrs = [('external_ids',
                   {'iface-id': port_id,
                    'iface-status': port_id,
-                   'port_id': port_id,
                    'namespaces': {namespace: port_id}
                    })]
         ovs = ovs_lib.FortinetOVSBridge(bridge)
         ovs.del_db_attributes('Interface', device_name, *attrs)
-        #ovs.del_interface_attr(device_name, namespace=namespace, *attrs)
 
     def _ovs_chk_port(self, bridge, port_id, device_name=None):
         if not bridge:
