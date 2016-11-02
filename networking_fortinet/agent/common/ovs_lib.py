@@ -427,14 +427,23 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 LOG.warn(_LW("Found failed openvswitch port: %s"),
                          result['name'])
             elif 'attached-mac' in result['external_ids']:
-                port_id = self.portid_from_external_ids(result['external_ids'])
-                if isinstance(port_id, dict):
-                    port_id = [id for id in port_id]
+                if result['name'] in consts.FTNT_PORTS:
+                    port_id = self.get_fgt_vif_port_set(result['name'])
+                else:
+                    port_id = self.portid_from_external_ids(
+                        result['external_ids'])
                 if port_id:
                     port_id = set(port_id) if isinstance(port_id, list) \
                         else set([port_id])
                     edge_ports |= port_id
         return edge_ports
+
+    def get_fgt_vif_port_set(self, port_name=None):
+        port_name = port_name or consts.INTERNAL_DEV_PORT
+        column = 'other_config'
+        cur_attr = self.db_get_val('Port', port_name, column)
+        cur_attr = self._format_attr(cur_attr)
+        return [pid for pid in cur_attr]
 
     def get_port_tag_dict(self):
         """Get a dict of port names and associated vlan tags.
