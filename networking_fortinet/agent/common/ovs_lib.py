@@ -428,6 +428,8 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                          result['name'])
             elif 'attached-mac' in result['external_ids']:
                 port_id = self.portid_from_external_ids(result['external_ids'])
+                if isinstance(port_id, dict):
+                    port_id = [id for id in port_id]
                 if port_id:
                     port_id = set(port_id) if isinstance(port_id, list) \
                         else set([port_id])
