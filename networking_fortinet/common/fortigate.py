@@ -41,7 +41,8 @@ class Fortigate(object):
         """Fortigate class."""
         self.cfg = getattr(cfg.CONF, const.CONF_SECTION, None)
         self.api_client = self.get_apiclient()
-
+        self.network = {}
+        self.router = {}
         if not task_manager:
             task_manager = tasks.TaskManager()
         self.task_manager = task_manager
@@ -168,8 +169,21 @@ class Fortigate(object):
     def set_resource(self, task_id, resource, **kwargs):
         return self.op(resource.set, task_id=task_id, **kwargs)
 
+    def get_resource(self, task_id, resource, **kwargs):
+        return self.op(resource.get, task_id=task_id, **kwargs)
+
     def delete_resource(self, task_id, resource, **kwargs):
         return self.op(resource.delete, task_id=task_id, **kwargs)
+
+class LocalInfo(object):
+    def __init__(self, fortigate, agent, host, namespace=None):
+        self.fgt = fortigate
+        # A bunch of resources in the Fortigate, may deperated
+        self.cfg = {}
+        self.agent = agent
+        self.host = host
+        # namespace to group ports belong to the same router
+        self.ns_name = namespace
 
 
 class Router(router_info.RouterInfo):
@@ -284,3 +298,24 @@ class Router(router_info.RouterInfo):
             #self.fip_ns.scan_fip_ports(self)
         import ipdb;ipdb.set_trace()
         super(Router, self).process(agent)
+
+class Network(object):
+    def __init__(self, vdom=None, subnet=None):
+        self.name = None
+        self.vdom = vdom
+        self.vlanid = None
+        self.subnet = subnet
+
+
+    def create(self, fgt, portid, vlanid, namespace):
+        if not namespace:
+            raise ValueError("namespace was required")
+            return
+        routerid, self.vdom = namespace.split('_')
+        self.name = '_'.join([const.PREFIX['inf'], vlanid])
+        fgt.add_resource(portid, resources.VlanInterface,
+                              name=self.name,
+                              vdom=const.EXT_VDOM,
+                              vlanid=vlanid,
+                              interface=self.fgt.cfg.int_interface,
+                              ip=gatewayip)
