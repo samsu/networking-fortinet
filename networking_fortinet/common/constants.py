@@ -86,7 +86,7 @@ EXTERNAL_DEV_PORT = 'fgt-ext-port'
 FTNT_PORTS = [INTERNAL_DEV_PORT, EXTERNAL_DEV_PORT]
 FTNT_INT_PORT_MAC = '90:6c:ac:aa:bb:cc'
 
-INF_Dr = 'networking_fortinet.agent.linux.interface.FortinetOVSInterfaceDriver'
+INF_DR = 'networking_fortinet.agent.linux.interface.FortinetOVSInterfaceDriver'
 
 # Define class
 DICT_DB_MAPS = {
