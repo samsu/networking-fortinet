@@ -313,9 +313,9 @@ class Network(object):
             return
         routerid, self.vdom = namespace.split('_')
         self.name = '_'.join([const.PREFIX['inf'], vlanid])
-        fgt.add_resource(portid, resources.VlanInterface,
-                              name=self.name,
-                              vdom=const.EXT_VDOM,
-                              vlanid=vlanid,
-                              interface=self.fgt.cfg.int_interface,
-                              ip=gatewayip)
+        #fgt.add_resource(portid, resources.VlanInterface,
+        #                      name=self.name,
+        #                      vdom=const.EXT_VDOM,
+        #                      vlanid=vlanid,
+        #                      interface=self.fgt.cfg.int_interface,
+        #                      ip=gatewayip)
