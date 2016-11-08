@@ -312,7 +312,7 @@ class Network(object):
             raise ValueError("namespace was required")
             return
         routerid, self.vdom = namespace.split('_')
-        self.name = '_'.join([const.PREFIX['inf'], vlanid])
+        #self.name = '_'.join([const.PREFIX['inf'], vlanid])
         #fgt.add_resource(portid, resources.VlanInterface,
         #                      name=self.name,
         #                      vdom=const.EXT_VDOM,
