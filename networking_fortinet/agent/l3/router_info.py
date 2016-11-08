@@ -540,7 +540,7 @@ class RouterInfo(object):
             current_internal_pids = self.driver.get_associated_pid(
                 existing_devices)
             current_internal_pids = set(current_internal_pids) if isinstance(
-                current_internal_pids, list) else set([current_internal_pids])
+                current_internal_pids, dict) else set([current_internal_pids])
             stale_devs = current_internal_pids - set(current_port_ids)
             for stale_dev in stale_devs:
                 LOG.debug('Deleting stale internal router device: %s',
