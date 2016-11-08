@@ -60,7 +60,7 @@ from networking_fortinet.agent.l3 \
 from networking_fortinet.common import config
 from networking_fortinet.common import constants as const
 from networking_fortinet.services.l3_router import l3_fortinet
-from networking_fortinet.common import fortigate as fortigate
+from networking_fortinet.common import fortigate
 from networking_fortinet.common import resources as fortinet_resources
 from networking_fortinet.db import models as fortinet_db
 from networking_fortinet.rpc.handlers import fortinet_agent_rpc
@@ -137,7 +137,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         self.process_monitor = external_process.ProcessMonitor(
             config=self.conf,
             resource_type='router')
-        self.conf.interface_driver = const.INF_Dr
+        self.conf.interface_driver = const.INF_DR
         self.driver = common_utils.load_interface_driver(self.conf)
         self.context = n_context.get_admin_context_without_session()
         self.plugin_rpc = l3_agent.L3PluginApi(topics.L3PLUGIN, host)
