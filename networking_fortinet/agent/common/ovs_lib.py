@@ -497,7 +497,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         for x in interface_info:
             external_ids = self._format_attr(x['external_ids'])
             if x['name'] in consts.FTNT_PORTS and \
-                    isinstance(external_ids.get('iface-id'), list):
+                    isinstance(external_ids.get('iface-id'), dict):
                 if_ids = set(external_ids.get('iface-id'))
                 by_id.update({if_id: x for if_id in if_ids})
             elif x['name'] not in consts.FTNT_PORTS:
