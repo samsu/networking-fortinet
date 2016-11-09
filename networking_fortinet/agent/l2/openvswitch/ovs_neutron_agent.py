@@ -1475,7 +1475,6 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             raise DeviceListRetrievalError(devices=devices)
 
         devices = devices_details_list.get('devices')
-        import ipdb;ipdb.set_trace()
         vif_by_id = self.int_br.get_vifs_by_ids(
             [vif['device'] for vif in devices])
         for details in devices:
@@ -1483,6 +1482,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             LOG.debug("## Processing port details: %s", details)
             LOG.debug("## Processing port: %s", device)
             port = vif_by_id.get(device)
+            import ipdb;ipdb.set_trace()
             if not port:
                 # The port disappeared and cannot be processed
                 LOG.info(_LI("Port %s was not found on the integration bridge "
