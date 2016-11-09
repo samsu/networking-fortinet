@@ -300,7 +300,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
                 return dvr_router.DvrEdgeRouter(*args, **kwargs)
             else:
                 #return dvr_local_router.DvrLocalRouter(*args, **kwargs)
-                import ipdb;ipdb.set_trace()
+                #import ipdb;ipdb.set_trace()
                 return fortigate.Router(self.fortigate, **kwargs)
 
         if router.get('ha'):
@@ -350,7 +350,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         registry.notify(resources.ROUTER, events.BEFORE_DELETE,
                         self, router=ri)
 
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
         ri.delete(self)
         del self.router_info[router_id]
 
@@ -455,8 +455,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         ri.router = router
         registry.notify(resources.ROUTER, events.BEFORE_UPDATE,
                         self, router=ri)
-        print "self.router_info=", self.router_info
-        import ipdb;ipdb.set_trace()
+        print "# self.router_info=", self.router_info
         ri.process(self)
         registry.notify(resources.ROUTER, events.AFTER_UPDATE, self, router=ri)
 
@@ -488,7 +487,6 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
                     router = routers[0]
 
             if not router:
-                import ipdb;ipdb.set_trace()
                 removed = self._safe_router_removed(update.id)
                 if not removed:
                     # TODO(Carl) Stop this fullsync non-sense.  Just retry this
@@ -572,7 +570,6 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         timestamp = timeutils.utcnow()
 
         try:
-            import ipdb;ipdb.set_trace()
             if self.conf.use_namespaces:
                 routers = self.plugin_rpc.get_routers(context)
             else:
