@@ -301,7 +301,6 @@ class Network(object):
         self.vlanid = None
         self.subnet = subnet
 
-
     def create(self, fgt, portid, vlanid, namespace):
         if not namespace:
             raise ValueError("namespace was required")
