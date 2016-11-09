@@ -488,6 +488,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
                     router = routers[0]
 
             if not router:
+                import ipdb;ipdb.set_trace()
                 removed = self._safe_router_removed(update.id)
                 if not removed:
                     # TODO(Carl) Stop this fullsync non-sense.  Just retry this
