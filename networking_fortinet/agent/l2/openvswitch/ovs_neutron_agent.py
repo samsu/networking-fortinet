@@ -849,10 +849,12 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         if port.port_name in consts.FTNT_PORTS:
             vlan_mapping['local_vlan'] = lvm.vlan
             vlan_mapping = {port.vif_id: vlan_mapping}
-            namespace = self.int_br.get_namespaces(port_name=port.port_name)
+            namespace = self.int_br.get_namespace(port_name=port.port_name,
+                                                  port_id=port.vif_id)
             network = fortigate.Network()
             import ipdb;ipdb.set_trace()
-            network.create(self.fortigate, port.vif_id, lvm.vlan, namespace)
+            network.create(self.fortigate, port.vif_id, lvm.vlan, namespace,
+                           fixed_ips['ip_address'])
         port_other_config.update(vlan_mapping)
         self.int_br.set_db_attribute("Port", port.port_name, "other_config",
                                      port_other_config)
