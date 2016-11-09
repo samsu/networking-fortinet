@@ -54,6 +54,9 @@ from neutron.plugins.ml2.drivers.openvswitch.agent.common \
 
 from networking_fortinet.agent.l2.openvswitch import ovs_dvr_neutron_agent
 from networking_fortinet.common import constants as consts
+from networking_fortinet.common import fortigate
+from networking_fortinet.common import resources
+
 
 LOG = logging.getLogger(__name__)
 cfg.CONF.import_group('AGENT', 'neutron.plugins.ml2.drivers.openvswitch.'
@@ -252,7 +255,8 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             # The patch_int_ofport and patch_tun_ofport are updated
             # here inside the call to setup_tunnel_br()
             self.setup_tunnel_br(tun_br)
-
+        self.fortigate = fortigate.Fortigate()
+        self.api_client = self.fortigate.get_apiclient()
         self.dvr_agent = ovs_dvr_neutron_agent.OVSDVRNeutronAgent(
             self.context,
             self.dvr_plugin_rpc,
@@ -352,6 +356,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             try:
                 print "port.port_name=", port.port_name
                 if port.port_name in consts.FTNT_PORTS:
+                    # todo: need to think about it later
                     continue
                 local_vlan_map = by_name[port.port_name]['other_config']
                 local_vlan = by_name[port.port_name]['tag']
@@ -844,6 +849,10 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         if port.port_name in consts.FTNT_PORTS:
             vlan_mapping['local_vlan'] = lvm.vlan
             vlan_mapping = {port.vif_id: vlan_mapping}
+            namespace = self.int_br.get_namespaces(port_name=port.port_name)
+            network = fortigate.Network()
+            import ipdb;ipdb.set_trace()
+            network.create(self.fortigate, port.vif_id, lvm.vlan, namespace)
         port_other_config.update(vlan_mapping)
         self.int_br.set_db_attribute("Port", port.port_name, "other_config",
                                      port_other_config)
