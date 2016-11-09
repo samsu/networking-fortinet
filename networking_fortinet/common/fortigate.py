@@ -311,5 +311,5 @@ class Network(object):
                          name=self.name,
                          vdom=const.EXT_VDOM,
                          vlanid=vlanid,
-                         interface=self.fgt.cfg.int_interface,
+                         interface=fgt.cfg.int_interface,
                          ip=gatewayip)
