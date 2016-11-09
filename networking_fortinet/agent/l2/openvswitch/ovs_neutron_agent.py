@@ -852,7 +852,6 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             namespace = self.int_br.get_namespace(port_name=port.port_name,
                                                   port_id=port.vif_id)
             network = fortigate.Network()
-            import ipdb;ipdb.set_trace()
             network.create(self.fortigate, port.vif_id, lvm.vlan, namespace,
                            fixed_ips[0]['ip_address'])
         port_other_config.update(vlan_mapping)
@@ -1484,7 +1483,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             LOG.debug("## Processing port details: %s", details)
             LOG.debug("## Processing port: %s", device)
             port = vif_by_id.get(device)
-            import ipdb;ipdb.set_trace()
+            #import ipdb;ipdb.set_trace()
             if not port:
                 # The port disappeared and cannot be processed
                 LOG.info(_LI("Port %s was not found on the integration bridge "
