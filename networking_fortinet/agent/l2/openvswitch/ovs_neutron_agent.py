@@ -854,7 +854,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             network = fortigate.Network()
             import ipdb;ipdb.set_trace()
             network.create(self.fortigate, port.vif_id, lvm.vlan, namespace,
-                           fixed_ips['ip_address'])
+                           fixed_ips[0]['ip_address'])
         port_other_config.update(vlan_mapping)
         self.int_br.set_db_attribute("Port", port.port_name, "other_config",
                                      port_other_config)
