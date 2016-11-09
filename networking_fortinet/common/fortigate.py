@@ -271,23 +271,17 @@ class Router(router_info.RouterInfo):
 
     def delete(self, agent):
         task_id = uuidutils.generate_uuid()
-        try:
-            for id in self.fgt_fw_policies:
-                self.fgt.delete_resource(task_id, resources.FirewallPolicy,
-                                         vdom=self.vdom,
-                                         id=id)
-            self.fgt.delete_resource(task_id, resources.FirewallAddrgrp,
+        for id in self.fgt_fw_policies:
+            self.fgt.delete_resource(task_id, resources.FirewallPolicy,
                                      vdom=self.vdom,
-                                     name=self.fgt_addr_grp)
-            for fwaddr in self.fgt_fwaddresses:
-                self.fgt.delete_resource(task_id, resources.FirewallAddress,
-                                         vdom=self.vdom, name=fwaddr)
-            super(Router, self).delete(agent)
-        except Exception as e:
-            with excutils.save_and_reraise_exception():
-                LOG.error(_LE("Failed to delete router router=%(router)s"),
-                          {"router": self.router})
-                self.fgt.finish(task_id)
+                                     id=id)
+        self.fgt.delete_resource(task_id, resources.FirewallAddrgrp,
+                                 vdom=self.vdom,
+                                 name=self.fgt_addr_grp)
+        for fwaddr in self.fgt_fwaddresses:
+            self.fgt.delete_resource(task_id, resources.FirewallAddress,
+                                     vdom=self.vdom, name=fwaddr)
+        super(Router, self).delete(agent)
         self.fgt.finish(task_id)
 
     def process(self, agent):
