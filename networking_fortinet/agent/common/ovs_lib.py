@@ -433,7 +433,6 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                     port_id = self.portid_from_external_ids(
                         result['external_ids'])
                 if port_id:
-                    import ipdb;ipdb.set_trace()
                     port_id = set(port_id) if isinstance(port_id, list) \
                         else set([port_id])
                     edge_ports |= port_id
@@ -441,10 +440,12 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
 
     def get_fgt_vif_port_set(self, port_name=None):
         port_name = port_name or consts.INTERNAL_DEV_PORT
-        column = 'other_config'
-        cur_attr = self.db_get_val('Port', port_name, column)
+        column = 'external_ids'
+        #column = 'other_config'
+        cur_attr = self.db_get_val('Interface', port_name, column)
         cur_attr = self._format_attr(cur_attr)
-        return [pid for pid in cur_attr]
+        port_ids = cur_attr.get('iface-id', {})
+        return list(port_ids) if isinstance(port_ids, dict) else []
 
     def get_port_tag_dict(self):
         """Get a dict of port names and associated vlan tags.
