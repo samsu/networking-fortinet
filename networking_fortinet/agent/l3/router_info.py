@@ -481,7 +481,7 @@ class RouterInfo(object):
                      if p['id'] not in current_port_ids]
         updated_ports = self._get_updated_ports(self.internal_ports,
                                                 internal_ports)
-
+        import ipdb;ipdb.set_trace()
         enable_ra = False
         for p in new_ports:
             self.internal_network_added(p)
