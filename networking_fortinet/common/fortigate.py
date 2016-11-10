@@ -312,8 +312,5 @@ class Network(object):
         self.name = ''.join([const.PREFIX['inf'], str(vlanid)])
         import ipdb;ipdb.set_trace()
         fgt.add_resource(portid, resources.VlanInterface,
-                         name=self.name,
-                         vdom=const.EXT_VDOM,
-                         vlanid=vlanid,
-                         interface=fgt.cfg.int_interface,
-                         ip=gatewayip)
+                         name=self.name, vdom=self.vdom, vlanid=vlanid,
+                         interface=fgt.cfg.int_interface, ip=gatewayip)
