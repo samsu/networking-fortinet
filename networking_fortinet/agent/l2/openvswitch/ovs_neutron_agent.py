@@ -255,7 +255,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             # The patch_int_ofport and patch_tun_ofport are updated
             # here inside the call to setup_tunnel_br()
             self.setup_tunnel_br(tun_br)
-        self.fortigate = fortigate.Fortigate(self.conf)
+        self.fortigate = fortigate.Fortigate()
         self.api_client = self.fortigate.get_apiclient()
         self.dvr_agent = ovs_dvr_neutron_agent.OVSDVRNeutronAgent(
             self.context,
