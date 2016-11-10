@@ -309,7 +309,7 @@ class Network(object):
             raise ValueError("namespace was required")
             return
         routerid, self.vdom = namespace.split('_')
-        self.name = '_'.join([const.PREFIX['inf'], str(vlanid)])
+        self.name = ''.join([const.PREFIX['inf'], str(vlanid)])
         import ipdb;ipdb.set_trace()
         fgt.add_resource(portid, resources.VlanInterface,
                          name=self.name,
