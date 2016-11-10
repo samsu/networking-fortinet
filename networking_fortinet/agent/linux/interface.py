@@ -151,7 +151,7 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         ipaddress = fixed_ip['ip_address']
         ip_subnet = '/'.join([ipaddress, str(fixed_ip['prefixlen'])])
         netmask = ftnt_utils.get_netmask(ip_subnet)
-        return {subnet_id: "%s %s" % (ipaddress, netmask)}
+        return subnet_id, "%s %s" % (ipaddress, netmask)
 
     def plug_new(self, network_id, port_id, device_name, fixed_ips,
                  mac_address, bridge=None, namespace=None, prefix=None):
