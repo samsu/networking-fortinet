@@ -145,7 +145,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         self.task_manager = tasks.TaskManager()
         self.task_manager.start()
         self.fortigates = []
-        self.fortigate = fortigate.Fortigate(self.conf)
+        self.fortigate = fortigate.Fortigate()
         self.api_client = self.fortigate.get_apiclient()
         self.initialize_fortigate()
         self.router = l3_fortinet.FortinetL3ServicePlugin(
