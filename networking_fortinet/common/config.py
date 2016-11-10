@@ -18,8 +18,6 @@ from oslo_log import log as logging
 from networking_fortinet._i18n import _
 from networking_fortinet.common import constants as const
 
-#from networking_fortinet.rpc.handlers import fortinet_agent_rpc
-
 
 LOG = logging.getLogger(__name__)
 
