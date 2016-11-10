@@ -33,6 +33,7 @@ from networking_fortinet.tasks import constants as t_consts
 from networking_fortinet.tasks import tasks
 
 #cfg.CONF.import_group(const.CONF_SECTION, 'networking_fortinet.common.config')
+LOG = logging.getLogger(__name__)
 
 @singleton.singleton
 class Fortigate(object):
