@@ -31,6 +31,8 @@ from neutron.i18n import _LE, _LI
 
 from networking_fortinet.agent.common import ovs_lib
 from networking_fortinet.common import constants as consts
+from networking_fortinet.common import utils as ftnt_utils
+
 
 LOG = logging.getLogger(__name__)
 
@@ -70,12 +72,15 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         return dev_name
 
     def _ovs_set_port(self, bridge, device_name, port_id, mac_address,
-                      namespace=None, internal=True):
+                      fixed_ips, namespace=None, internal=True):
+        subnet_id, gatewayip = self._prepare_subnet_info(fixed_ips[0])
         attrs = [('external_ids',
                   {'iface-id': {port_id: namespace},
                    'iface-status': {port_id: 'active'},
                    'attached-mac': mac_address,
-                   'namespaces': {namespace: [port_id]}})]
+                   'namespaces': {namespace: [port_id]},
+                   'routers': {namespace: [subnet_id]},
+                   'subnets': {subnet_id: gatewayip}})]
         if internal:
             attrs.insert(0, ('type', 'internal'))
         ovs = ovs_lib.FortinetOVSBridge(bridge)
@@ -141,8 +146,15 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         ns = [('external_ids', {'namespaces': namespace})]
         return ovs.del_db_attributes('Interface', port_name, *ns)
 
-    def plug_new(self, network_id, port_id, device_name, mac_address,
-                 bridge=None, namespace=None, prefix=None):
+    def _prepare_subnet_info(self, fixed_ip):
+        subnet_id = fixed_ip['subnet_id']
+        ipaddress = fixed_ip['ip_address']
+        ip_subnet = '/'.join([ipaddress, str(fixed_ip['prefixlen'])])
+        netmask = ftnt_utils.get_netmask(ip_subnet)
+        return {subnet_id: "%s %s" % (ipaddress, netmask)}
+
+    def plug_new(self, network_id, port_id, device_name, fixed_ips,
+                 mac_address, bridge=None, namespace=None, prefix=None):
         """Plug in the interface."""
         if not bridge:
             bridge = self.conf.ovs_integration_bridge
@@ -151,7 +163,7 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         tap_name = self._get_tap_name(device_name)
         if tap_name in FTNT_PORTS:
             self._ovs_set_port(bridge, tap_name, port_id, mac_address,
-                               namespace=namespace, internal=False)
+                               fixed_ips, namespace=namespace, internal=False)
         else:
             super(FortinetOVSInterfaceDriver,
                   self).plug_new(network_id, port_id, device_name, mac_address,
