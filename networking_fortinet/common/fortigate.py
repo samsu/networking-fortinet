@@ -41,7 +41,6 @@ class Fortigate(object):
     def __init__(self, task_manager=None):
         """Fortigate class."""
         self.cfg = getattr(cfg.CONF, const.CONF_SECTION, None)
-        import ipdb;ipdb.set_trace()
         self.api_client = self.get_apiclient()
         self.network = {}
         self.router = {}
