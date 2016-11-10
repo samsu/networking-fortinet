@@ -17,6 +17,7 @@ import netaddr
 from neutron.db import api as db_api
 from oslo_config import cfg
 from oslo_log import helpers as log_helpers
+from oslo_log import log as logging
 from oslo_utils import excutils, uuidutils
 import six
 
