@@ -32,7 +32,7 @@ from networking_fortinet.db import models as fortinet_db
 from networking_fortinet.tasks import constants as t_consts
 from networking_fortinet.tasks import tasks
 
-cfg.CONF.import_group(const.CONF_SECTION, 'networking_fortinet.common.config')
+#cfg.CONF.import_group(const.CONF_SECTION, 'networking_fortinet.common.config')
 
 @singleton.singleton
 class Fortigate(object):
@@ -41,6 +41,7 @@ class Fortigate(object):
     def __init__(self, task_manager=None):
         """Fortigate class."""
         self.cfg = getattr(cfg.CONF, const.CONF_SECTION, None)
+        import ipdb;ipdb.set_trace()
         self.api_client = self.get_apiclient()
         self.network = {}
         self.router = {}
