@@ -450,6 +450,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         for attr in attr_path:
             if isinstance(sub_attr, dict):
                 sub_attr = cur_attr.get(attr, None)
+                cur_attr = sub_attr
             else:
                 break
         return sub_attr
