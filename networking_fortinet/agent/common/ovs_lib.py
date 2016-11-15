@@ -417,7 +417,6 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                                    log_errors=log_errors)
         cur_attr = self._format_attr(cur_attr)
         attr_path = ['iface-id', port_id]
-        import ipdb;ipdb.set_trace()
         subnet_id = self._get_subattr(cur_attr, attr_path, format=False)
         attr_path = ['subnets', subnet_id]
         return self._get_subattr(cur_attr, attr_path, format=False)
