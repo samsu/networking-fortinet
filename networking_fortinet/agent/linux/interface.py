@@ -162,7 +162,7 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         bridge = bridge or self.conf.ovs_integration_bridge
         port_name = port_name or consts.INTERNAL_DEV_PORT
         ovs = ovs_lib.FortinetOVSBridge(bridge)
-        ns = [('external_ids', {'namespaces': namespace})]
+        ns = [('external_ids', {'routers': namespace})]
         return ovs.del_db_attributes('Interface', port_name, *ns)
 
     def _prepare_subnet_info(self, fixed_ip):
