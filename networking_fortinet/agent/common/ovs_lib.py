@@ -438,7 +438,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                        check_error=True, log_errors=True):
         if not subnet_id:
             return None
-        attr_path = ['subnets', subnet_id]
+        attr_path = ['gatewayips', subnet_id]
         return self.get_subattr('Interface', port_name,
                                 'external_ids', attr_path,
                                 check_error=check_error,
