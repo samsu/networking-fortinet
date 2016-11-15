@@ -401,11 +401,11 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                        check_error=True, log_errors=True):
         port_name = port_name or consts.INTERNAL_DEV_PORT
         column = column or 'external_ids'
-        cur_attr = self.db_get_val('Interface', port_name, column,
+        attr_path = ['routers']
+        routers = self.get_subattr('Interface', port_name, column, attr_path,
                                    check_error=check_error,
                                    log_errors=log_errors)
-        cur_attr = self._format_attr(cur_attr)
-        return cur_attr.get('namespaces', {})
+        return routers.keys()
 
     def get_namespace(self, port_name=None, port_id=None,
                        check_error=True, log_errors=True):
@@ -426,7 +426,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             cur_attr = self._format_attr(cur_attr)
         sub_attr = {}
         for attr in attr_path:
-            if isinstance(sub_attr, dict):
+            if isinstance(cur_attr, dict):
                 sub_attr = cur_attr.get(attr, None)
                 cur_attr = sub_attr
             else:
