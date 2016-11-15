@@ -74,11 +74,19 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
     def _ovs_set_port(self, bridge, device_name, port_id, mac_address,
                       fixed_ips, namespace=None, internal=True):
         subnet_id, gatewayip = self._prepare_subnet_info(fixed_ips[0])
+        '''
         attrs = [('external_ids',
                   {'iface-id': {port_id: namespace},
                    'iface-status': {port_id: 'active'},
                    'attached-mac': mac_address,
                    'namespaces': {namespace: [port_id]},
+                   'routers': {namespace: [subnet_id]},
+                   'subnets': {subnet_id: gatewayip}})]
+        '''
+        attrs = [('external_ids',
+                  {'iface-id': {port_id: subnet_id},
+                   'iface-status': {port_id: 'active'},
+                   'attached-mac': mac_address,
                    'routers': {namespace: [subnet_id]},
                    'subnets': {subnet_id: gatewayip}})]
         if internal:
@@ -104,12 +112,15 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
     def _ovs_del_port(self, bridge, device_name, port_id, namespace=None):
         if not bridge:
             bridge = self.conf.ovs_integration_bridge
+        ovs = ovs_lib.FortinetOVSBridge(bridge)
+        qry_path = ['iface-id', port_id]
+        subnet_id = ovs.get_subattr('Interface', device_name,
+                                    'external_ids', qry_path)
         attrs = [('external_ids',
                   {'iface-id': port_id,
                    'iface-status': port_id,
-                   'namespaces': {namespace: port_id}
-                   })]
-        ovs = ovs_lib.FortinetOVSBridge(bridge)
+                   'routers': {namespace: subnet_id},
+                   'subnets': subnet_id})]
         ovs.del_db_attributes('Interface', device_name, *attrs)
 
     def _ovs_chk_port(self, bridge, port_id, device_name=None):

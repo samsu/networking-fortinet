@@ -434,7 +434,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         :param port_name:
         :param column:
         :param attr_path: it is a list, poiint to the subattribute path,
-        e.g. [subnets, subnet_id]
+        e.g. [iface-id, port_id]
         :param check_error:
         :param log_errors:
         :return:
