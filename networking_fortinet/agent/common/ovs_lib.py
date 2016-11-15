@@ -411,11 +411,28 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                        check_error=True, log_errors=True):
         if not port_id:
             return None
+        port_name = port_name or consts.INTERNAL_DEV_PORT
+        cur_attr = self.db_get_val('Interface', port_name, 'external_ids',
+                                   check_error=check_error,
+                                   log_errors=log_errors)
+        cur_attr = self._format_attr(cur_attr)
         attr_path = ['iface-id', port_id]
-        return self.get_subattr('Interface', port_name,
-                                'external_ids', attr_path,
-                                check_error=check_error,
-                                log_errors=log_errors)
+        import ipdb;ipdb.set_trace()
+        subnet_id = self._get_subattr(cur_attr, attr_path, format=False)
+        attr_path = ['subnets', subnet_id]
+        return self._get_subattr(cur_attr, attr_path, format=False)
+
+    def _get_subattr(self, cur_attr, attr_path, format=True):
+        if format:
+            cur_attr = self._format_attr(cur_attr)
+        sub_attr = {}
+        for attr in attr_path:
+            if isinstance(sub_attr, dict):
+                sub_attr = cur_attr.get(attr, None)
+                cur_attr = sub_attr
+            else:
+                break
+        return sub_attr
 
     def get_gatewayip(self, port_name=None, subnet_id=None,
                        check_error=True, log_errors=True):
@@ -445,15 +462,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         cur_attr = self.db_get_val(table, port_name, column,
                                    check_error=check_error,
                                    log_errors=log_errors)
-        cur_attr = self._format_attr(cur_attr)
-        sub_attr = {}
-        for attr in attr_path:
-            if isinstance(sub_attr, dict):
-                sub_attr = cur_attr.get(attr, None)
-                cur_attr = sub_attr
-            else:
-                break
-        return sub_attr
+        return self._get_subattr(cur_attr, attr_path, format=True)
 
     def portid_from_external_ids(self, external_ids):
         external_ids = self._format_attr(external_ids)
