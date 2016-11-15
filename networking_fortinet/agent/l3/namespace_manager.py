@@ -130,11 +130,10 @@ class NamespaceManager(object):
                 #self._cleanup(ns_prefix, ns_id)
 
     def _ftnt_cleanup(self, namespace):
-        import ipdb;ipdb.set_trace()
-        if self._all_namespaces[namespace]:
-            for port_id in self._all_namespaces[namespace]:
-                self.driver.unplug(const.INTERNAL_DEV_PORT, port_id=port_id,
-                                   namespace=namespace)
+        ports = self.driver.get_pid_in_namespace(namespace)
+        for port_id in ports:
+            self.driver.unplug(const.INTERNAL_DEV_PORT, port_id=port_id,
+                               namespace=namespace)
         try:
             self.driver.del_namespace(namespace=namespace)
         #ns = ns_class(ns_id, self.agent_conf, self.driver, use_ipv6=False)

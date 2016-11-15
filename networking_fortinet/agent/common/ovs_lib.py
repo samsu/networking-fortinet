@@ -421,6 +421,22 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         attr_path = ['subnets', subnet_id]
         return self._get_subattr(cur_attr, attr_path, formatted=True)
 
+    def get_pid_in_namespace(self, namespace, port_name=None,
+                             check_error=True, log_errors=True):
+        port_name = port_name or consts.INTERNAL_DEV_PORT
+        cur_attr = self.db_get_val('Interface', port_name, 'external_ids',
+                                   check_error=check_error,
+                                   log_errors=log_errors)
+        cur_attr = self._format_attr(cur_attr)
+        attr_path = ['routers', namespace]
+        subnet_ids = self._get_subattr(cur_attr, attr_path, formatted=True)
+        port_maps = self._get_subattr(cur_attr, ['iface-id'], formatted=True)
+        ports = []
+        for pid, subnet_id in port_maps.iteritems():
+            if subnet_id in subnet_ids:
+                ports.append(pid)
+        return ports
+
     def _get_subattr(self, cur_attr, attr_path, formatted=False):
         if not formatted:
             cur_attr = self._format_attr(cur_attr)
