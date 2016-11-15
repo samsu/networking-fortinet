@@ -135,6 +135,7 @@ class NamespaceManager(object):
             self.driver.unplug(const.INTERNAL_DEV_PORT, port_id=port_id,
                                namespace=namespace)
         try:
+            import ipdb;ipdb.set_trace()
             self.driver.del_namespace(namespace=namespace)
         #ns = ns_class(ns_id, self.agent_conf, self.driver, use_ipv6=False)
         #try:
