@@ -150,7 +150,7 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         bridge = bridge or self.conf.ovs_integration_bridge
         port_name = port_name or consts.INTERNAL_DEV_PORT
         ovs = ovs_lib.FortinetOVSBridge(bridge)
-        ovs.get_pid_in_namespace(namespace, port_name=port_name)
+        return ovs.get_pid_in_namespace(namespace, port_name=port_name)
 
     def get_namespaces(self, bridge=None, port_name=None):
         bridge = bridge or self.conf.ovs_integration_bridge
