@@ -443,6 +443,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
 
     @log_helpers.log_method_call
     def _process_added_router(self, router):
+        import ipdb;ipdb.set_trace()
         self._router_added(router['id'], router)
         ri = self.router_info[router['id']]
         ri.router = router

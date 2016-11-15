@@ -230,7 +230,7 @@ class Router(router_info.RouterInfo):
                 subnet = ' '.join([str(cidr.network), str(cidr.netmask)])
                 self.fgt.add_resource(task_id, resources.FirewallAddress,
                                       vdom=self.vdom,
-                                      name= name,
+                                      name=name,
                                       subnet=subnet)
                 self.fgt_fwaddresses.append(name)
             self.fgt_addr_grp = const.PREFIX['addrgrp'] + self.vdom
