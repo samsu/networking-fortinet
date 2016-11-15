@@ -417,12 +417,12 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                                    log_errors=log_errors)
         cur_attr = self._format_attr(cur_attr)
         attr_path = ['iface-id', port_id]
-        subnet_id = self._get_subattr(cur_attr, attr_path, format=False)
+        subnet_id = self._get_subattr(cur_attr, attr_path, formated=True)
         attr_path = ['subnets', subnet_id]
-        return self._get_subattr(cur_attr, attr_path, format=False)
+        return self._get_subattr(cur_attr, attr_path, formated=True)
 
-    def _get_subattr(self, cur_attr, attr_path, format=True):
-        if format:
+    def _get_subattr(self, cur_attr, attr_path, formated=False):
+        if not formated:
             cur_attr = self._format_attr(cur_attr)
         sub_attr = {}
         for attr in attr_path:
@@ -461,7 +461,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         cur_attr = self.db_get_val(table, port_name, column,
                                    check_error=check_error,
                                    log_errors=log_errors)
-        return self._get_subattr(cur_attr, attr_path, format=True)
+        return self._get_subattr(cur_attr, attr_path, formated=False)
 
     def portid_from_external_ids(self, external_ids):
         external_ids = self._format_attr(external_ids)
