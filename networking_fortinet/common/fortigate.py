@@ -101,9 +101,10 @@ class Fortigate(object):
         router_id, vdom = namespace.split('_')
         task_id = uuidutils.generate_uuid()
         import ipdb;ipdb.set_trace()
-        self.delete_resource(task_id, resources.FirewallPolicy,
-                             vdom=vdom,
-                             id=fwpolicy_id)
+        if fwpolicy_id:
+            self.delete_resource(task_id, resources.FirewallPolicy,
+                                 vdom=vdom,
+                                 id=fwpolicy_id)
         addr_grp = const.PREFIX['addrgrp'] + vdom
         members = []
         try:
