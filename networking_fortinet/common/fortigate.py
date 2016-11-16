@@ -100,6 +100,7 @@ class Fortigate(object):
     def clean_namespace_trash(self, namespace, fwpolicy_id, inf_names):
         router_id, vdom = namespace.split('_')
         task_id = uuidutils.generate_uuid()
+        import ipdb;ipdb.set_trace()
         self.delete_resource(task_id, resources.FirewallPolicy,
                              vdom=vdom,
                              id=fwpolicy_id)
@@ -261,7 +262,6 @@ class Router(router_info.RouterInfo):
                 subnet = inf['subnets'][0]
                 cidr = netaddr.IPNetwork(subnet['cidr'])
                 name = str(cidr.network)
-                import ipdb;ipdb.set_trace()
                 subnet = ' '.join([str(cidr.network), str(cidr.netmask)])
                 self.fgt.add_resource(task_id, resources.FirewallAddress,
                                       vdom=self.vdom,
