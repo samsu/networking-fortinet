@@ -312,7 +312,7 @@ class Router(router_info.RouterInfo):
             self.fgt.delete_resource(task_id, resources.FirewallPolicy,
                                      vdom=self.vdom,
                                      id=id)
-            self.fgt_fw_policies.remove(id)
+        del self.fgt_fw_policies[:]
         self.fgt.delete_resource(task_id, resources.FirewallAddrgrp,
                                  vdom=self.vdom,
                                  name=self.fgt_addr_grp)
