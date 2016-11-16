@@ -304,6 +304,7 @@ class RouterInfo(object):
         self.router[l3_constants.FLOATINGIP_KEY] = []
         self.process(agent)
         self.disable_radvd()
+        import ipdb;ipdb.set_trace()
         if self.router_namespace:
             self.router_namespace.delete()
 

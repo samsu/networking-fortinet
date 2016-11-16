@@ -325,8 +325,8 @@ class Router(router_info.RouterInfo):
         for fwaddr in self.fgt_fwaddresses:
             self.fgt.delete_resource(task_id, resources.FirewallAddress,
                                      vdom=self.vdom, name=fwaddr)
-        self.driver.del_fwpolicy(self.ns_name)
         '''
+        self.driver.del_fwpolicy(self.ns_name)
         super(Router, self).delete(agent)
         #self.fgt.finish(task_id)
 
