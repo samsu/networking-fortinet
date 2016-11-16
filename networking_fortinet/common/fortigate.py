@@ -119,7 +119,7 @@ class Fortigate(object):
                              name=addr_grp)
         for member in members:
             self.delete_resource(task_id, resources.FirewallAddress,
-                                 vdom=vdom, name=member)
+                                 vdom=vdom, name=member['name'])
         for inf in inf_names:
             self.delete_resource(task_id, resources.VlanInterface,
                                  vdom=vdom, name=inf)
