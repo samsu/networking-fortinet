@@ -97,7 +97,7 @@ class Fortigate(object):
             api_server, self.cfg.username, self.cfg.password)
 
     @log_helpers.log_method_call
-    def clean_namespace_trash(self, namespace, fwpolicy_id):
+    def clean_namespace_trash(self, namespace, fwpolicy_id, inf_names):
         router_id, vdom = namespace.split('_')
         task_id = uuidutils.generate_uuid()
         self.delete_resource(task_id, resources.FirewallPolicy,
@@ -116,6 +116,10 @@ class Fortigate(object):
             for member in members:
                 self.delete_resource(task_id, resources.FirewallAddress,
                                      vdom=vdom, name=member)
+            for inf in inf_names:
+                self.delete_resource(task_id, resources.VlanInterface,
+                                     vdom=vdom, name=inf)
+            self.delete_resource(task_id, resources.Vdom, name=vdom)
         except exception.ResourceNotFound:
             pass
 
@@ -199,6 +203,11 @@ class Fortigate(object):
         return self.op(resource.get, task_id=task_id, **kwargs)
 
     def delete_resource(self, task_id, resource, **kwargs):
+        if not task_id:
+            LOG.debug("No task_id assigned in deleting resource"
+                      "%(rs)s with keywords %(kws)s",
+                      {'rs': resource, 'kws': kwargs})
+            task_id = uuidutils.generate_uuid()
         return self.op(resource.delete, task_id=task_id, **kwargs)
 
 class LocalInfo(object):

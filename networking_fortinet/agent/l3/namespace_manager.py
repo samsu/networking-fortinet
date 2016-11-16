@@ -135,7 +135,8 @@ class NamespaceManager(object):
         """clean fgt data first, then clean ovs data"""
         ports = self.driver.get_pid_in_namespace(namespace)
         fwpolicy = self.driver.get_fwpolicy(namespace)
-        self.fortigate.clean_namespace_trash(namespace, fwpolicy)
+        inf_names = self.driver.get_vlan_ports(ports)
+        self.fortigate.clean_namespace_trash(namespace, fwpolicy, inf_names)
         for port_id in ports:
             self.driver.unplug(const.INTERNAL_DEV_PORT, port_id=port_id,
                                namespace=namespace)
