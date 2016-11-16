@@ -122,6 +122,7 @@ class Fortigate(object):
             self.delete_resource(task_id, resources.VlanInterface,
                                  vdom=vdom, name=inf)
         self.delete_resource(task_id, resources.Vdom, name=vdom)
+        self.finish(task_id)
 
     @log_helpers.log_method_call
     def sync_conf_to_db(self, param):
@@ -307,6 +308,11 @@ class Router(router_info.RouterInfo):
         return res
 
     def delete(self, agent):
+        ports = self.driver.get_pid_in_namespace(self.ns_name)
+        fwpolicy = self.driver.get_fwpolicy(self.ns_name)
+        inf_names = self.driver.get_vlan_ports(ports)
+        self.fgt.clean_namespace_trash(self.ns_name, fwpolicy, inf_names)
+        '''
         task_id = uuidutils.generate_uuid()
         for id in self.fgt_fw_policies:
             self.fgt.delete_resource(task_id, resources.FirewallPolicy,
@@ -320,8 +326,9 @@ class Router(router_info.RouterInfo):
             self.fgt.delete_resource(task_id, resources.FirewallAddress,
                                      vdom=self.vdom, name=fwaddr)
         self.driver.del_fwpolicy(self.ns_name)
+        '''
         super(Router, self).delete(agent)
-        self.fgt.finish(task_id)
+        #self.fgt.finish(task_id)
 
     def process(self, agent):
         # After a router was added to the dict, still need to process
