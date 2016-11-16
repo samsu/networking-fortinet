@@ -261,6 +261,7 @@ class Router(router_info.RouterInfo):
                 subnet = inf['subnets'][0]
                 cidr = netaddr.IPNetwork(subnet['cidr'])
                 name = str(cidr.network)
+                import ipdb;ipdb.set_trace()
                 subnet = ' '.join([str(cidr.network), str(cidr.netmask)])
                 self.fgt.add_resource(task_id, resources.FirewallAddress,
                                       vdom=self.vdom,
