@@ -110,18 +110,18 @@ class Fortigate(object):
                                              vdom=vdom,
                                              name=addr_grp)
             members = fgt_addr_grp['results'][0].get('member', [])
-            self.delete_resource(task_id, resources.FirewallAddrgrp,
-                                 vdom=vdom,
-                                 name=addr_grp)
-            for member in members:
-                self.delete_resource(task_id, resources.FirewallAddress,
-                                     vdom=vdom, name=member)
-            for inf in inf_names:
-                self.delete_resource(task_id, resources.VlanInterface,
-                                     vdom=vdom, name=inf)
-            self.delete_resource(task_id, resources.Vdom, name=vdom)
         except exception.ResourceNotFound:
             pass
+        self.delete_resource(task_id, resources.FirewallAddrgrp,
+                             vdom=vdom,
+                             name=addr_grp)
+        for member in members:
+            self.delete_resource(task_id, resources.FirewallAddress,
+                                 vdom=vdom, name=member)
+        for inf in inf_names:
+            self.delete_resource(task_id, resources.VlanInterface,
+                                 vdom=vdom, name=inf)
+        self.delete_resource(task_id, resources.Vdom, name=vdom)
 
     @log_helpers.log_method_call
     def sync_conf_to_db(self, param):
