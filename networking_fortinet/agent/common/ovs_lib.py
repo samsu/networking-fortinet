@@ -440,14 +440,14 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
     def _get_subattr(self, cur_attr, attr_path, formatted=False):
         if not formatted:
             cur_attr = self._format_attr(cur_attr)
-        sub_attr = {}
         for attr in attr_path:
             if isinstance(cur_attr, dict):
                 sub_attr = cur_attr.get(attr, None)
                 cur_attr = sub_attr
             else:
+                cur_attr = {}
                 break
-        return sub_attr
+        return cur_attr
 
     def get_gatewayip(self, port_name=None, subnet_id=None,
                        check_error=True, log_errors=True):
