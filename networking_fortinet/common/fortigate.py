@@ -104,6 +104,7 @@ class Fortigate(object):
                              vdom=vdom,
                              id=fwpolicy_id)
         addr_grp = const.PREFIX['addrgrp'] + vdom
+        members = []
         try:
             fgt_addr_grp = self.get_resource(task_id,
                                              resources.FirewallAddrgrp,
