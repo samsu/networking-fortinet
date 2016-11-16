@@ -101,8 +101,8 @@ class Fortigate(object):
         router_id, vdom = namespace.split('_')
         task_id = uuidutils.generate_uuid()
         self.delete_resource(task_id, resources.FirewallPolicy,
-                                     vdom=vdom,
-                                     id=fwpolicy_id)
+                             vdom=vdom,
+                             id=fwpolicy_id)
         addr_grp = const.PREFIX['addrgrp'] + vdom
         try:
             fgt_addr_grp = self.get_resource(task_id,
@@ -115,7 +115,7 @@ class Fortigate(object):
                                  name=addr_grp)
             for member in members:
                 self.delete_resource(task_id, resources.FirewallAddress,
-                                         vdom=vdom, name=member)
+                                     vdom=vdom, name=member)
         except exception.ResourceNotFound:
             pass
 
