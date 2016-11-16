@@ -93,7 +93,8 @@ class NamespaceManager(object):
         self._clean_stale = False
 
         for ns in self._all_namespaces:
-            if ns in self._ids_to_keep:
+            router_id, vdom = ns.split('_')
+            if router_id in self._ids_to_keep:
                 continue
             self._ftnt_cleanup(ns)
             #_ns_prefix, ns_id = self.get_prefix_and_id(ns)
