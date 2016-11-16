@@ -166,6 +166,20 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         ovs = ovs_lib.FortinetOVSBridge(bridge)
         return ovs.get_pid_in_namespace(namespace, port_name=port_name)
 
+    def get_vlan_ports(self, port_ids, bridge=None):
+        bridge = bridge or self.conf.ovs_integration_bridge
+        port_name = consts.INTERNAL_DEV_PORT
+        ovs = ovs_lib.FortinetOVSBridge(bridge)
+        vlanids = []
+        cur_port_infos = ovs.get_subattr('Port', port_name, 'other_config', [])
+        if cur_port_infos:
+            for port_id in port_ids:
+                if port_id in cur_port_infos:
+                    vlan_port = consts.PREFIX['inf'] + str(
+                        cur_port_infos[port_id]['local_vlan'])
+                    vlanids.append(vlan_port)
+        return vlanids
+
     def get_namespaces(self, bridge=None, port_name=None):
         bridge = bridge or self.conf.ovs_integration_bridge
         port_name = port_name or consts.INTERNAL_DEV_PORT
