@@ -97,6 +97,25 @@ class Fortigate(object):
             api_server, self.cfg.username, self.cfg.password)
 
     @log_helpers.log_method_call
+    def clean_namespace_trash(self, namespace, fwpolicy_id):
+        router_id, vdom = namespace.split('_')
+        task_id = uuidutils.generate_uuid()
+        self.delete_resource(task_id, resources.FirewallPolicy,
+                                     vdom=vdom,
+                                     id=fwpolicy_id)
+        addr_grp = const.PREFIX['addrgrp'] + vdom
+        fgt_addr_grp = self.get_resource(task_id, resources.FirewallAddrgrp,
+                             vdom=vdom,
+                             name=addr_grp)
+        members = fgt_addr_grp['results'][0].get('member', [])
+        self.delete_resource(task_id, resources.FirewallAddrgrp,
+                             vdom=vdom,
+                             name=addr_grp)
+        for member in members:
+            self.delete_resource(task_id, resources.FirewallAddress,
+                                     vdom=vdom, name=member)
+
+    @log_helpers.log_method_call
     def sync_conf_to_db(self, param):
         """sync conf to database"""
         cls = getattr(fortinet_db, const.FORTINET_PARAMS[param]['cls'])
@@ -206,7 +225,7 @@ class Router(router_info.RouterInfo):
         # addr_grp name is the combination of addrgrp, _ and vdom name
         self.fgt_addr_grp = None
         # The set of fgt firewall policy edit ids associated with the router
-        self.fgt_fw_policies = []
+        self.fgt_fw_policies = [self.driver.get_fwpolicy(self.ns_name)]
 
     @log_helpers.log_method_call
     def create_router(self, router):
@@ -246,6 +265,8 @@ class Router(router_info.RouterInfo):
                                              dstaddr=self.fgt_addr_grp,
                                              nat='disable')
             self.fgt_fw_policies.append(fwpolicy['results']['mkey'])
+            self.driver.save_fwpolicy(self.ns_name,
+                                      fwpolicy['results']['mkey'])
             '''
             if 'vlink' in cfg:
                 vlinkinfo = cfg['vlink']
@@ -278,12 +299,14 @@ class Router(router_info.RouterInfo):
             self.fgt.delete_resource(task_id, resources.FirewallPolicy,
                                      vdom=self.vdom,
                                      id=id)
+            self.fgt_fw_policies.remove(id)
         self.fgt.delete_resource(task_id, resources.FirewallAddrgrp,
                                  vdom=self.vdom,
                                  name=self.fgt_addr_grp)
         for fwaddr in self.fgt_fwaddresses:
             self.fgt.delete_resource(task_id, resources.FirewallAddress,
                                      vdom=self.vdom, name=fwaddr)
+        self.driver.del_fwpolicy(self.ns_name)
         super(Router, self).delete(agent)
         self.fgt.finish(task_id)
 

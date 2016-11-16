@@ -191,6 +191,7 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
         self.namespaces_manager = namespace_manager.NamespaceManager(
             self.conf,
             self.driver,
+            self.fortigate,
             self.conf.use_namespaces,
             self.metadata_driver)
 

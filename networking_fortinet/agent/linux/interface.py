@@ -74,15 +74,6 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
     def _ovs_set_port(self, bridge, device_name, port_id, mac_address,
                       fixed_ips, namespace=None, internal=True):
         subnet_id, gatewayip = self._prepare_subnet_info(fixed_ips[0])
-        '''
-        attrs = [('external_ids',
-                  {'iface-id': {port_id: namespace},
-                   'iface-status': {port_id: 'active'},
-                   'attached-mac': mac_address,
-                   'namespaces': {namespace: [port_id]},
-                   'routers': {namespace: [subnet_id]},
-                   'subnets': {subnet_id: gatewayip}})]
-        '''
         attrs = [('external_ids',
                   {'iface-id': {port_id: subnet_id},
                    'iface-status': {port_id: 'active'},
@@ -95,7 +86,30 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         ovs = ovs_lib.FortinetOVSBridge(bridge)
         for attr in attrs:
             ovs.set_db_attribute('Interface', device_name, *attr)
-        #ovs.set_interface_attr(device_name, *attrs)
+
+    def save_fwpolicy(self, namespace, fwpolicy_id, bridge=None,
+                      port_name=None):
+        bridge = bridge or self.conf.ovs_integration_bridge
+        port_name = port_name or consts.INTERNAL_DEV_PORT
+        attrs = [('external_ids', {'fgt': {namespace: fwpolicy_id}})]
+        ovs = ovs_lib.FortinetOVSBridge(bridge)
+        for attr in attrs:
+            ovs.set_db_attribute('Interface', port_name, *attr)
+
+    def get_fwpolicy(self, namespace, bridge=None, port_name=None):
+        bridge = bridge or self.conf.ovs_integration_bridge
+        port_name = port_name or consts.INTERNAL_DEV_PORT
+        ovs = ovs_lib.FortinetOVSBridge(bridge)
+        attr_path = ['fgt', namespace]
+        return ovs.get_subattr('Interface', port_name,
+                               'external_ids', attr_path)
+
+    def del_fwpolicy(self, namespace, bridge=None, port_name=None):
+        bridge = bridge or self.conf.ovs_integration_bridge
+        port_name = port_name or consts.INTERNAL_DEV_PORT
+        ovs = ovs_lib.FortinetOVSBridge(bridge)
+        fwpolicy = [('external_ids', {'fgt': namespace})]
+        return ovs.del_db_attributes('Interface', port_name, *fwpolicy)
 
     def init_router_port(self, device_name, ip_cidrs, namespace,
                          preserve_ips=None, gateway_ips=None,

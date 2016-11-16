@@ -55,7 +55,8 @@ class NamespaceManager(object):
         dvr_fip_ns.FIP_NS_PREFIX: dvr_fip_ns.FipNamespace,
     }
 
-    def __init__(self, agent_conf, driver, clean_stale, metadata_driver=None):
+    def __init__(self, agent_conf, driver, fortigate, clean_stale,
+                 metadata_driver=None):
         """Initialize the NamespaceManager.
 
         :param agent_conf: configuration from l3 agent
@@ -65,6 +66,7 @@ class NamespaceManager(object):
         """
         self.agent_conf = agent_conf
         self.driver = driver
+        self.fortigate = fortigate
         self._clean_stale = clean_stale
         self.metadata_driver = metadata_driver
         if metadata_driver:
@@ -130,7 +132,10 @@ class NamespaceManager(object):
                 #self._cleanup(ns_prefix, ns_id)
 
     def _ftnt_cleanup(self, namespace):
+        """clean fgt data first, then clean ovs data"""
         ports = self.driver.get_pid_in_namespace(namespace)
+        fwpolicy = self.driver.get_fwpolicy(namespace)
+        self.fortigate.clean_namespace_trash(namespace, fwpolicy)
         for port_id in ports:
             self.driver.unplug(const.INTERNAL_DEV_PORT, port_id=port_id,
                                namespace=namespace)
