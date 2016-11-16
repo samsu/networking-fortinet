@@ -138,6 +138,7 @@ class NamespaceManager(object):
         fwpolicy = self.driver.get_fwpolicy(namespace)
         inf_names = self.driver.get_vlan_ports(ports)
         self.fortigate.clean_namespace_trash(namespace, fwpolicy, inf_names)
+        self.driver.del_fwpolicy(namespace)
         for port_id in ports:
             self.driver.unplug(const.INTERNAL_DEV_PORT, port_id=port_id,
                                namespace=namespace)
