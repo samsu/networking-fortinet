@@ -608,7 +608,6 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         LOG.info(_LI("Port %(port_id)s not present in bridge %(br_name)s"),
                  {'port_id': port_id, 'br_name': self.br_name})
 
-"""
     def get_vif_ports(self):
         edge_ports = []
         port_info = self.get_ports_attributes(
@@ -618,25 +617,21 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             name = port['name']
             external_ids = self._format_attr(port['external_ids'])
             ofport = port['ofport']
-            if "iface-id" in external_ids and "attached-mac" in external_ids:
-                if isinstance(external_ids['iface-id'], list):
-                    for id in external_ids['iface-id']:
-                        p = ovs_lib.VifPort(name, ofport, id,
-                                            external_ids['attached-mac'], self)
-                        edge_ports.append(p)
-                else:
-                    p = ovs_lib.VifPort(name, ofport, external_ids['iface-id'],
-                                        external_ids['attached-mac'], self)
+            mac = external_ids.get('attached-mac', None)
+            if name in consts.FTNT_PORTS:
+                for pid in external_ids.get('iface-id', {}):
+                    p = ovs_lib.VifPort(name, ofport, pid, mac, self)
                     edge_ports.append(p)
-            elif ("xs-vif-uuid" in external_ids and
-                  "attached-mac" in external_ids):
-                # if this is a xenserver and iface-id is not automatically
-                # synced to OVS from XAPI, we grab it from XAPI directly
-                iface_id = self.get_xapi_iface_id(external_ids['xs-vif-uuid'])
-                p = ovs_lib.VifPort(name, ofport, iface_id,
-                                    external_ids['attached-mac'], self)
-                edge_ports.append(p)
-
+            else:
+                if "iface-id" in external_ids and mac:
+                    p = ovs_lib.VifPort(name, ofport, external_ids["iface-id"],
+                                        mac, self)
+                    edge_ports.append(p)
+                elif "xs-vif-uuid" in external_ids and mac:
+                    # if this is a xenserver and iface-id is not automatically
+                    # synced to OVS from XAPI, we grab it from XAPI directly
+                    iface_id = self.get_xapi_iface_id(
+                        external_ids["xs-vif-uuid"])
+                    p = ovs_lib.VifPort(name, ofport, iface_id, mac, self)
+                    edge_ports.append(p)
         return edge_ports
-"""
-
