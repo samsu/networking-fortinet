@@ -345,7 +345,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
     def _restore_local_vlan_map(self):
         self._local_vlan_hints = {}
         cur_ports = self.int_br.get_vif_ports()
-        port_names = [p.port_name for p in cur_ports]
+        port_names = set([p.port_name for p in cur_ports])
         port_info = self.int_br.get_ports_attributes(
             "Port", columns=["name", "other_config", "tag"], ports=port_names)
         by_name = {x['name']: x for x in port_info}
