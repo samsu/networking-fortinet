@@ -894,6 +894,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             port = port_detail['vif_port']
             device = port_detail['device']
             # Do not bind a port if it's already bound
+            import ipdb;ipdb.set_trace()
             cur_tag = tags_by_name.get(port.port_name)
             if cur_tag is None:
                 LOG.info(_LI("Port %s was deleted concurrently, skipping it"),
