@@ -360,8 +360,8 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                     # todo: need to think about it later
                     other_config = by_name[port.port_name]['other_config']
                     local_vlan_map = other_config.get(port.vif_id)
-                    local_vlan = local_vlan_map.pop('tag', DEAD_VLAN_TAG) if \
-                        local_vlan_map else DEAD_VLAN_TAG
+                    local_vlan = local_vlan_map.pop('tag', None) if \
+                        local_vlan_map else None
                 else:
                     local_vlan_map = by_name[port.port_name]['other_config']
                     local_vlan = by_name[port.port_name]['tag']
