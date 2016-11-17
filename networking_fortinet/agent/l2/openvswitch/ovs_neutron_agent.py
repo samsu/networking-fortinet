@@ -848,7 +848,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         if segmentation_id is not None:
             vlan_mapping['segmentation_id'] = segmentation_id
         if port.port_name in consts.FTNT_PORTS:
-            vlan_mapping['local_vlan'] = lvm.vlan
+            vlan_mapping['tag'] = lvm.vlan
             vlan_mapping = {port.vif_id: vlan_mapping}
             namespace = self.int_br.get_namespace(port_name=port.port_name,
                                                   port_id=port.vif_id)

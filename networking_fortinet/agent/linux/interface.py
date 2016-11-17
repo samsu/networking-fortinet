@@ -176,7 +176,7 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
             for port_id in port_ids:
                 if port_id in cur_port_infos:
                     vlan_port = consts.PREFIX['inf'] + str(
-                        cur_port_infos[port_id]['local_vlan'])
+                        cur_port_infos[port_id]['tag'])
                     vlanids.append(vlan_port)
         return vlanids
 
