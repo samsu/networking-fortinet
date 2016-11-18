@@ -906,8 +906,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                          port.port_name)
                 continue
 
-            if isinstance(cur_tag, list) and lvm.vlan not in cur_tag \
-                    or cur_tag != lvm.vlan:
+            if isinstance(cur_tag, list) and lvm.vlan not in cur_tag:
                 self.int_br.delete_flows(in_port=port.ofport)
             if self.prevent_arp_spoofing:
                 self.setup_arp_spoofing_protection(self.int_br,
