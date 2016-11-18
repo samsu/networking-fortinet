@@ -1367,7 +1367,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 #        and (isinstance(port_tags[port.port_name], list)
                 #             and lvm.vlan not in port_tags[port.port_name])):
                 pname = port.port_name
-                import ipdb;ipdb.set_trace()
+                #import ipdb;ipdb.set_trace()
                 if pname in port_tags and (
                     not isinstance(port_tags[pname], list) and
                     port_tags[pname] != lvm.vlan or
@@ -1491,7 +1491,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             LOG.debug("## Processing port details: %s", details)
             LOG.debug("## Processing port: %s", device)
             port = vif_by_id.get(device)
-            #import ipdb;ipdb.set_trace()
+            import ipdb;ipdb.set_trace()
             if not port:
                 # The port disappeared and cannot be processed
                 LOG.info(_LI("Port %s was not found on the integration bridge "
