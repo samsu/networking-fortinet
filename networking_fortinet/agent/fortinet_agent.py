@@ -685,7 +685,7 @@ class L3NATAgentWithStateReport(FortinetAgent):
         configurations['interfaces'] = num_interfaces
         configurations['floating_ips'] = num_floating_ips
         try:
-            import ipdb;ipdb.set_trace()
+            #import ipdb;ipdb.set_trace()
             LOG.debug("## _report_state(): self.context %(ct)s, "
                       "self.agent_state %(ags)s, self.use_call %(uc)s",
                       {'ct': self.context, 'ags': self.agent_state,
