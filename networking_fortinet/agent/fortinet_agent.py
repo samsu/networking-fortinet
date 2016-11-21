@@ -658,6 +658,7 @@ class L3NATAgentWithStateReport(FortinetAgent):
             'start_flag': True,
             'agent_type': const.AGENT_TYPE_FTNT}
         report_interval = self.conf.AGENT.report_interval
+        print "## report_interval = %s" % report_interval
         if report_interval:
             self.heartbeat = loopingcall.FixedIntervalLoopingCall(
                 self._report_state)
@@ -671,7 +672,6 @@ class L3NATAgentWithStateReport(FortinetAgent):
         router_infos = self.router_info.values()
         num_routers = len(router_infos)
         for ri in router_infos:
-            #import ipdb;ipdb.set_trace()
             ex_gw_port = ri.get_ex_gw_port()
             if ex_gw_port:
                 num_ex_gw_ports += 1
@@ -685,6 +685,11 @@ class L3NATAgentWithStateReport(FortinetAgent):
         configurations['interfaces'] = num_interfaces
         configurations['floating_ips'] = num_floating_ips
         try:
+            import ipdb;ipdb.set_trace()
+            LOG.debug("## _report_state(): self.context %(ct)s, "
+                      "self.agent_state %(ags)s, self.use_call %(uc)s",
+                      {'ct': self.context, 'ags': self.agent_state,
+                       'uc': self.use_call})
             self.state_rpc.report_state(self.context, self.agent_state,
                                         self.use_call)
             self.agent_state.pop('start_flag', None)
