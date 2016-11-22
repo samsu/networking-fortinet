@@ -499,7 +499,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
                 LOG.warn(_LW("Found failed openvswitch port: %s"),
                          result['name'])
             elif 'attached-mac' in result['external_ids']:
-                import ipdb;ipdb.set_trace()
+                #import ipdb;ipdb.set_trace()
                 if result['name'] in consts.FTNT_PORTS:
                     port_id = self.get_fgt_vif_port_set(result['name'])
                 else:
