@@ -1367,7 +1367,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 #        and (isinstance(port_tags[port.port_name], list)
                 #             and lvm.vlan not in port_tags[port.port_name])):
                 pname = port.port_name
-                import ipdb;ipdb.set_trace()
+                #import ipdb;ipdb.set_trace()
                 if pname in port_tags and (
                     not isinstance(port_tags[pname], list) and
                     port_tags[pname] != lvm.vlan or
