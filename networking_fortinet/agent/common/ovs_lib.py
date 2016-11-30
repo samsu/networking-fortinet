@@ -93,6 +93,13 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
             return {key: res[key] for key in ret_keys}
         return res
 
+    def db_get_val(self, table, record, column, check_error=False,
+                   log_errors=True):
+        return self._format_attr(
+            super(FortinetOVSBridge, self).db_get_val(table, record, column,
+                                                      check_error=check_error,
+                                                      log_errors=log_errors))
+
     @staticmethod
     def _format_attr(attrs):
         def _fmt_attr(attr):
