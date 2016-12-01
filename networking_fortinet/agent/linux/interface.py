@@ -172,6 +172,7 @@ class FortinetOVSInterfaceDriver(interface.OVSInterfaceDriver):
         ovs = ovs_lib.FortinetOVSBridge(bridge)
         vlanids = []
         cur_port_infos = ovs.get_subattr('Port', port_name, 'other_config', [])
+        import ipdb;ipdb.set_trace()
         if cur_port_infos:
             for port_id in port_ids:
                 if port_id in cur_port_infos:
