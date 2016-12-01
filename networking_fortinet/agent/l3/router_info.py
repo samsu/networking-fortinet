@@ -332,7 +332,7 @@ class RouterInfo(object):
                                 fixed_ips, mac_address,
                                 interface_name):
         LOG.debug("adding internal network: port(%s)", port_id)
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
         self.driver.plug_new(network_id, port_id, interface_name, fixed_ips,
                              mac_address, namespace=ns_name)
         ip_cidrs = common_utils.fixed_ip_cidrs(fixed_ips)
@@ -483,7 +483,7 @@ class RouterInfo(object):
                      if p['id'] not in current_port_ids]
         updated_ports = self._get_updated_ports(self.internal_ports,
                                                 internal_ports)
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
         enable_ra = False
         for p in new_ports:
             self.internal_network_added(p)

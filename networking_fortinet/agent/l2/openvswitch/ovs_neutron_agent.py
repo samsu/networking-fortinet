@@ -856,7 +856,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             vlan_mapping = {port.vif_id: vlan_mapping}
             namespace = self.int_br.get_namespace(port_name=port.port_name,
                                                   port_id=port.vif_id)
-            import ipdb; ipdb.set_trace()
+            #import ipdb; ipdb.set_trace()
             gatewayip = self.int_br.get_gatewayip(
                 port_name=port.port_name, subnet_id=fixed_ips[0]['subnet_id'])
             network = fortigate.Network()
@@ -899,7 +899,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             port = port_detail['vif_port']
             device = port_detail['device']
             # Do not bind a port if it's already bound
-            import ipdb;ipdb.set_trace()
+            #import ipdb;ipdb.set_trace()
             cur_tag = tags_by_name.get(port.port_name)
             if cur_tag is None:
                 LOG.info(_LI("Port %s was deleted concurrently, skipping it"),
@@ -918,7 +918,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
 
             if port.port_name in consts.FTNT_PORTS \
                     and isinstance(cur_tag, list) and lvm.vlan not in cur_tag:
-                import ipdb;ipdb.set_trace()
+                #import ipdb;ipdb.set_trace()
                 cur_tag.append(lvm.vlan)
                 cur_tag = [str(tag) for tag in cur_tag]
                 self.int_br.set_db_attribute("Port", port.port_name,
@@ -1491,7 +1491,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             LOG.debug("## Processing port details: %s", details)
             LOG.debug("## Processing port: %s", device)
             port = vif_by_id.get(device)
-            import ipdb;ipdb.set_trace()
+            #import ipdb;ipdb.set_trace()
             if not port:
                 # The port disappeared and cannot be processed
                 LOG.info(_LI("Port %s was not found on the integration bridge "

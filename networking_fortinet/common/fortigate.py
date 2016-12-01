@@ -100,7 +100,7 @@ class Fortigate(object):
     def clean_namespace_trash(self, namespace, fwpolicy_id, inf_names):
         router_id, vdom = namespace.split('_')
         task_id = uuidutils.generate_uuid()
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
         if fwpolicy_id:
             self.delete_resource(task_id, resources.FirewallPolicy,
                                  vdom=vdom,
@@ -340,7 +340,7 @@ class Router(router_info.RouterInfo):
         if ex_gw_port:
             self.fip_ns = agent.get_fip_ns(ex_gw_port['network_id'])
             #self.fip_ns.scan_fip_ports(self)
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
         super(Router, self).process(agent)
 
 class Network(object):
@@ -356,7 +356,7 @@ class Network(object):
             return
         routerid, self.vdom = namespace.split('_')
         self.name = ''.join([const.PREFIX['inf'], str(vlanid)])
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
         fgt.add_resource(portid, resources.VlanInterface,
                          name=self.name, vdom=self.vdom, vlanid=vlanid,
                          interface=fgt.cfg.int_interface, ip=gatewayip)
