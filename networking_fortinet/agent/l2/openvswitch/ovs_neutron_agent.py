@@ -856,7 +856,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             vlan_mapping = {port.vif_id: vlan_mapping}
             namespace = self.int_br.get_namespace(port_name=port.port_name,
                                                   port_id=port.vif_id)
-            #import ipdb; ipdb.set_trace()
+            import ipdb; ipdb.set_trace()
             gatewayip = self.int_br.get_gatewayip(
                 port_name=port.port_name, subnet_id=fixed_ips[0]['subnet_id'])
             network = fortigate.Network()
