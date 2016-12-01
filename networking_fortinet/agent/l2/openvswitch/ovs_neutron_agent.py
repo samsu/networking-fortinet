@@ -349,7 +349,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         port_info = self.int_br.get_ports_attributes(
             "Port", columns=["name", "other_config", "tag"], ports=port_names)
         by_name = {x['name']: x for x in port_info}
-        import ipdb;ipdb.set_trace()
+        #import ipdb;ipdb.set_trace()
         for port in cur_ports:
             # if a port was deleted between get_vif_ports and
             # get_ports_attributes, we
@@ -856,7 +856,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
             vlan_mapping = {port.vif_id: vlan_mapping}
             namespace = self.int_br.get_namespace(port_name=port.port_name,
                                                   port_id=port.vif_id)
-            import ipdb; ipdb.set_trace()
+            #import ipdb; ipdb.set_trace()
             gatewayip = self.int_br.get_gatewayip(
                 port_name=port.port_name, subnet_id=fixed_ips[0]['subnet_id'])
             network = fortigate.Network()
