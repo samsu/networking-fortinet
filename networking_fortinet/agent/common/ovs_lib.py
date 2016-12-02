@@ -412,7 +412,7 @@ class FortinetOVSBridge(ovs_lib.OVSBridge):
         routers = self.get_subattr('Interface', port_name, column, attr_path,
                                    check_error=check_error,
                                    log_errors=log_errors)
-        return routers.keys()
+        return routers.keys() if routers else []
 
     def get_namespace(self, port_name=None, port_id=None,
                        check_error=True, log_errors=True):
