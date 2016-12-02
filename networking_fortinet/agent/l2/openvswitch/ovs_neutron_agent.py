@@ -377,7 +377,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
                 and local_vlan != DEAD_VLAN_TAG):
                 print "# self.available_local_vlans=%s" % self.available_local_vlans
                 print "# local_vlan=%s" % local_vlan
-                print "# type(local_vlan)=" % type(local_vlan)
+                print "# type(local_vlan)=%s" % type(local_vlan)
                 import ipdb;ipdb.set_trace()
                 self.available_local_vlans.remove(local_vlan)
                 self._local_vlan_hints[local_vlan_map['net_uuid']] = \
