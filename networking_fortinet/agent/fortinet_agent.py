@@ -185,7 +185,6 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
             break
 
         self.metadata_driver = None
-        import ipdb;ipdb.set_trace()
         if self.conf.enable_metadata_proxy:
             self.metadata_driver = metadata_driver.MetadataDriver(self)
 
