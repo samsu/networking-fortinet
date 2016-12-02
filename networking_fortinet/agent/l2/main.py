@@ -43,6 +43,7 @@ _main_modules = {
     'ovs-ofctl': 'networking_fortinet.agent.l2.main'
 }
 
+
 def init_config():
     pass
 
