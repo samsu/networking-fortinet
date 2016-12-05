@@ -21,8 +21,6 @@ from oslo_config import cfg
 from oslo_log import log as logging
 from neutron.common import config as common_config
 from neutron.common import utils as n_utils
-#from neutron.plugins.ml2.drivers.openvswitch.agent.openflow.ovs_ofctl \
-#    import br_int
 from neutron.plugins.ml2.drivers.openvswitch.agent.openflow.ovs_ofctl \
     import br_phys
 from neutron.plugins.ml2.drivers.openvswitch.agent.openflow.ovs_ofctl \
@@ -31,14 +29,10 @@ from neutron.plugins.ml2.drivers.openvswitch.agent.openflow.ovs_ofctl \
 from networking_fortinet.agent.l2.openvswitch import br_int
 from networking_fortinet.agent.l2.openvswitch import ovs_neutron_agent
 
+
 LOG = logging.getLogger(__name__)
 cfg.CONF.import_group('OVS', 'neutron.plugins.ml2.drivers.openvswitch.agent.'
                       'common.config')
-try:
-    cls_br_int = br_int.FortinetOVSIntegrationBridge
-except AttributeError:
-    cls_br_int = br_int.OVSIntegrationBridge
-
 _main_modules = {
     'ovs-ofctl': 'networking_fortinet.agent.l2.main'
 }
@@ -52,9 +46,13 @@ def main():
     init_config()
     common_config.setup_logging()
     n_utils.log_opt_values(LOG)
-    print "## cls_br_int=", cls_br_int
+    try:
+        cls_br_int = br_int.FortinetOVSIntegrationBridge
+    except AttributeError:
+        cls_br_int = br_int.OVSIntegrationBridge
+    LOG.debug("ovs agent br-int class: %(cls_br_int)s",
+              {'cls_br_int': cls_br_int})
     bridge_classes = {
-        #br_int.FortinetOVSIntegrationBridge,
         'br_int': cls_br_int,
         'br_phys': br_phys.OVSPhysicalBridge,
         'br_tun': br_tun.OVSTunnelBridge,
