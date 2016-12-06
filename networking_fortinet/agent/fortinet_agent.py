@@ -570,9 +570,8 @@ class FortinetAgent(firewall_l3_agent.FWaaSL3AgentRpcCallback,
     def fetch_and_sync_all_routers(self, context, ns_manager):
         prev_router_ids = set(self.router_info)
         timestamp = timeutils.utcnow()
-
+        import ipdb;ipdb.set_trace()
         try:
-            import ipdb;ipdb.set_trace()
             if self.conf.use_namespaces:
                 routers = self.plugin_rpc.get_routers(context)
             else:
