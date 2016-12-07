@@ -202,6 +202,7 @@ class OVSNeutronAgent(sg_rpc.SecurityGroupAgentRpcCallbackMixin,
         self.tunnel_types = tunnel_types or []
         self.l2_pop = l2_population
         print "### l2_population=%s " % l2_population
+        print "### arp_responder=%s " % arp_responder
         # TODO(ethuleau): Change ARP responder so it's not dependent on the
         #                 ML2 l2 population mechanism driver.
         self.enable_distributed_routing = enable_distributed_routing
