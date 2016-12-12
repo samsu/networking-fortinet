@@ -274,6 +274,7 @@ class Router(router_info.RouterInfo):
                                   name=self.fgt_addr_grp,
                                   vdom=self.vdom,
                                   members=self.fgt_fwaddresses)
+            print "### self.driver.get_fwpolicy(self.ns_name) =", self.driver.get_fwpolicy(self.ns_name)
             if not self.driver.get_fwpolicy(self.ns_name):
                 fwpolicy = self.fgt.add_resource(task_id,
                                                  resources.FirewallPolicy,
