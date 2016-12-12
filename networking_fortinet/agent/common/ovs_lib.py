@@ -43,6 +43,7 @@ FTNT_PORTS = consts.FTNT_PORTS
 
 LOG = ovs_lib.LOG
 
+
 class FortinetOVSBridge(ovs_lib.OVSBridge):
     """ FortinetOVSBridge class
     """
