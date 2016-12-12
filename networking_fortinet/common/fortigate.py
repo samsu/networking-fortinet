@@ -62,7 +62,7 @@ class Fortigate(object):
         :return:
         """
         if not self.exist():
-            # samsu: it means use general network nodes instead of a fgt
+            # samsu: it means use regular network nodes instead of a fgt
             return
 
         for key in const.FORTINET_PARAMS:
@@ -274,16 +274,18 @@ class Router(router_info.RouterInfo):
                                   name=self.fgt_addr_grp,
                                   vdom=self.vdom,
                                   members=self.fgt_fwaddresses)
-            fwpolicy = self.fgt.add_resource(task_id, resources.FirewallPolicy,
-                                             vdom=self.vdom,
-                                             srcintf='any',
-                                             srcaddr=self.fgt_addr_grp,
-                                             dstintf='any',
-                                             dstaddr=self.fgt_addr_grp,
-                                             nat='disable')
-            self.fgt_fw_policies.append(fwpolicy['results']['mkey'])
-            self.driver.save_fwpolicy(self.ns_name,
-                                      fwpolicy['results']['mkey'])
+            if not self.driver.get_fwpolicy(self.ns_name):
+                fwpolicy = self.fgt.add_resource(task_id,
+                                                 resources.FirewallPolicy,
+                                                 vdom=self.vdom,
+                                                 srcintf='any',
+                                                 srcaddr=self.fgt_addr_grp,
+                                                 dstintf='any',
+                                                 dstaddr=self.fgt_addr_grp,
+                                                 nat='disable')
+                self.fgt_fw_policies.append(fwpolicy['results']['mkey'])
+                self.driver.save_fwpolicy(self.ns_name,
+                                          fwpolicy['results']['mkey'])
             '''
             if 'vlink' in cfg:
                 vlinkinfo = cfg['vlink']
