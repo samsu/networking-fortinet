@@ -91,7 +91,7 @@ def port_range(range):
 
 def get_mac(obj, context, interface=None):
     if not interface:
-        interface = obj._fortigate['int_interface']
+        interface = obj.fortigate.cfg['int_interface']
     res = op(obj, context, resources.VlanInterface.get, name=interface)
     if 200 == res['http_status']:
         return res['results'][0]['macaddr']
@@ -734,7 +734,7 @@ def delete_addrgrp(obj, context, **kwargs):
 def add_vlink_intf(obj, context, vlink_vlan, vlink_ip):
     vdom = getattr(vlink_vlan, 'vdom')
     ipsubnet = netaddr.IPNetwork(vlink_ip.vlink_ip_subnet)
-    if obj._fortigate.get('npu_available'):
+    if obj.fortigate.cfg.get('npu_available'):
         intf_ext, intf_int = 'npu0_vlink0', 'npu0_vlink1'
         add_vlanintf(obj, context,
                      name=vlink_vlan.inf_name_ext_vdom,
@@ -816,7 +816,7 @@ def get_vlink_intf(obj, context, **kwargs):
 
 def delete_vlink_intf(obj, context, vlink_vlan):
     vdom = getattr(vlink_vlan, 'vdom')
-    if obj._fortigate.get('npu_available'):
+    if obj.fortigate.cfg.get('npu_available'):
         delete_vlanintf(obj, context,
                         name=vlink_vlan.inf_name_int_vdom,
                         vdom=vdom)
@@ -880,7 +880,7 @@ def delete_vlink(obj, context, tenant_id):
     delete_fwpolicy(obj, context,
                     vdom=const.EXT_VDOM,
                     srcintf=vlink_vlan.inf_name_ext_vdom,
-                    dstintf=obj._fortigate['ext_interface'],
+                    dstintf=obj.fortigate.cfg['ext_interface'],
                     nat='enable')"""
     gateway_ip = get_ipaddr(netaddr.IPNetwork(vlink_ip.vlink_ip_subnet), 1)
     delete_routerstatic(obj, context,
@@ -1117,14 +1117,14 @@ def set_ext_gw(obj, context, port):
     add_fwpolicy(obj, context,
                  vdom=const.EXT_VDOM,
                  srcintf=vlink_db.inf_name_ext_vdom,
-                 dstintf=obj._fortigate['ext_interface'],
+                 dstintf=obj.fortigate.cfg['ext_interface'],
                  poolname=ip_address)
     subnet_db = fortinet_db.query_record(context, models_v2.Subnet,
                                 id=port['fixed_ips'][0]['subnet_id'])
     if subnet_db:
         netmask = netaddr.IPNetwork(subnet_db.cidr).netmask
         add_interface_ip(obj, context,
-                         name=obj._fortigate['ext_interface'],
+                         name=obj.fortigate.cfg['ext_interface'],
                          vdom=const.EXT_VDOM,
                          ip="%s %s" % (ip_address, netmask))
 
@@ -1136,7 +1136,7 @@ def clr_ext_gw(obj, context, port):
     netmask = netaddr.IPNetwork(subnetv2_db.cidr).netmask
     ip = "%s %s" % (ip_address, netmask)
     delete_interface_ip(obj, context,
-                        name=obj._fortigate['ext_interface'],
+                        name=obj.fortigate.cfg['ext_interface'],
                         vdom=const.EXT_VDOM,
                         ip=ip)
 

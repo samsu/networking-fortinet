@@ -86,7 +86,7 @@ class ConfigMixin(object):
         }
         for opt, val in fgt_test_config.items():
             cfg.CONF.set_override(opt, val, 'ml2_fortinet')
-        self._fortigate = cfg.CONF.ml2_fortinet
+        #self._fortigate = cfg.CONF.ml2_fortinet
 
 
 class FakeDbContract(object):

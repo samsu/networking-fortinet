@@ -60,7 +60,7 @@ class FortinetFirewallPlugin(
     @log_helpers.log_method_call
     def __init__(self):
         """Do the initialization for the firewall service plugin here."""
-        self._fortigate = config.fgt_info
+        self.fortigate.cfg = config.fgt_info
         self._driver = config.get_apiclient()
         self.task_manager = tasks.TaskManager()
         self.task_manager.start()
@@ -609,7 +609,7 @@ class FortinetFirewallPlugin(
 
     @log_helpers.log_method_call
     def _make_default_firewall_rule_dict(self, tenant_id):
-        if tenant_id and self._fortigate["enable_default_fwrule"]:
+        if tenant_id and self.fortigate.cfg["enable_default_fwrule"]:
             return {'id': tenant_id,
                     'tenant_id': tenant_id,
                     'name': '_default_rule_deny_all',
@@ -705,7 +705,7 @@ class FortinetFirewallPlugin(
         }
         if action in ['allow', 'accept']:
             for key in profiles:
-                profiles[key] = self._fortigate[key]
+                profiles[key] = self.fortigate.cfg[key]
         return profiles
 
     @log_helpers.log_method_call

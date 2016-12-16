@@ -147,7 +147,7 @@ class FortinetMechanismDriver(driver_api.MechanismDriver):
                                name=inf_name,
                                vdom=namespace.vdom,
                                vlanid=vlanid,
-                               interface=self._fortigate['int_interface'],
+                               interface=self.fortigate.cfg['int_interface'],
                                alias=network_name)
         except Exception as e:
             utils.rollback_on_err(self, context, e)
@@ -257,7 +257,7 @@ class FortinetMechanismDriver(driver_api.MechanismDriver):
                             subnet_id=subnet_id,
                             vdom=const.EXT_VDOM,
                             dst=const.EXT_DEF_DST,
-                            device=self._fortigate['ext_interface'],
+                            device=self.fortigate.cfg['ext_interface'],
                             gateway=gateway)
             else:
                 namespace = fortinet_db.query_record(context,

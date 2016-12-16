@@ -515,7 +515,7 @@ class FortinetL3ServicePlugin(router.L3RouterPlugin):
                                    vdom=const.EXT_VDOM,
                                    srcintf=ext_intf,
                                    srcaddr=mappedip,
-                                   dstintf=self._fortigate['ext_interface'],
+                                   dstintf=self.fortigate.cfg['ext_interface'],
                                    poolname=db_fip.floating_ip_address)
                 utils.head_firewall_policy(self, context,
                                            vdom=const.EXT_VDOM,
@@ -576,7 +576,7 @@ class FortinetL3ServicePlugin(router.L3RouterPlugin):
                                   vdom=const.EXT_VDOM,
                                   srcintf=ext_intf,
                                   srcaddr=mappedip,
-                                  dstintf=self._fortigate['ext_interface'],
+                                  dstintf=self.fortigate.cfg['ext_interface'],
                                   poolname=db_fip.floating_ip_address)
 
             utils.delete_fwaddress(self, context,
