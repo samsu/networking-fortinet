@@ -52,9 +52,7 @@ class Fortigate(object):
         self.task_manager.start()
 
     def exist(self):
-        if self.api_client:
-            return True
-        return False
+        return True if self.api_client else False
 
     @log_helpers.log_method_call
     def initialize(self):

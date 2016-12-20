@@ -1104,7 +1104,8 @@ def set_ext_gw(obj, context, port):
         raise ValueError
 
     namespace = add_vdom(obj, context, tenant_id=tenant_id)
-    #add_vlink(obj, context, namespace.vdom)
+    ## Uncomment the line
+    add_vlink(obj, context, namespace.vdom)
     vlink_db = fortinet_db.query_record(context,
                                 fortinet_db.Fortinet_Vlink_Vlan_Allocation,
                                 vdom=namespace.vdom)
