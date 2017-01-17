@@ -363,15 +363,14 @@ class FortinetMechanismDriver(driver_api.MechanismDriver):
                 cidr = netaddr.IPNetwork(db_subnetv2.cidr)
                 subnet = ' '.join([str(cidr.network), str(cidr.netmask)])
                 utils.add_fwaddress(self, context,
-                                   vdom=namespace.vdom,
-                                   name=str(cidr.network),
-                                   subnet=subnet)
+                                    vdom=namespace.vdom,
+                                    name=str(cidr.network),
+                                    subnet=subnet)
                 addrgrp_name = const.PREFIX['addrgrp'] + namespace.vdom
                 utils.add_addrgrp(self, context,
                                   name=addrgrp_name,
                                   vdom=namespace.vdom,
                                   members=[str(cidr.network)])
-
                 utils.add_fwpolicy(self, context,
                                    vdom=namespace.vdom,
                                    srcintf='any',
